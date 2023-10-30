@@ -15,5 +15,6 @@ MonoBehaviour:
   mNodeName: C&T Building
   mGeoPosition: {x: 53.76358, y: -2.709106}
   mConnectedNodes: []
+  mNodeType: 1
   mBuildingName: C&T Building
   mBuildingDescription: The Computing and technology building.

@@ -18,7 +18,7 @@ public class cNode_Manager : MonoBehaviour
     /* -------- Prefabs -------- */
     
     [Title("Node Prefabs")]
-	[SerializeField] private GameObject             pNode_Building;                             // Prefab for the building nodes, used when generating the map.
+    [SerializeField] private GameObject             pNode_Building;                             // Prefab for the building nodes, used when generating the map.
     [SerializeField] private GameObject             pNode_Path;                                 // Prefab for the path nodes, used when generating the map.
 
     /* -------- Constants -------- */
