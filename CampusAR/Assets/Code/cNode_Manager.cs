@@ -1,3 +1,4 @@
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,9 +12,6 @@ public class cNode_Manager : MonoBehaviour
 	
     /* Singleton */
     public static cNode_Manager                     mInstance;                                  // Singleton instance, used to reference this class globally.
-
-    [Title("Node Data")]
-    [SerializeField] private List<cNode>            rAllNodes;                                  // A list of all the nodes.
     
     /* -------- Prefabs -------- */
     
@@ -26,6 +24,8 @@ public class cNode_Manager : MonoBehaviour
     private const int                               kEarthRadiusMetres = 6371000;               // The radius of the earth in metres.
 
     /* -------- Variables -------- */
+    
+    private List<cNode>                             mNodes = new List<cNode>();              // A list of all the nodes.
     private List<GameObject>                        mWorldNodes = new List<GameObject>();       // A list of all the instantiaed nodes in-world.
 
     /* -------- Unity Methods -------- */
@@ -124,6 +124,13 @@ public class cNode_Manager : MonoBehaviour
     /// </summary>
     public void HandleNodes(Vector2 _userPosition, float _userAngle)
     {
+        // Check if buildings have been loaded into memory.
+        if (mNodes.Count <= 0)
+        {
+            // Read all the nodes into memory.
+            
+        }
+
         // Check if nodes have been generated.
         if (mWorldNodes.Count > 0)
         {
@@ -132,15 +139,13 @@ public class cNode_Manager : MonoBehaviour
         else // Generate the nodes.
         {
             // Instantiate all the nodes.
-            for (int i = 0; i < rAllNodes.Count; i++)
+            for (int i = 0; i < mNodes.Count; i++)
             {
                 // Setup node variable.
                 GameObject _node = null;
 
-                print((int)rAllNodes[i].GetNodeType());
-
                 // Create the correct node.
-                switch (rAllNodes[i].GetNodeType())
+                switch (mNodes[i].GetNodeType())
                 {
                     case NodeType.Path:
                     {
@@ -155,7 +160,7 @@ public class cNode_Manager : MonoBehaviour
                 }
 
                 // Position the node correctly, and align it with the North bearing relative to the user.
-                _node.transform.position = Quaternion.Euler(0.0f, _userAngle, 0.0f) * GetVector(_userPosition, rAllNodes[i].GetGPSLocation());
+                _node.transform.position = Quaternion.Euler(0.0f, _userAngle, 0.0f) * GetVector(_userPosition, mNodes[i].GetGPSLocation());
 
                 // Add node to list of spawned nodes.
                 mWorldNodes.Add(_node);
