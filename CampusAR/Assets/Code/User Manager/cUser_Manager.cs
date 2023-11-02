@@ -11,17 +11,24 @@ public class cUser_Manager : MonoBehaviour
 	/* Singleton */
     public static cUser_Manager         mInstance;                                              // Singleton instance, used to reference this class globally.
 
+    /* Guiding Arrow */
+    [SerializeField] private GameObject rGuideArrow;                                            // A reference to the guiding arrow.
+
     /* -------- Constants -------- */
     [Title("GPS Values")]
     [SnappedSlider(1.0f, 1.0f, 60.0f)]
-    [SerializeField] private float      kGPSCallTimer = 5.0f;                                  // The amount of seconds in-between making GPS calls. (5s by default)
+    [SerializeField] private float      kGPSCallTimer = 5.0f;                                   // The amount of seconds in-between making GPS calls. (5s by default)
     
     /* -------- Variables -------- */
 
+    /* GPS */
     public Vector2                      mUserLastLocation { get; private set; }                 // The users last GPS location, used for maintaining accuracy.
     public float                        mUserLastCompassRotation { get; private set; } = 0.0f;  // The users last compass bearing, this is stored to not overwhelm the phone.
     
-    private float                       mLocationTimer = 1.0f;                                  // The timer used to make GPS location calls.
+    private float                       mLocationTimer = 1.0f;                                  // The timer used to make GPS location calls
+
+    /* Guiding */
+    private int                         mTargetNodeIndex = -1;                                  // The index of the target building/node, if -1 no node is selected.
 
     /* -------- Unity Methods -------- */
 
@@ -82,8 +89,17 @@ public class cUser_Manager : MonoBehaviour
         // Get the users rotation based on their compass.
 
         // Position the nodes once user location has been received.
-        cNode_Manager.mInstance.HandleNodes(mUserLastLocation, 0.0f);
+        cNode_Manager.mInstance.HandleNodes(mUserLastLocation, mUserLastCompassRotation);
     }
 
     /* -------- Public Methods -------- */
+
+    /// <summary>
+    /// Sets the target node that the user will be guided to. Set to -1 to disable guiding.
+    /// </summary>
+    /// <param name="_index">The index of the building/node from the list of nodes in cNode_Manager.</param>
+    public void SetTargetNode(int _index)
+    {
+        mTargetNodeIndex = _index;
+    }
 }
