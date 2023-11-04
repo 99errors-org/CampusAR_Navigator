@@ -1,0 +1,12 @@
+{
+    "mNodeName": "Vernon Building",
+    "mGeoPosition": {
+        "x": 53.7675534,
+        "y": -2.705736057
+    },
+    "mConnectedNodes": [],
+    "mNodeType": 1,
+    "mBuildingName": "Vernon Building",
+    "mBuildingDescription": "",
+    "mBuildingAbbreviation": ""
+}

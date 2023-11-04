@@ -1,0 +1,12 @@
+{
+    "mNodeName": "Greenbank Building",
+    "mGeoPosition": {
+        "x": 53.7656799,
+        "y": -2.706261338
+    },
+    "mConnectedNodes": [],
+    "mNodeType": 1,
+    "mBuildingName": "Greenbank Building",
+    "mBuildingDescription": "",
+    "mBuildingAbbreviation": ""
+}

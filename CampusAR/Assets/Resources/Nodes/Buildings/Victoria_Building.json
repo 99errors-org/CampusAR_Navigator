@@ -1,0 +1,12 @@
+{
+    "mNodeName": "Victoria Building",
+    "mGeoPosition": {
+        "x": 53.7651317,
+        "y": -2.708423549
+    },
+    "mConnectedNodes": [],
+    "mNodeType": 1,
+    "mBuildingName": "Victoria Building",
+    "mBuildingDescription": "",
+    "mBuildingAbbreviation": ""
+}

@@ -1,0 +1,12 @@
+{
+    "mNodeName": "Leighton Building",
+    "mGeoPosition": {
+        "x": 53.76155845,
+        "y": -2.709330187
+    },
+    "mConnectedNodes": [],
+    "mNodeType": 1,
+    "mBuildingName": "Leighton Building",
+    "mBuildingDescription": "",
+    "mBuildingAbbreviation": ""
+}

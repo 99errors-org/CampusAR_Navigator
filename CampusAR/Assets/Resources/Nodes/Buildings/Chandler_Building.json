@@ -1,0 +1,12 @@
+{
+    "mNodeName": "Chandler Building",
+    "mGeoPosition": {
+        "x": 53.76098721,
+        "y": -2.707076802
+    },
+    "mConnectedNodes": [],
+    "mNodeType": 1,
+    "mBuildingName": "Chandler Building",
+    "mBuildingDescription": "",
+    "mBuildingAbbreviation": ""
+}

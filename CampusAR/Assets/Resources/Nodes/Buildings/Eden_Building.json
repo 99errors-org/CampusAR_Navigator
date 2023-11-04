@@ -1,0 +1,12 @@
+{
+    "mNodeName": "Eden Building",
+    "mGeoPosition": {
+        "x": 53.7661529,
+        "y": -2.70697075
+    },
+    "mConnectedNodes": [],
+    "mNodeType": 1,
+    "mBuildingName": "Eden Building",
+    "mBuildingDescription": "",
+    "mBuildingAbbreviation": ""
+}

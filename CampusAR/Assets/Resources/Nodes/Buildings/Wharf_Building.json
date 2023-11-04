@@ -1,0 +1,12 @@
+{
+    "mNodeName": "Wharf Building",
+    "mGeoPosition": {
+        "x": 53.7609295,
+        "y": -2.70852865
+    },
+    "mConnectedNodes": [],
+    "mNodeType": 1,
+    "mBuildingName": "Wharf Building",
+    "mBuildingDescription": "",
+    "mBuildingAbbreviation": ""
+}

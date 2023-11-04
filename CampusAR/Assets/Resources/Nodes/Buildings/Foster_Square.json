@@ -1,0 +1,12 @@
+{
+    "mNodeName": "Foster Square",
+    "mGeoPosition": {
+        "x": 53.76204687,
+        "y": -2.7083218
+    },
+    "mConnectedNodes": [],
+    "mNodeType": 1,
+    "mBuildingName": "Foster Square",
+    "mBuildingDescription": "",
+    "mBuildingAbbreviation": ""
+}

@@ -1,0 +1,12 @@
+{
+    "mNodeName": "Harris Building",
+    "mGeoPosition": {
+        "x": 53.76134639,
+        "y": -2.707051857
+    },
+    "mConnectedNodes": [],
+    "mNodeType": 1,
+    "mBuildingName": "Harris Building",
+    "mBuildingDescription": "",
+    "mBuildingAbbreviation": ""
+}

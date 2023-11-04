@@ -1,0 +1,12 @@
+{
+    "mNodeName": "Edward Building",
+    "mGeoPosition": {
+        "x": 53.7608532,
+        "y": -2.707723047
+    },
+    "mConnectedNodes": [],
+    "mNodeType": 1,
+    "mBuildingName": "Edward Building",
+    "mBuildingDescription": "",
+    "mBuildingAbbreviation": ""
+}

@@ -1,0 +1,12 @@
+{
+    "mNodeName": "Adelphi Building",
+    "mGeoPosition": {
+        "x": 53.76429755,
+        "y": -2.707912136
+    },
+    "mConnectedNodes": [],
+    "mNodeType": 1,
+    "mBuildingName": "Adelphi Building",
+    "mBuildingDescription": "",
+    "mBuildingAbbreviation": ""
+}

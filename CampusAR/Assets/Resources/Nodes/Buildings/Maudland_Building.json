@@ -1,0 +1,12 @@
+{
+    "mNodeName": "Maudland Building",
+    "mGeoPosition": {
+        "x": 53.7620862,
+        "y": -2.709713312
+    },
+    "mConnectedNodes": [],
+    "mNodeType": 1,
+    "mBuildingName": "Maudland Building",
+    "mBuildingDescription": "",
+    "mBuildingAbbreviation": ""
+}

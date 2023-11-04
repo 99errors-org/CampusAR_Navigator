@@ -1,0 +1,12 @@
+{
+    "mNodeName": "Kirkham Building",
+    "mGeoPosition": {
+        "x": 53.76362415,
+        "y": -2.71057565
+    },
+    "mConnectedNodes": [],
+    "mNodeType": 1,
+    "mBuildingName": "Kirkham Building",
+    "mBuildingDescription": "",
+    "mBuildingAbbreviation": ""
+}

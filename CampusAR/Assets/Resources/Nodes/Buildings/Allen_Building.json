@@ -1,0 +1,12 @@
+{
+    "mNodeName": "Allen Building",
+    "mGeoPosition": {
+        "x": 53.7651737,
+        "y": -2.707464512
+    },
+    "mConnectedNodes": [],
+    "mNodeType": 1,
+    "mBuildingName": "Allen Building",
+    "mBuildingDescription": "",
+    "mBuildingAbbreviation": ""
+}

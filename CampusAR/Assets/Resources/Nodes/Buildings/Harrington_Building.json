@@ -1,0 +1,12 @@
+{
+    "mNodeName": "Harrington Building",
+    "mGeoPosition": {
+        "x": 53.76579037,
+        "y": -2.707149041
+    },
+    "mConnectedNodes": [],
+    "mNodeType": 1,
+    "mBuildingName": "Harrington Building",
+    "mBuildingDescription": "",
+    "mBuildingAbbreviation": ""
+}
