@@ -117,6 +117,6 @@ public class cUser_Manager : MonoBehaviour
     public void TargetPathfinding()
     {
         cGPSMaths.GetAngle(mUserLastLocation, cNode_Manager.mInstance.GetNodes[mTargetNodeIndex].GetGPSLocation());
-
+        
     }
 }
