@@ -1,6 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using TetraCreations.Attributes;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 
@@ -11,24 +14,25 @@ public class cUser_Manager : MonoBehaviour
 	/* Singleton */
     public static cUser_Manager         mInstance;                                              // Singleton instance, used to reference this class globally.
 
-    /* Guiding Arrow */
-    [SerializeField] private GameObject rGuideArrow;                                            // A reference to the guiding arrow.
+    /* User Interface */
+    [SerializeField] private GameObject rInitPanel;                                             // The initialisation panel.
+    [SerializeField] private TextMeshProUGUI rDebugText;                                        // Text used for debugging the initialisation screen.
+
+    [SerializeField] private Transform  mCamera;                                                // Reference to the camera.
 
     /* -------- Constants -------- */
-    [Title("GPS Values")]
-    [SnappedSlider(1.0f, 1.0f, 60.0f)]
-    [SerializeField] private float      kGPSCallTimer = 5.0f;                                   // The amount of seconds in-between making GPS calls. (5s by default)
-    
+    private const float                 kLocationTimeout    = 20.0f;                            // The amount of seconds before the location services times out and starts again.
+
     /* -------- Variables -------- */
 
     /* GPS */
+    private bool                        mCoroutine = false;
+
     public Vector2                      mUserLastLocation { get; private set; }                 // The users last GPS location, used for maintaining accuracy.
     public float                        mUserLastCompassRotation { get; private set; } = 0.0f;  // The users last compass bearing, this is stored to not overwhelm the phone.
-    
-    private float                       mLocationTimer = 1.0f;                                  // The timer used to make GPS location calls
 
     /* Guiding */
-    private int                         mTargetNodeIndex = -1;                                  // The index of the target building/node, if -1 no node is selected.
+    private int                         mTargetNodeIndex    = -1;                               // The index of the target building/node, if -1 no node is selected.
 
     /* -------- Unity Methods -------- */
 
@@ -43,53 +47,146 @@ public class cUser_Manager : MonoBehaviour
         {
             Destroy(this);
         }
-
-        // If in editor, use a generic location.
-        if (Application.isEditor)
-        {
-            // Generic user location set while in editor, this is the Square outside of Student Centre.
-            mUserLastLocation = new Vector2(53.762764f, -2.707214f);
-        }
     }
 
-    private void Update()
+    private void Start()
     {
-        GPSTimer();
+        // Set the location and rotation of the user if debugging.
+        if (Application.isEditor)
+        {
+            // Set debug location (Outside the Student Centre).
+            mUserLastLocation = new Vector2(53.762764f, -2.707214f);
+
+            // Set debug rotation (East)
+            mUserLastCompassRotation = 90.0f;
+        }
+
+        // Initialise the location services.
+        StartCoroutine(LocationCompassSetup());
+    }
+
+    private void FixedUpdate()
+    {
+        SetUserData();
+    }
+
+    /* -------- Coroutines -------- */
+
+    /// <summary>
+    /// Initialises the location services and compass.
+    /// </summary>
+    IEnumerator LocationCompassSetup()
+    {
+        // Check if in editor.
+        if (Application.isEditor)
+        {
+            // Create the nodes in-world.
+            cNode_Manager.mInstance.InstantiateNodes(new Vector2(Input.location.lastData.latitude, Input.location.lastData.longitude), -Input.compass.trueHeading);
+
+            // Hide initialisation screen.
+            rInitPanel.SetActive(false);
+
+            // Exit coroutine.
+            yield break;
+        }
+
+        mCoroutine = true;
+
+        // Start location services.
+        Input.location.Start();
+
+        // Get current time.
+        DateTime _initTime = DateTime.Now;
+
+        // Check if timed out.
+        while ((DateTime.Now - _initTime).TotalSeconds < kLocationTimeout)
+        {
+            // Check if location services started.
+            if (Input.location.status == LocationServiceStatus.Running)
+            {
+                // Setup the compass.
+                Input.compass.enabled = true;
+
+                // Create the nodes in-world.
+                cNode_Manager.mInstance.InstantiateNodes(new Vector2(Input.location.lastData.latitude, Input.location.lastData.longitude), -Input.compass.trueHeading);
+
+                // Hide initialisation screen.
+                rInitPanel.SetActive(false);
+                break;
+            }
+
+            yield return null;
+        }
+
+        mCoroutine = false;
     }
 
     /* -------- Private Methods -------- */
 
     /// <summary>
-    /// Checks the time between GPS calls and makes a new call if necessary.
-    /// </summary>
-    private void GPSTimer()
-    {
-        // Check timer.
-        if (mLocationTimer <= 0.0f)
-        {
-            // Get the users location.
-            GetUserLocation();
-
-            // Reset timer.
-            mLocationTimer = kGPSCallTimer;
-        }
-        else
-        {
-            mLocationTimer -= Time.deltaTime;
-        }
-    }
-
-    /// <summary>
     /// Makes a call to the Phones GPS functionality and gets the users current position.
     /// </summary>
-    private void GetUserLocation()
+    private void SetUserData()
     {
-        // User the phones GPS location to request the users location.
+        // Check if location services is running.
+        if (Input.location.status == LocationServiceStatus.Running || Application.isEditor)
+        {
+            
+            if (!Application.isEditor) // In production.
+            {
+                // Check if the user is pointing their phone down.
+                // Get camera angle.
+                float _CamXAngle = mCamera.transform.eulerAngles.x % 360;
 
-        // Get the users rotation based on their compass.
+                if (_CamXAngle < 0)
+                {
+                    _CamXAngle += 360;
+                }
 
-        // Position the nodes once user location has been received.
-        cNode_Manager.mInstance.HandleNodes(mUserLastLocation, mUserLastCompassRotation);
+                if (_CamXAngle > 80.0f && _CamXAngle < 100.0f)
+                {
+                    rDebugText.text = "Pointing Down";
+
+                    // Set compass.
+                    mUserLastCompassRotation = Mathf.Round(Mathf.LerpAngle(mUserLastCompassRotation, Input.compass.trueHeading, 10.0f * Time.deltaTime)) ;
+                }
+                else
+                {
+                    rDebugText.text = "Not Pointing Down";
+                }
+
+                // Set location.
+                mUserLastLocation = new Vector2(Input.location.lastData.latitude, Input.location.lastData.longitude);
+            }
+
+            // Call the node handler.
+            cNode_Manager.mInstance.CorrectNodes(mUserLastLocation, -mUserLastCompassRotation);
+        }
+        else // Location Services not running.
+        {
+            switch (Input.location.status)  
+            {
+                case LocationServiceStatus.Initializing: // Initialising.
+                {
+                    // Do nothing.
+                    break;
+                }
+                case LocationServiceStatus.Stopped:
+                case LocationServiceStatus.Failed:
+                {
+                    // Restart the Location and Compass setup.
+                    if (!mCoroutine)
+                    {
+                        // Stop the location service.
+                        Input.location.Stop();
+
+                        StartCoroutine(LocationCompassSetup());
+                    }
+
+                    break;
+                }
+            }
+        }
     }
 
     /* -------- Public Methods -------- */

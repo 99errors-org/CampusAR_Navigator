@@ -21,6 +21,15 @@ public class cNode
 
 	/* -------- Public Methods -------- */
 
+    /// <summary>
+    /// Returns the name of the node.
+    /// </summary>
+    /// <returns></returns>
+    public string GetNodeName()
+    {
+        return mNodeName;
+    }
+
 	/// <summary>
 	/// Get the type of node.
 	/// </summary>
