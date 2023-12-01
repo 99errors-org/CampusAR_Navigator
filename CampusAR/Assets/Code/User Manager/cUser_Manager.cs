@@ -125,8 +125,7 @@ public class cUser_Manager : MonoBehaviour
     /// </summary>
     public void TargetPathfinding()
     {
-        float rotationAngle = cGPSMaths.GetAngle(mInstance.mUserLastLocation, cNode_Manager.mInstance.GetNodes[mTargetNodeIndex].GetGPSLocation());
-        rotationAngle -= mInstance.mUserLastCompassRotation;
+        float rotationAngle = cGPSMaths.GetAngle(mUserLastLocation, cNode_Manager.mInstance.GetNodes[mTargetNodeIndex].GetGPSLocation());
         cArrowManager.mInstance.RotateArrow(rotationAngle);
     }
 }
