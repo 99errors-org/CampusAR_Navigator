@@ -1,12 +1,12 @@
 {
     "mNodeName": "Student Centre",
     "mGeoPosition": {
-        "x": 53.763013,
-        "y": -2.707259
+        "x": 53.7630985,
+        "y": -2.707194193
     },
     "mConnectedNodes": [],
     "mNodeType": 1,
-    "mBuildingName": "The Student Centre",
-    "mBuildingDescription": "A place for students to get support, attend events or relax.",
+    "mBuildingName": "Student Centre",
+    "mBuildingDescription": "",
     "mBuildingAbbreviation": ""
 }
