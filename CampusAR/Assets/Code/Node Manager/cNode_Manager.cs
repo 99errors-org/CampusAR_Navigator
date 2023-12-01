@@ -21,7 +21,9 @@ public class cNode_Manager : MonoBehaviour
 
     /* -------- Variables -------- */
     
-    public List<cNode>                             mNodes = new List<cNode>();                 // A list of all the nodes.
+    public List<cNode>                              mNodes = new List<cNode>();                 // A list of all the nodes.
+    public List<cNode_Building>                     mBuildingNodes = new List<cNode_Building>();// A list of all the building nodes
+    public List<cNode>                              mPathNodes = new List<cNode>();             // A list of all the path nodes
     private List<GameObject>                        mWorldNodes = new List<GameObject>();       // A list of all the instantiaed nodes in-world.
 
     /* -------- Unity Methods -------- */
@@ -64,6 +66,7 @@ public class cNode_Manager : MonoBehaviour
 
             // Add the node.
             mNodes.Add(_node);
+            mBuildingNodes.Add(_node);
         }
 
         // Load all buildings.
@@ -79,6 +82,7 @@ public class cNode_Manager : MonoBehaviour
 
             // Add the node.
             mNodes.Add(_node);
+            mPathNodes.Add(_node);
         }
     }
 
@@ -98,35 +102,47 @@ public class cNode_Manager : MonoBehaviour
     /// </summary>
     public void InstantiateNodes(Vector2 _userPosition, float _userAngle)
     {
-        // Instantiate all the nodes.
-        for (int i = 0; i < mNodes.Count; i++)
-        {
-            // Setup node variable.
-            GameObject _node = null;
+        // Setup node variable.
+        GameObject _node = null;
 
-            // Create the correct node.
-            switch (mNodes[i].GetNodeType())
-            {
-                case NodeType.Path:
-                {
-                    _node = Instantiate(pNode_Path);
-                    break;
-                }
-                case NodeType.Building:
-                {
-                    _node = Instantiate(pNode_Building);
-                    break;
-                }
-            }
+        // Instantiate all the building nodes.
+        foreach (cNode buildingNode in mBuildingNodes)
+        {
+            //Create the node
+            _node = Instantiate(pNode_Building);
 
             // Position the node correctly, and align it with the North bearing relative to the user.
-            _node.transform.position = Quaternion.Euler(0.0f, _userAngle, 0.0f) * cGPSMaths.GetVector(_userPosition, mNodes[i].GetGPSLocation());
+            _node.transform.position = Quaternion.Euler(0.0f, _userAngle, 0.0f) * cGPSMaths.GetVector(_userPosition, buildingNode.GetGPSLocation());
 
             // Name the in-world object.
-            _node.name = "Node - " + mNodes[i].GetBuildingName();
+            _node.name = "Node - " + buildingNode.GetBuildingName();
 
             // Add node to list of spawned nodes.
             mWorldNodes.Add(_node);
+        }
+
+        //Instantiate all the path nodes
+        foreach (cNode pathNode in mPathNodes)
+        {
+            //Create the node
+            _node = Instantiate(pNode_Path);
+
+            // Position the node correctly, and align it with the North bearing relative to the user.
+            _node.transform.position = Quaternion.Euler(0.0f, _userAngle, 0.0f) * cGPSMaths.GetVector(_userPosition, pathNode.GetGPSLocation());
+
+            // Name the in-world object.
+            _node.name = "Node - " + pathNode.GetBuildingName();
+
+            // Add node to list of spawned nodes.
+            mWorldNodes.Add(_node);
+        }
+    }
+
+    public List<cNode> GetNodes
+    {
+        get
+        {
+            return mNodes;
         }
     }
 }

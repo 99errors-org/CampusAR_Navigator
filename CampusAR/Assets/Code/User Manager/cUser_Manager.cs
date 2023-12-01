@@ -70,6 +70,21 @@ public class cUser_Manager : MonoBehaviour
     private void FixedUpdate()
     {
         SetUserData();
+
+        if (mTargetNodeIndex != 1) { cPathfinding.RunPathfinding(); } // If there is a target selected, pathfind to the target
+        else
+        {
+            //If there is not a target selected, set C+T building as the target
+            //This entire else statement is a temporary addition for testing purposes, to be deleted once we have a real mechanism to set the target node
+            for (int nodeIndex = 0; nodeIndex < cNode_Manager.mInstance.mBuildingNodes.Count; nodeIndex++)
+            {
+                if (cNode_Manager.mInstance.mBuildingNodes[nodeIndex].GetBuildingName() == "Computing & Technology Building") 
+                { 
+                    mTargetNodeIndex = nodeIndex;
+                    break;
+                }
+            }
+        }
     }
 
     /* -------- Coroutines -------- */
