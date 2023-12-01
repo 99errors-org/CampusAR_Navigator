@@ -21,6 +21,7 @@ public class cUser_Manager : MonoBehaviour
     [SerializeField] private Transform  mCamera;                                                // Reference to the camera.
 
     /* -------- Constants -------- */
+
     private const float                 kLocationTimeout    = 20.0f;                            // The amount of seconds before the location services times out and starts again.
 
     /* -------- Variables -------- */
