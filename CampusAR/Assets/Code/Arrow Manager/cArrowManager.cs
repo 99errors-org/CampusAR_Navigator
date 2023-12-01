@@ -5,7 +5,10 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 public class cArrowManager : MonoBehaviour
-{
+{ 
+    /* Singleton */
+    public static cArrowManager mInstance;                                              // Singleton instance, used to reference this class globally.
+
     [SerializeField]
     private GameObject mArrowPrefab;                                                    // Stores the arrow prefab to be instantiated later
 
@@ -21,6 +24,21 @@ public class cArrowManager : MonoBehaviour
                    
     /*------ Variables ---------*/
     private int mCurrentTargetNodeIndex = cUser_Manager.kNullTargetNodeIndex;
+    private const float kDistanceInfrontOfUser = 7.12f;
+    // position the arrow a bit to the ground
+    private const float kArrowYPosition = -1.04f;
+    private void Awake()
+    {
+        // Setup the singleton instance.
+        if (mInstance == null)
+        {
+            mInstance = this;
+        }
+        else
+        {
+            Destroy(this);
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
