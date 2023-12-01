@@ -56,6 +56,15 @@ public class cUser_Manager : MonoBehaviour
         GPSTimer();
 
         if (mTargetNodeIndex != kNullTargetNodeIndex) { TargetPathfinding(); }
+        else
+        {
+            int i = 0;
+            foreach (cNode node in cNode_Manager.mInstance.GetNodes)
+            {
+                if (node.GetBuildingName() == "Computing & Technology Building") { mTargetNodeIndex = i; break; }
+                i++;
+            }
+        }
     }
 
     /* -------- Private Methods -------- */
