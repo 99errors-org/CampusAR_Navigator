@@ -24,6 +24,7 @@ public class cUser_Manager : MonoBehaviour
 
     private const float                 kLocationTimeout    = 20.0f;                            // The amount of seconds before the location services times out and starts again.
 
+    public const int                    kNullTargetNodeIndex = -1;                              // The index when there is no target node selected
     /* -------- Variables -------- */
 
     /* GPS */
@@ -33,7 +34,7 @@ public class cUser_Manager : MonoBehaviour
     public float                        mUserLastCompassRotation { get; private set; } = 0.0f;  // The users last compass bearing, this is stored to not overwhelm the phone.
 
     /* Guiding */
-    private int                         mTargetNodeIndex    = -1;                               // The index of the target building/node, if -1 no node is selected.
+    private int                         mTargetNodeIndex    = kNullTargetNodeIndex;             // The index of the target building/node, if -1 no node is selected.
 
     /* -------- Unity Methods -------- */
 
@@ -199,5 +200,10 @@ public class cUser_Manager : MonoBehaviour
     public void SetTargetNode(int _index)
     {
         mTargetNodeIndex = _index;
+    }
+
+    public int GetTargetNode()              // Returns the target nodes index if it is there or returns -1 if there is no target node
+    {
+        return mTargetNodeIndex;
     }
 }
