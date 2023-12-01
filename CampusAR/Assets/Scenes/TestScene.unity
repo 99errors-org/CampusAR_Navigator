@@ -533,10 +533,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1cbde73c6df33641bd853f3abcd9097, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mArrowPrefab: {fileID: 8446443235296542570, guid: c44f5fd572dae7244a6ab4092e0c815c,
+  mArrowPrefab: {fileID: 6619884496334779087, guid: 7c8a47366c5c683428fbb1eafda57d86,
     type: 3}
   mCam: {fileID: 1354141925}
-  mUserManager: {fileID: 380270490}
 --- !u!1 &990444642
 GameObject:
   m_ObjectHideFlags: 0

@@ -74,6 +74,6 @@ public class cArrowManager : MonoBehaviour
     // Sets the arrow to a rotated position
     public void RotateArrow(float rotationAngle)
     {
-        mArrow.transform.Rotate(new Vector3(0.0f, 0.0f, rotationAngle));
+        mArrow.transform.rotation = Quaternion.Euler(0.0f, rotationAngle, 0.0f);
     }
 }
