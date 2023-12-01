@@ -44,8 +44,6 @@ public class cNode_Manager : MonoBehaviour
         LoadNodeList();
     }
 
-    /* -------- Private Methods -------- */
-
     /* -------- Public Methods -------- */
 
     /// <summary>
