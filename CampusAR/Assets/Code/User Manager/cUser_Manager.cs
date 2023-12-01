@@ -12,12 +12,14 @@ public class cUser_Manager : MonoBehaviour
 	/* Singleton */
     public static cUser_Manager         mInstance;                                              // Singleton instance, used to reference this class globally.
 
+    /* Guiding Arrow */
+    [SerializeField] private GameObject rGuideArrow;                                            // A reference to the guiding arrow.
 
     /* -------- Constants -------- */
     [Title("GPS Values")]
     [SnappedSlider(1.0f, 1.0f, 60.0f)]
     [SerializeField] private float      kGPSCallTimer = 5.0f;                                   // The amount of seconds in-between making GPS calls. (5s by default)
-    public const int                    kNullTargetNodeIndex = -1;                              // -1 no node is selected
+    
     /* -------- Variables -------- */
 
     /* GPS */
@@ -27,7 +29,7 @@ public class cUser_Manager : MonoBehaviour
     private float                       mLocationTimer = 1.0f;                                  // The timer used to make GPS location calls
 
     /* Guiding */
-    private int                         mTargetNodeIndex = kNullTargetNodeIndex;                // The index of the target building/node, if -1 no node is selected.
+    private int                         mTargetNodeIndex = -1;                                  // The index of the target building/node, if -1 no node is selected.
 
     /* -------- Unity Methods -------- */
 
@@ -55,16 +57,7 @@ public class cUser_Manager : MonoBehaviour
     {
         GPSTimer();
 
-        if (mTargetNodeIndex != kNullTargetNodeIndex) { TargetPathfinding(); }
-        else
-        {
-            int i = 0;
-            foreach (cNode node in cNode_Manager.mInstance.GetNodes)
-            {
-                if (node.GetBuildingName() == "Computing & Technology Building") { mTargetNodeIndex = i; break; }
-                i++;
-            }
-        }
+        if (mTargetNodeIndex != -1) { TargetPathfinding(); }
     }
 
     /* -------- Private Methods -------- */
@@ -113,20 +106,13 @@ public class cUser_Manager : MonoBehaviour
         mTargetNodeIndex = _index;
     }
 
-    // Returns the target nodes index if it is there or returns -1 if there is no target node
-    public int GetTargetNode()
-    {
-        return mTargetNodeIndex;
-    }
-
     /// <summary>
     ///  Runs the pathfinding between the users current location and the target location.
     ///  Kept modular to help Iain's brain when we inevitably upgrade it. I am a simple man.
     /// </summary>
     public void TargetPathfinding()
     {
-        float rotationAngle = cGPSMaths.GetAngle(mInstance.mUserLastLocation, cNode_Manager.mInstance.GetNodes[mTargetNodeIndex].GetGPSLocation());
-        rotationAngle -= mInstance.mUserLastCompassRotation;
-        cArrowManager.mInstance.RotateArrow(rotationAngle);
+        cGPSMaths.GetAngle(mUserLastLocation, cNode_Manager.mInstance.GetNodes[mTargetNodeIndex].GetGPSLocation());
+
     }
 }
