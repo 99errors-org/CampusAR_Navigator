@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TetraCreations.Attributes;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -55,6 +56,8 @@ public class cUser_Manager : MonoBehaviour
     private void Update()
     {
         GPSTimer();
+
+        if (mTargetNodeIndex != -1) { TargetPathfinding(); }
     }
 
     /* -------- Private Methods -------- */
@@ -101,5 +104,15 @@ public class cUser_Manager : MonoBehaviour
     public void SetTargetNode(int _index)
     {
         mTargetNodeIndex = _index;
+    }
+
+    /// <summary>
+    ///  Runs the pathfinding between the users current location and the target location.
+    ///  Kept modular to help Iain's brain when we inevitably upgrade it. I am a simple man.
+    /// </summary>
+    public void TargetPathfinding()
+    {
+        cGPSMaths.GetAngle(mUserLastLocation, cNode_Manager.mInstance.GetNodes[mTargetNodeIndex].GetGPSLocation());
+
     }
 }

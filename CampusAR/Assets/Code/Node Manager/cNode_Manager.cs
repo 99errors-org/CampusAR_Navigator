@@ -145,4 +145,13 @@ public class cNode_Manager : MonoBehaviour
             InstantiateNodes(_userPosition, _userAngle);
         }
     }
+
+    public List<cNode> GetNodes
+    {
+        get
+        {
+            return mNodes;
+        }
+    }
+   
 }
