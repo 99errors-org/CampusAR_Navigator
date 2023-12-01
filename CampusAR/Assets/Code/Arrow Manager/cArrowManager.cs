@@ -24,9 +24,7 @@ public class cArrowManager : MonoBehaviour
                    
     /*------ Variables ---------*/
     private int mCurrentTargetNodeIndex = cUser_Manager.kNullTargetNodeIndex;
-    private const float kDistanceInfrontOfUser = 7.12f;
-    // position the arrow a bit to the ground
-    private const float kArrowYPosition = -1.04f;
+
     private void Awake()
     {
         // Setup the singleton instance.
