@@ -38,13 +38,8 @@ public class cArrowManager : MonoBehaviour
         }
         
         // Checks if the arrow is instantiated
-        if (mArrow != null && mArrow.activeSelf)
+        if (mArrow == null)                                                        // Instantiate arrow if it isn't
         {
-            RotateArrow(10.0f*Time.deltaTime);
-        }
-        else if (mArrow == null)                                                        // Instantiate arrow if it isn't
-        {
-
             mArrow = Instantiate(mArrowPrefab);                 
         }
     }
