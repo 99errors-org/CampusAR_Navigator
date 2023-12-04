@@ -71,7 +71,7 @@ public class cUser_Manager : MonoBehaviour
     {
         SetUserData();
 
-        if (mTargetNodeIndex != 1) { cPathfinding.RunPathfinding(); } // If there is a target selected, pathfind to the target
+        if (mTargetNodeIndex != 1) { cPathfinding.mInstance.RunPathfinding(); } // If there is a target selected, pathfind to the target
         else
         {
             //If there is not a target selected, set C+T building as the target
