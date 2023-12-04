@@ -3,12 +3,6 @@ using System.Collections.Generic;
 using TetraCreations.Attributes;
 using UnityEngine;
 
-public enum NodeType
-{
-	Path		= 0,
-	Building	= 1,
-}
-
 public class cNode
 {
 	/* -------- Variables -------- */
@@ -17,7 +11,6 @@ public class cNode
 	[SerializeField] protected Vector2		mGeoPosition;                           // The GPS location of the Node, X = Latitude, Y = Longitude.
 	[SerializeField] protected List<string>	mConnectedNodes = new List<string>();   // A list of all the connected nodes that the user can get to from this node.
 
-	[SerializeField] protected NodeType		mNodeType = NodeType.Path;		        // The type of node this object is.
 
 	/* -------- Public Methods -------- */
 
@@ -29,15 +22,6 @@ public class cNode
     {
         return mNodeName;
     }
-
-	/// <summary>
-	/// Get the type of node.
-	/// </summary>
-	/// <returns>Returns the currently assigned type (NodeType)</returns>
-	public virtual NodeType GetNodeType()
-	{
-		return mNodeType;
-	}
 
 	/// <summary>
 	/// Get the position of this node in Latitude and Longitude.

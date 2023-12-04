@@ -24,6 +24,7 @@ public class cUser_Manager : MonoBehaviour
 
     private const float                 kLocationTimeout    = 20.0f;                            // The amount of seconds before the location services times out and starts again.
 
+    public const int                    kNullTargetNodeIndex = -1;                              // The index when there is no target node selected
     /* -------- Variables -------- */
 
     /* GPS */
@@ -33,7 +34,7 @@ public class cUser_Manager : MonoBehaviour
     public float                        mUserLastCompassRotation { get; private set; } = 0.0f;  // The users last compass bearing, this is stored to not overwhelm the phone.
 
     /* Guiding */
-    private int                         mTargetNodeIndex    = -1;                               // The index of the target building/node, if -1 no node is selected.
+    private int                         mTargetNodeIndex    = kNullTargetNodeIndex;             // The index of the target building/node, if -1 no node is selected.
 
     /* -------- Unity Methods -------- */
 
@@ -69,6 +70,21 @@ public class cUser_Manager : MonoBehaviour
     private void FixedUpdate()
     {
         SetUserData();
+
+        if (mTargetNodeIndex != 1) { cPathfinding.RunPathfinding(); } // If there is a target selected, pathfind to the target
+        else
+        {
+            //If there is not a target selected, set C+T building as the target
+            //This entire else statement is a temporary addition for testing purposes, to be deleted once we have a real mechanism to set the target node
+            for (int nodeIndex = 0; nodeIndex < cNode_Manager.mInstance.mBuildingNodes.Count; nodeIndex++)
+            {
+                if (cNode_Manager.mInstance.mBuildingNodes[nodeIndex].GetBuildingName() == "Computing & Technology Building") 
+                { 
+                    mTargetNodeIndex = nodeIndex;
+                    break;
+                }
+            }
+        }
     }
 
     /* -------- Coroutines -------- */
@@ -199,5 +215,10 @@ public class cUser_Manager : MonoBehaviour
     public void SetTargetNode(int _index)
     {
         mTargetNodeIndex = _index;
+    }
+
+    public int GetTargetNode()              // Returns the target nodes index if it is there or returns -1 if there is no target node
+    {
+        return mTargetNodeIndex;
     }
 }
