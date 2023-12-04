@@ -50,7 +50,7 @@ public class cArrowManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        mCurrentTargetNodeIndex = cUser_Manager.mInstance.GetTargetNode();          // Gets the current target nodes index 
+        mCurrentTargetNodeIndex = cUser_Manager.mInstance.GetTargetNodeIndex();          // Gets the current target nodes index 
         if (mCurrentTargetNodeIndex == cUser_Manager.kNullTargetNodeIndex)          // If the target node is not set it returns -1 
         {
             return;                                                                 // Doesn't run the updating code 

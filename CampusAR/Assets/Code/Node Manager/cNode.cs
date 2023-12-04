@@ -5,11 +5,13 @@ using UnityEngine;
 
 public class cNode
 {
+    public static cNode nullNode;
+
 	/* -------- Variables -------- */
 	[Title("Node Information")]
-	[SerializeField] protected string		mNodeName;                              // The name of this node.
-	[SerializeField] protected Vector2		mGeoPosition;                           // The GPS location of the Node, X = Latitude, Y = Longitude.
-	[SerializeField] protected List<string>	mConnectedNodes = new List<string>();   // A list of all the connected nodes that the user can get to from this node.
+	[SerializeField] protected string		    mNodeName;                              // The name of this node.
+	[SerializeField] protected Vector2          mGeoPosition;                           // The GPS location of the Node, X = Latitude, Y = Longitude.
+	[SerializeField] protected List<cNode>      mConnectedNodes = new List<cNode>();    // A list of all the connected nodes that the user can get to from this node.
 
 
 	/* -------- Public Methods -------- */
@@ -31,6 +33,11 @@ public class cNode
 	{
 		return mGeoPosition;
 	}
+
+    public List<cNode> GetConnectedNodes()
+    {
+        return mConnectedNodes;
+    }
 
 	/// <summary>
 	/// Get the name of this building.
