@@ -125,7 +125,7 @@ public class cPathfinding : MonoBehaviour
     public bool PathfindingV2(cNode startNode, cNode targetNode)
     {
         // If path is empty, create a path to the target
-        if (mCurrentPath.Count == 0) { FindNodePath(startNode, targetNode); }   
+        if (mCurrentPath.Count == 0) { FindNodePath(startNode, targetNode); mCurrentPathPosition = 0; }   
         
         // Point the arrow towards the target node
         RunPathfinding(mCurrentPath[mCurrentPathPosition]);
