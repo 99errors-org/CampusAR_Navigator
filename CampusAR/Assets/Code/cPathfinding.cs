@@ -13,7 +13,6 @@ public class cPathfinding : MonoBehaviour
     private List<cNode> mCurrentPath = new List<cNode>();   // Chain of nodes working from the users start position to the final target destination
     int mCurrentPathPosition = 0;                           // Index of how far into the list Path the user has traversed
     int mNodeReachThreshold = 20;                           // How close the user must be to the node before the node is considered to be reached
-    float mDistanceToNextNode;                              // Stores the distance to the next node in the path
 
     /* -------- Unity Methods -------- */
     void Start()
@@ -132,7 +131,7 @@ public class cPathfinding : MonoBehaviour
         RunPathfinding(mCurrentPath[mCurrentPathPosition]);
 
         // If the user is within n meters of the node, start pathfinding to the next node
-        if (cGPSMaths.GetDistance(cUser_Manager.mInstance.mUserLastLocation, mCurrentPath[mCurrentPathPosition].GetGPSLocation()) < mNodeReachThreshold)
+        if (DistanceToNextNode < mNodeReachThreshold)
         {
             if (mCurrentPath[mCurrentPathPosition] == targetNode) { return true; }  // Target reached
             else
