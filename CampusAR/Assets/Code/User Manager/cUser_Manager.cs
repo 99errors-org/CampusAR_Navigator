@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using TetraCreations.Attributes;
 using TMPro;
@@ -71,17 +70,6 @@ public class cUser_Manager : MonoBehaviour
     private void FixedUpdate()
     {
         SetUserData();
-
-        /* ----- Test GPS Function ----- */
-        int distanceThreshold = 10;
-        if (cGPSMaths.GetDistance(mUserLastLocation, cNode_Manager.mInstance.GetNodes.Last().GetGPSLocation()) < distanceThreshold)
-        {
-            rDebugText.text = cNode_Manager.mInstance.GetNodes.Last().GetNodeName() + " - Within " + distanceThreshold.ToString() + "m";
-        }
-        else
-        {
-            rDebugText.text = cNode_Manager.mInstance.GetNodes.Last().GetNodeName() + " - Outside range (" + Mathf.Round(cGPSMaths.GetDistance(mUserLastLocation, cNode_Manager.mInstance.GetNodes.Last().GetGPSLocation())).ToString() + "m)";
-        }
     }
 
     /* -------- Coroutines -------- */
