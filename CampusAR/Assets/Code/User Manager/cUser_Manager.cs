@@ -159,14 +159,14 @@ public class cUser_Manager : MonoBehaviour
 
                 if (_CamXAngle > 80.0f && _CamXAngle < 100.0f)
                 {
-                    rDebugText.text = "Pointing Down";
+                    //rDebugText.text = "Pointing Down";
 
                     // Set compass.
                     mUserLastCompassRotation = Mathf.Round(Mathf.LerpAngle(mUserLastCompassRotation, Input.compass.trueHeading, 10.0f * Time.deltaTime)) ;
                 }
                 else
                 {
-                    rDebugText.text = "Not Pointing Down";
+                    //rDebugText.text = "Not Pointing Down";
                 }
 
                 // Set location.
