@@ -29,7 +29,7 @@ public class cPathfinding : MonoBehaviour
             //This entire else statement is a temporary addition for testing purposes, to be deleted once we have a real mechanism to set the target node
             for (int nodeIndex = 0; nodeIndex < cNode_Manager.mInstance.mBuildingNodes.Count; nodeIndex++)
             {
-                if (cNode_Manager.mInstance.mBuildingNodes[nodeIndex].GetBuildingName() == "Computing & Technology Building")
+                if (cNode_Manager.mInstance.mBuildingNodes[nodeIndex].GetNodeName() == "Test Node")
                 {
                     cUser_Manager.mInstance.SetTargetNode(nodeIndex);
                     break;
