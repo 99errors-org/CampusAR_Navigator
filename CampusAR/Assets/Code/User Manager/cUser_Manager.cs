@@ -33,6 +33,9 @@ public class cUser_Manager : MonoBehaviour
     public Vector2                      mUserLastLocation { get; private set; }                 // The users last GPS location, used for maintaining accuracy.
     public float                        mUserLastCompassRotation { get; private set; } = 0.0f;  // The users last compass bearing, this is stored to not overwhelm the phone.
 
+
+    public enum kDistanceUnit { m, km, mi};                                                    // Enum for distance unit 
+    private kDistanceUnit mUsersDistancePrefrence = kDistanceUnit.m;                           // Users distance unit prefrence
     /* Guiding */
     private int                         mTargetNodeIndex    = kNullTargetNodeIndex;             // The index of the target building/node, if -1 no node is selected.
 
@@ -210,5 +213,10 @@ public class cUser_Manager : MonoBehaviour
     public cNode GetTargetNode()
     {
         return cNode_Manager.mInstance.GetNodes[mTargetNodeIndex];
+    }
+
+    public kDistanceUnit GetUserDistnacePrefrence()
+    {
+        return mUsersDistancePrefrence;
     }
 }
