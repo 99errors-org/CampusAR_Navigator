@@ -79,4 +79,20 @@ public class cArrowManager : MonoBehaviour
     {
         mArrow.transform.rotation = Quaternion.Euler(new Vector3(0.0f, rotationAngle, 0.0f));   // sets the rotation of the arrow to a specific angle does not rotate it by that much
     }
+
+    /// <summary>
+    /// Rotates the arrow to the correct position. Callable from outside the class
+    /// </summary>
+    /// <param name="targetNode"></param>
+    public static void DirectArrow(cNode targetNode)
+    {
+        //Find the angle between the user and target
+        float rotationAngle = cGPSMaths.GetAngle(cUser_Manager.mInstance.mUserLastLocation, targetNode.GetGPSLocation());
+
+        //Correct the angle for the direction the user is facing
+        rotationAngle -= cUser_Manager.mInstance.mUserLastCompassRotation;
+
+        //Set the arrow to face the angle towards the target
+        cArrowManager.mInstance.RotateArrow(rotationAngle);
+    }
 }

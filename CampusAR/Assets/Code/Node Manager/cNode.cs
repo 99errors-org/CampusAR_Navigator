@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TetraCreations.Attributes;
 using UnityEngine;
+using UnityEngine.InputSystem.Utilities;
 
 public class cNode
 {
@@ -13,8 +14,21 @@ public class cNode
 	[SerializeField] protected Vector2          mGeoPosition;                           // The GPS location of the Node, X = Latitude, Y = Longitude.
 	[SerializeField] protected List<cNode>      mConnectedNodes = new List<cNode>();    // A list of all the connected nodes that the user can get to from this node.
 
+    /* -------- Constructors -------- */
 
-	/* -------- Public Methods -------- */
+    public cNode()
+    {
+
+    }
+
+    public cNode(string nodeName, Vector2 GPSPosition, List<cNode> connectedNodes)
+    {
+        mNodeName = nodeName;
+        mGeoPosition = GPSPosition;
+        mConnectedNodes = connectedNodes;
+    }
+
+    /* -------- Public Methods -------- */
 
     /// <summary>
     /// Returns the name of the node.
@@ -74,6 +88,24 @@ public class cNode_Building : cNode
 	[SerializeField] private string			mBuildingName;					// The name of the building at this specific node.
 	[SerializeField] private string			mBuildingDescription;           // The description of this nodes building.	
     [SerializeField] private string			mBuildingAbbreviation;          // The abbraviation of this building, for example HB for Harris Building.
+
+    /* -------- Constructors -------- */
+
+    public cNode_Building()
+    {
+
+    }
+
+    public cNode_Building(string nodeName, Vector2 GPSPosition, List<cNode> connectedNodes)
+    {
+        mNodeName = nodeName;
+        mGeoPosition = GPSPosition;
+        mConnectedNodes = connectedNodes;
+
+        mBuildingName = nodeName;
+        mBuildingDescription = "Test node for GPS testing";
+        mBuildingAbbreviation = "TN";
+    }
 
     /* -------- Public Methods -------- */
 

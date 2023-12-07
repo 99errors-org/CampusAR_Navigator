@@ -22,7 +22,7 @@ public class cPathfinding : MonoBehaviour
 
     void Update()
     {
-        if (cUser_Manager.mInstance.GetTargetNodeIndex() != cUser_Manager.kNullTargetNodeIndex) { RunPathfinding(cUser_Manager.mInstance.GetTargetNode()); } // If there is a target selected, pathfind to the target
+        if (cUser_Manager.mInstance.GetTargetNodeIndex() != cUser_Manager.kNullTargetNodeIndex) { cArrowManager.DirectArrow(cUser_Manager.mInstance.GetTargetNode()); } // If there is a target selected, pathfind to the target
         else
         {
             //If there is not a target selected, set C+T building as the target
@@ -46,7 +46,7 @@ public class cPathfinding : MonoBehaviour
     /// <param name="currentNode"></param>
     /// <param name="targetNode"></param>
     /// <returns></returns>
-    private cNode FindNextNode(cNode currentNode, cNode targetNode) 
+    private static cNode FindNextNode(cNode currentNode, cNode targetNode) 
     {
         // Initialise node to return
         cNode nextNode = cNode.nullNode;
@@ -78,7 +78,7 @@ public class cPathfinding : MonoBehaviour
     /// <param name="startNode"></param>
     /// <param name="targetNode"></param>
     /// <returns></returns>
-    private List<cNode> FindNodePath(cNode startNode, cNode targetNode)
+    private static List<cNode> FindNodePath(cNode startNode, cNode targetNode)
     {
         // Create a list to store all the nodes in a path from the user to the target destination
         List<cNode> path = new List<cNode>();
@@ -107,28 +107,18 @@ public class cPathfinding : MonoBehaviour
     /* -------- Public Methods -------- */
 
     /// <summary>
-    /// Runs the whole pathfinding algorithm and rotates the arrow to the correct position. Callable from outside the class
+    /// Runs version 2 of the pathfinding algorithm. Uses path nodes to create complex paths to the target
     /// </summary>
+    /// <param name="startNode"></param>
     /// <param name="targetNode"></param>
-    public void RunPathfinding(cNode targetNode)
-    {
-        //Find the angle between the user and target
-        float rotationAngle = cGPSMaths.GetAngle(cUser_Manager.mInstance.mUserLastLocation, targetNode.GetGPSLocation());
-        
-        //Correct the angle for the direction the user is facing
-        rotationAngle -= cUser_Manager.mInstance.mUserLastCompassRotation;
-        
-        //Set the arrow to face the angle towards the target
-        cArrowManager.mInstance.RotateArrow(rotationAngle);
-    }
-
+    /// <returns></returns>
     public bool PathfindingV2(cNode startNode, cNode targetNode)
     {
         // If path is empty, create a path to the target
         if (mCurrentPath.Count == 0) { FindNodePath(startNode, targetNode); mCurrentPathPosition = 0; }   
         
         // Point the arrow towards the target node
-        RunPathfinding(mCurrentPath[mCurrentPathPosition]);
+        cArrowManager.DirectArrow(mCurrentPath[mCurrentPathPosition]);
 
         // If the user is within n meters of the node, start pathfinding to the next node
         if (DistanceToNextNode < mNodeReachThreshold)
