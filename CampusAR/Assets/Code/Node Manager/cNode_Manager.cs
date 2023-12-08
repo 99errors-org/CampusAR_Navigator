@@ -12,7 +12,10 @@ public class cNode_Manager : MonoBehaviour
 	
     /* Singleton */
     public static cNode_Manager                     mInstance;                                      // Singleton instance, used to reference this class globally.
-    
+
+    /* Containers */
+    [SerializeField] private Transform              rNodeContainer;                                 // Container for holding all the nodes.
+
     /* -------- Prefabs -------- */
     
     [Title("Node Prefabs")]
@@ -90,18 +93,22 @@ public class cNode_Manager : MonoBehaviour
     /// <summary>
     /// Corrects all the nodes that have already been instantiated based on the users current position.
     /// </summary>
-    public void CorrectNodes(Vector2 _userPosition, float _userAngle)
+    public void CorrectNodes(Vector2 _userPosition)
     {
+        // Move all the nodes to the correct positions.
         for (int i = 0; i < mNodes.Count; i++)
         {
-            mWorldNodes[i].transform.position = Quaternion.Euler(0.0f, _userAngle, 0.0f) * cGPSMaths.GetVector(_userPosition, mNodes[i].GetGPSLocation());
+            mWorldNodes[i].transform.localPosition = cGPSMaths.GetVector(_userPosition, mNodes[i].GetGPSLocation());
         }
+
+        // Rotate the nodes container to point north.
+        rNodeContainer.rotation = Quaternion.Euler(0.0f, -cUser_Manager.mInstance.mNorthOffset, 0.0f);
     }
 
     /// <summary>
     /// Creates all the nodes
     /// </summary>
-    public void InstantiateNodes(Vector2 _userPosition, float _userAngle)
+    public void InstantiateNodes(Vector2 _userPosition)
     {
         // Setup node variable.
         GameObject _node = null;
@@ -109,11 +116,11 @@ public class cNode_Manager : MonoBehaviour
         // Instantiate all the building nodes.
         foreach (cNode buildingNode in mBuildingNodes)
         {
-            //Create the node
-            _node = Instantiate(pNode_Building);
+            // Create the node
+            _node = Instantiate(pNode_Building, rNodeContainer);
 
             // Position the node correctly, and align it with the North bearing relative to the user.
-            _node.transform.position = Quaternion.Euler(0.0f, _userAngle, 0.0f) * cGPSMaths.GetVector(_userPosition, buildingNode.GetGPSLocation());
+            _node.transform.position = cGPSMaths.GetVector(_userPosition, buildingNode.GetGPSLocation());
 
             // Name the in-world object.
             _node.name = "Node - " + buildingNode.GetBuildingName();
@@ -125,11 +132,11 @@ public class cNode_Manager : MonoBehaviour
         //Instantiate all the path nodes
         foreach (cNode pathNode in mPathNodes)
         {
-            //Create the node
-            _node = Instantiate(pNode_Path);
+            // Create the node
+            _node = Instantiate(pNode_Path, rNodeContainer);
 
             // Position the node correctly, and align it with the North bearing relative to the user.
-            _node.transform.position = Quaternion.Euler(0.0f, _userAngle, 0.0f) * cGPSMaths.GetVector(_userPosition, pathNode.GetGPSLocation());
+            _node.transform.position = cGPSMaths.GetVector(_userPosition, pathNode.GetGPSLocation());
 
             // Name the in-world object.
             _node.name = "Node - " + pathNode.GetBuildingName();

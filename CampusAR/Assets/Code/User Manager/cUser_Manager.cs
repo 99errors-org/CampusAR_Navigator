@@ -7,35 +7,49 @@ using TetraCreations.Attributes;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class cUser_Manager : MonoBehaviour
 {
 	/* -------- References -------- */
 
 	/* Singleton */
-    public static cUser_Manager         mInstance;                                              // Singleton instance, used to reference this class globally.
+    public static cUser_Manager                 mInstance;                                              // Singleton instance, used to reference this class globally.
 
     /* User Interface */
-    [SerializeField] private GameObject rInitPanel;                                             // The initialisation panel.
-    [SerializeField] private TextMeshProUGUI rDebug_CurrentNodeText;                            // Text used for debugging the initialisation screen.
 
-    [SerializeField] private Transform  mCamera;                                                // Reference to the camera.
+        /* Init Screen */
+    [SerializeField] private GameObject         rInitPanel;                                             // The Initialisation panel.
+    [SerializeField] private TextMeshProUGUI    rDebug_CurrentNodeText;                                 // Text used for debugging the initialisation screen.
+
+        /* Calibration Screen */
+    [SerializeField] private Transform          rCam;                                                   // Reference to the camera.
+
+    [SerializeField] private GameObject         rCalibrationScreen;                                     // The Calibration panel.
+    [SerializeField] private TextMeshProUGUI    rCalibrationText;                                       // The text displayed on the calibration screen.
+    [SerializeField] private Sprite[]           rPhoneStateSprites;                                     // Array of sprites, which are used to indicate the phone state.
+    [SerializeField] private Image              rPhoneStateImage;                                       // The Image that displays the phones current state.
 
     /* -------- Constants -------- */
 
-    private const float                 kLocationTimeout = 20.0f;                               // The amount of seconds before the location services times out and starts again.
+    public const int                            kNullTargetNodeIndex = -1;                              // The index when there is no target node selected
 
-    public const int                    kNullTargetNodeIndex = -1;                              // The index when there is no target node selected
+    private const float                         kLocationTimeout = 20.0f;                               // The amount of seconds before the location services times out and starts again.
+    private const float                         kCalibrationTime = 3.0f;                                // The amount of time it takes to calibrate the north offset.   
+    
     /* -------- Variables -------- */
 
     /* GPS */
-    private bool                        mCoroutine = false;
+    private bool                                mCoroutine = false;
 
-    public Vector2                      mUserLastLocation { get; private set; }                 // The users last GPS location, used for maintaining accuracy.
-    public float                        mUserLastCompassRotation { get; private set; } = 0.0f;  // The users last compass bearing, this is stored to not overwhelm the phone.
+    public Vector2                              mUserLastLocation { get; private set; }                 // The users last GPS location, used for maintaining accuracy.
+    public float                                mUserLastCompassRotation { get; private set; } = 0.0f;  // The users last compass bearing, this is stored to not overwhelm the phone.
 
     /* Guiding */
-    private int                         mTargetNodeIndex = kNullTargetNodeIndex;                // The index of the target building/node, if -1 no node is selected.
+    private int                                 mTargetNodeIndex = kNullTargetNodeIndex;                // The index of the target building/node, if -1 no node is selected.
+
+    /* Calibration */
+    public float                                mNorthOffset { get; private set; } = 0.0f;              // The last north offset.
 
     /* -------- Unity Methods -------- */
 
@@ -85,7 +99,7 @@ public class cUser_Manager : MonoBehaviour
         if (Application.isEditor)
         {
             // Create the nodes in-world.
-            cNode_Manager.mInstance.InstantiateNodes(mUserLastLocation, mUserLastCompassRotation);
+            cNode_Manager.mInstance.InstantiateNodes(mUserLastLocation);
 
             // Hide initialisation screen.
             rInitPanel.SetActive(false);
@@ -108,14 +122,12 @@ public class cUser_Manager : MonoBehaviour
             // Check if location services started.
             if (Input.location.status == LocationServiceStatus.Running)
             {
-                // Setup the compass.
-                Input.compass.enabled = true;
-
                 // Create the nodes in-world.
-                cNode_Manager.mInstance.InstantiateNodes(new Vector2(Input.location.lastData.latitude, Input.location.lastData.longitude), -Input.compass.trueHeading);
+                cNode_Manager.mInstance.InstantiateNodes(new Vector2(Input.location.lastData.latitude, Input.location.lastData.longitude));
 
-                // Hide initialisation screen.
-                rInitPanel.SetActive(false);
+                // Calibrate the compass.
+                StartCoroutine(CalibrateNorth());
+
                 break;
             }
 
@@ -125,7 +137,95 @@ public class cUser_Manager : MonoBehaviour
         mCoroutine = false;
     }
 
+    /// <summary>
+    /// Calibrates the phones compass and gets the north bearing in relation to the Unity In World Forward axis.
+    /// </summary>
+    IEnumerator CalibrateNorth()
+    {
+        // Open the calibration screen.
+        rCalibrationScreen.SetActive(true);
+
+        // Start the counter.
+        DateTime _initTime = DateTime.Now;
+
+        // Check if gyroscope is supported.
+        if (SystemInfo.supportsGyroscope)
+        {
+            // Enable Gyroscope.
+            Input.gyro.enabled = true;
+        }
+
+        // Enable the compass
+        Input.compass.enabled = true;
+
+        // While the timer is above 0.
+        while ((DateTime.Now - _initTime).TotalSeconds < kCalibrationTime)
+        {
+            // Check if user is pointing down.
+            if (CheckPhoneIsFlat())
+            {
+                // Set the image.
+                rPhoneStateImage.sprite = rPhoneStateSprites[0];
+
+                // Set the text.
+                rCalibrationText.text = "Phone calibrating, please wait.";
+
+            }
+            else // Phone is not facing down.
+            {
+                // Set the image.
+                rPhoneStateImage.sprite = rPhoneStateSprites[1];
+
+                // Set the text.
+                rCalibrationText.text = "Hold the phone flat to calibrate!";
+
+                // Reset the timer.
+                _initTime = DateTime.Now;
+            }
+
+            yield return null;
+        }
+
+        // Once the timer is 0, set the north.
+        mNorthOffset = Input.compass.trueHeading;
+
+        // Close the calibration screen.
+        rCalibrationScreen.SetActive(false);
+    }
+
     /* -------- Private Methods -------- */
+
+    /// <summary>
+    /// Checks if the phone is flat.
+    /// </summary>
+    private bool CheckPhoneIsFlat()
+    {
+        // Check if the phone supports Gyroscope.
+        if (SystemInfo.supportsGyroscope)
+        {
+            if (Input.gyro.attitude.x > -0.1f && Input.gyro.attitude.x < 0.1f)
+            {
+                return true;
+            }
+        }
+        else // Gyro not supported, use AR camera.
+        {
+            // Get camera angle.
+            float _CamXAngle = rCam.transform.eulerAngles.x % 360;
+
+            if (_CamXAngle < 0)
+            {
+                _CamXAngle += 360;
+            }
+
+            if (_CamXAngle > 80.0f && _CamXAngle < 100.0f)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     /// <summary>
     /// Makes a call to the Phones GPS functionality and gets the users current position.
@@ -138,33 +238,14 @@ public class cUser_Manager : MonoBehaviour
             
             if (!Application.isEditor) // In production.
             {
-                // Check if the user is pointing their phone down.
-                // Get camera angle.
-                float _CamXAngle = mCamera.transform.eulerAngles.x % 360;
-
-                if (_CamXAngle < 0)
-                {
-                    _CamXAngle += 360;
-                }
-
-                if (_CamXAngle > 80.0f && _CamXAngle < 100.0f)
-                {
-                    //rDebugText.text = "Pointing Down";
-
-                    // Set compass.
-                    mUserLastCompassRotation = Mathf.Round(Mathf.LerpAngle(mUserLastCompassRotation, Input.compass.trueHeading, 10.0f * Time.deltaTime)) ;
-                }
-                else
-                {
-                    //rDebugText.text = "Not Pointing Down";
-                }
+                
 
                 // Set location.
                 mUserLastLocation = new Vector2(Input.location.lastData.latitude, Input.location.lastData.longitude);
             }
 
             // Call the node handler.
-            cNode_Manager.mInstance.CorrectNodes(mUserLastLocation, -mUserLastCompassRotation);
+            cNode_Manager.mInstance.CorrectNodes(mUserLastLocation);
         }
         else // Location Services not running.
         {
@@ -202,7 +283,7 @@ public class cUser_Manager : MonoBehaviour
         }
         else
         {
-            rDebug_CurrentNodeText.text = "Current: " + cNode_Manager.mInstance.mNodes[mTargetNodeIndex].GetNodeName() +
+            rDebug_CurrentNodeText.text =   "Current: " + cNode_Manager.mInstance.mNodes[mTargetNodeIndex].GetNodeName() +
                                             "\n" + "Distance: " + 
                                             Mathf.Round(cGPSMaths.GetDistance(mUserLastLocation, cNode_Manager.mInstance.mNodes[mTargetNodeIndex].GetGPSLocation())) + 
                                             "m";
