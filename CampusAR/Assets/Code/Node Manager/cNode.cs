@@ -96,15 +96,15 @@ public class cNode_Building : cNode
 
     }
 
-    public cNode_Building(string nodeName, Vector2 GPSPosition, List<cNode> connectedNodes)
+    public cNode_Building(string nodeName, Vector2 GPSPosition, List<cNode> connectedNodes, string buildingName, string buildingDescription, string buildingAbbreviation)
     {
         mNodeName = nodeName;
         mGeoPosition = GPSPosition;
         mConnectedNodes = connectedNodes;
 
         mBuildingName = nodeName;
-        mBuildingDescription = "Test node for GPS testing";
-        mBuildingAbbreviation = "TN";
+        mBuildingDescription = buildingDescription;
+        mBuildingAbbreviation = buildingAbbreviation;
     }
 
     /* -------- Public Methods -------- */
