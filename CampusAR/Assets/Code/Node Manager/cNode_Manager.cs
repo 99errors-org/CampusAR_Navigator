@@ -11,20 +11,21 @@ public class cNode_Manager : MonoBehaviour
 	/* -------- References -------- */
 	
     /* Singleton */
-    public static cNode_Manager                     mInstance;                                  // Singleton instance, used to reference this class globally.
+    public static cNode_Manager                     mInstance;                                      // Singleton instance, used to reference this class globally.
     
     /* -------- Prefabs -------- */
     
     [Title("Node Prefabs")]
-    [SerializeField] private GameObject             pNode_Building;                             // Prefab for the building nodes, used when generating the map.
-    [SerializeField] private GameObject             pNode_Path;                                 // Prefab for the path nodes, used when generating the map.
+    [SerializeField] private GameObject             pNode_Building;                                 // Prefab for the building nodes, used when generating the map.
+    [SerializeField] private GameObject             pNode_Path;                                     // Prefab for the path nodes, used when generating the map.
 
     /* -------- Variables -------- */
     
-    public List<cNode>                              mNodes = new List<cNode>();                 // A list of all the nodes.
-    public List<cNode_Building>                     mBuildingNodes = new List<cNode_Building>();// A list of all the building nodes
-    public List<cNode>                              mPathNodes = new List<cNode>();             // A list of all the path nodes
-    private List<GameObject>                        mWorldNodes = new List<GameObject>();       // A list of all the instantiaed nodes in-world.
+    public List<cNode>                              mNodes { get; private set; } = new List<cNode>();                     // A list of all the nodes.
+    public List<cNode_Building>                     mBuildingNodes { get; private set; } = new List<cNode_Building>();    // A list of all the building nodes
+    public List<cNode>                              mPathNodes { get; private set; } = new List<cNode>();                 // A list of all the path nodes
+    
+    private List<GameObject>                        mWorldNodes = new List<GameObject>();           // A list of all the instantiaed nodes in-world.
 
     /* -------- Unity Methods -------- */
 
@@ -135,14 +136,6 @@ public class cNode_Manager : MonoBehaviour
 
             // Add node to list of spawned nodes.
             mWorldNodes.Add(_node);
-        }
-    }
-
-    public List<cNode> GetNodes
-    {
-        get
-        {
-            return mNodes;
         }
     }
 }

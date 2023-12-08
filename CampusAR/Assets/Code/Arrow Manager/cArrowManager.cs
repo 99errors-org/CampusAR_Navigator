@@ -7,24 +7,24 @@ using UnityEngine;
 public class cArrowManager : MonoBehaviour
 {
 
-    /* Singleton */
+    /* -------- Singleton -------- */
     public static cArrowManager mInstance;                                              // Singleton instance, used to reference this class globally.
 
+    /* -------- Prefabs -------- */
     [SerializeField]
     private GameObject mArrowPrefab;                                                    // Stores the arrow prefab to be instantiated later
 
+    /* -------- References -------- */
     private GameObject mArrow;                                                          // Stores the Arrow object not the prefab
 
-    [SerializeField]
-    private GameObject mCam;                                                            // Stores the camera object can't get the camera without it son dont remove it
+    [SerializeField] private GameObject mCam;                                           // Stores the camera object can't get the camera without it son dont remove it
 
+    /* -------- Constants -------- */
+    private const float kDistanceInfrontOfUser = 1.0f;                                  // How much distance in front of the user to place the arrow;
 
+    private const float kArrowYPosition = -0.4f;                                        // position the arrow a bit to the ground 
 
-    /*------ Constants ---------*/
-    private const float kDistanceInfrontOfUser = 7.12f;                                 // How much distance in front of the user to place the arrow;
-
-    private const float kArrowYPosition = -1.04f;                                       // position the arrow a bit to the ground 
-
+    /* -------- Unity Methods -------- */
     private void Awake()
     {
         // Setup the singleton instance.
@@ -38,48 +38,32 @@ public class cArrowManager : MonoBehaviour
         }
     }
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (cUser_Manager.mInstance.GetTargetNodeIndex() == cUser_Manager.kNullTargetNodeIndex)          // If the target node is not set it returns -1 
+        // Check if the arrow doesn't exist.
+        if (mArrow == null)                           
         {
-            return;                                                                 // Doesn't run the updating code 
-        }
+            // Get the correct position for the arrow.
+            Vector3 _arrowPos = mCam.transform.rotation * new Vector3(mCam.transform.position.x,
+                                                                      mCam.transform.position.y + kArrowYPosition,
+                                                                      mCam.transform.position.z + kDistanceInfrontOfUser);
 
-        if (mArrow == null)                                                         // Checks if the arrow is instantiated                              
-        {
-            mArrow = Instantiate(mArrowPrefab);                                     // Instantiate arrow if it isn't
+            // Instantiate the arrow and parent it to the camera.
+            mArrow = Instantiate(mArrowPrefab, _arrowPos, Quaternion.identity, mCam.transform);
         }
     }
 
     void FixedUpdate()
     {
-        
-        if (mArrow != null && mArrow.activeSelf)                                    // Checks if the arrow is instantiated and is set to visible
-        {
-            // Keeps the arrow in front of the camera
-            mArrow.transform.position = mCam.transform.rotation * new Vector3(mCam.transform.position.x,
-                                                                              mCam.transform.position.y + kArrowYPosition,
-                                                                              mCam.transform.position.z + kDistanceInfrontOfUser);
-        }
+        // Deactivate the arrow if unused.
+        mArrow.SetActive(cUser_Manager.mInstance.GetTargetNodeIndex() != cUser_Manager.kNullTargetNodeIndex);
     }
 
-    // Sets the arrow to a rotated position
-    public void RotateArrow(float rotationAngle)
-    {
-        mArrow.transform.rotation = Quaternion.Euler(new Vector3(0.0f, rotationAngle, 0.0f));   // sets the rotation of the arrow to a specific angle does not rotate it by that much
-    }
+    /* -------- Public Methods -------- */
 
     /// <summary>
     /// Rotates the arrow to the correct position. Callable from outside the class
     /// </summary>
-    /// <param name="targetNode"></param>
     public void DirectArrow(cNode targetNode)
     {
         //Find the angle between the user and target
@@ -89,6 +73,6 @@ public class cArrowManager : MonoBehaviour
         rotationAngle -= cUser_Manager.mInstance.mUserLastCompassRotation;
 
         //Set the arrow to face the angle towards the target
-        RotateArrow(rotationAngle);
+        mArrow.transform.rotation = Quaternion.Euler(new Vector3(0.0f, (-rotationAngle) + 90.0f, 0.0f));
     }
 }

@@ -10,9 +10,9 @@ public class cPathfinding : MonoBehaviour
     /* Singleton */
     public static cPathfinding mInstance;
 
-    private List<cNode> mCurrentPath = new List<cNode>();   // Chain of nodes working from the users start position to the final target destination
-    int mCurrentPathPosition = 0;                           // Index of how far into the list Path the user has traversed
-    int mNodeReachThreshold = 20;                           // How close the user must be to the node before the node is considered to be reached
+    private List<cNode> mCurrentPath = new List<cNode>();           // Chain of nodes working from the users start position to the final target destination
+    private int mCurrentPathPosition = 0;                           // Index of how far into the list Path the user has traversed
+    private int mNodeReachThreshold = 20;                           // How close the user must be to the node before the node is considered to be reached
 
     /* -------- Unity Methods -------- */
 
@@ -20,7 +20,6 @@ public class cPathfinding : MonoBehaviour
     {
         if (cUser_Manager.mInstance.GetTargetNodeIndex() != cUser_Manager.kNullTargetNodeIndex)
         {
-            Debug.Log("Direct to target");
             // If there is a target selected, pathfind to the target            
             cArrowManager.mInstance.DirectArrow(cUser_Manager.mInstance.GetTargetNode());
         }
@@ -94,7 +93,11 @@ public class cPathfinding : MonoBehaviour
             cNode nextNode = FindNextNode(path.Last(), targetNode);
 
             // If the next node is the target, pathing is complete, leave the while loop
-            if (nextNode == targetNode) { path.Add(nextNode); break; }
+            if (nextNode == targetNode)
+            {
+                path.Add(nextNode);
+                break;
+            }
             else
             {
                 // Otherwise, add the next node to the list and continue pathing
@@ -116,7 +119,10 @@ public class cPathfinding : MonoBehaviour
     public bool PathfindingV2(cNode startNode, cNode targetNode)
     {
         // If path is empty, create a path to the target
-        if (mCurrentPath.Count == 0) { FindNodePath(startNode, targetNode); mCurrentPathPosition = 0; }   
+        if (mCurrentPath.Count == 0)
+        {
+            FindNodePath(startNode, targetNode); mCurrentPathPosition = 0;
+        }   
         
         // Point the arrow towards the target node
         cArrowManager.mInstance.DirectArrow(mCurrentPath[mCurrentPathPosition]);
@@ -124,7 +130,11 @@ public class cPathfinding : MonoBehaviour
         // If the user is within n meters of the node, start pathfinding to the next node
         if (DistanceToNextNode < mNodeReachThreshold)
         {
-            if (mCurrentPath[mCurrentPathPosition] == targetNode) { return true; }  // Target reached
+            if (mCurrentPath[mCurrentPathPosition] == targetNode)
+            {
+                // Target reached.
+                return true;
+            }
             else
             {
                 // Move to pathfinding to the next node in the path

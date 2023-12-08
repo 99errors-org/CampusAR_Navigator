@@ -234,7 +234,7 @@ public class cUser_Manager : MonoBehaviour
     /// <returns></returns>
     public cNode GetTargetNode()
     {
-        return cNode_Manager.mInstance.GetNodes[mTargetNodeIndex];
+        return cNode_Manager.mInstance.mNodes[mTargetNodeIndex];
     }
 
     /// <summary>
