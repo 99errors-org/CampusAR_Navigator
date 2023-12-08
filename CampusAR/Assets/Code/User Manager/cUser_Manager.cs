@@ -17,13 +17,13 @@ public class cUser_Manager : MonoBehaviour
 
     /* User Interface */
     [SerializeField] private GameObject rInitPanel;                                             // The initialisation panel.
-    [SerializeField] private TextMeshProUGUI rDebugText;                                        // Text used for debugging the initialisation screen.
+    [SerializeField] private TextMeshProUGUI rDebug_CurrentNodeText;                            // Text used for debugging the initialisation screen.
 
     [SerializeField] private Transform  mCamera;                                                // Reference to the camera.
 
     /* -------- Constants -------- */
 
-    private const float                 kLocationTimeout    = 20.0f;                            // The amount of seconds before the location services times out and starts again.
+    private const float                 kLocationTimeout = 20.0f;                               // The amount of seconds before the location services times out and starts again.
 
     public const int                    kNullTargetNodeIndex = -1;                              // The index when there is no target node selected
     /* -------- Variables -------- */
@@ -35,7 +35,7 @@ public class cUser_Manager : MonoBehaviour
     public float                        mUserLastCompassRotation { get; private set; } = 0.0f;  // The users last compass bearing, this is stored to not overwhelm the phone.
 
     /* Guiding */
-    private int                         mTargetNodeIndex    = kNullTargetNodeIndex;             // The index of the target building/node, if -1 no node is selected.
+    private int                         mTargetNodeIndex = kNullTargetNodeIndex;                // The index of the target building/node, if -1 no node is selected.
 
     /* -------- Unity Methods -------- */
 
@@ -61,7 +61,7 @@ public class cUser_Manager : MonoBehaviour
             mUserLastLocation = new Vector2(53.762764f, -2.707214f);
 
             // Set debug rotation (East)
-            mUserLastCompassRotation = 90.0f;
+            mUserLastCompassRotation = 0.0f;
         }
 
         // Initialise the location services.
@@ -71,17 +71,7 @@ public class cUser_Manager : MonoBehaviour
     private void FixedUpdate()
     {
         SetUserData();
-
-        /* ----- Test GPS Function ----- */
-        int distanceThreshold = 10;
-        if (cGPSMaths.GetDistance(mUserLastLocation, cNode_Manager.mInstance.GetNodes.Last().GetGPSLocation()) < distanceThreshold)
-        {
-            rDebugText.text = cNode_Manager.mInstance.GetNodes.Last().GetNodeName() + " - Within " + distanceThreshold.ToString() + "m";
-        }
-        else
-        {
-            rDebugText.text = cNode_Manager.mInstance.GetNodes.Last().GetNodeName() + " - Outside range (" + Mathf.Round(cGPSMaths.GetDistance(mUserLastLocation, cNode_Manager.mInstance.GetNodes.Last().GetGPSLocation())).ToString() + "m)";
-        }
+        Debug_CurrentNode();
     }
 
     /* -------- Coroutines -------- */
@@ -95,7 +85,7 @@ public class cUser_Manager : MonoBehaviour
         if (Application.isEditor)
         {
             // Create the nodes in-world.
-            cNode_Manager.mInstance.InstantiateNodes(new Vector2(Input.location.lastData.latitude, Input.location.lastData.longitude), -Input.compass.trueHeading);
+            cNode_Manager.mInstance.InstantiateNodes(mUserLastLocation, mUserLastCompassRotation);
 
             // Hide initialisation screen.
             rInitPanel.SetActive(false);
@@ -203,6 +193,22 @@ public class cUser_Manager : MonoBehaviour
         }
     }
 
+    private void Debug_CurrentNode()
+    {
+        // Check if pointing at a building.
+        if (mTargetNodeIndex == kNullTargetNodeIndex)
+        {
+            rDebug_CurrentNodeText.text = "No Node Selected";
+        }
+        else
+        {
+            rDebug_CurrentNodeText.text = "Current: " + cNode_Manager.mInstance.mNodes[mTargetNodeIndex].GetNodeName() +
+                                            "\n" + "Distance: " + 
+                                            Mathf.Round(cGPSMaths.GetDistance(mUserLastLocation, cNode_Manager.mInstance.mNodes[mTargetNodeIndex].GetGPSLocation())) + 
+                                            "m";
+        }
+    }
+
     /* -------- Public Methods -------- */
 
     /// <summary>
@@ -214,13 +220,43 @@ public class cUser_Manager : MonoBehaviour
         mTargetNodeIndex = _index;
     }
 
-    public int GetTargetNodeIndex()              // Returns the target nodes index if it is there or returns -1 if there is no target node
+    /// <summary>
+    /// Returns the target nodes index if it is there or returns -1 if there is no target node
+    /// </summary>
+    public int GetTargetNodeIndex()
     {
         return mTargetNodeIndex;
     }
 
+    /// <summary>
+    /// Returns the target node, as a cNode object.
+    /// </summary>
+    /// <returns></returns>
     public cNode GetTargetNode()
     {
         return cNode_Manager.mInstance.GetNodes[mTargetNodeIndex];
+    }
+
+    /// <summary>
+    /// Changes the currently selected node, increments down the list.
+    /// </summary>
+    /// <param name="_increment"></param>
+    public void ChangeCurrentNode(bool _increment)
+    {
+        // Check if incrementing.
+        if (_increment)
+        {
+            if (mTargetNodeIndex < (cNode_Manager.mInstance.mNodes.Count - 1))
+            {
+                mTargetNodeIndex++;
+            }
+        }
+        else
+        {
+            if (mTargetNodeIndex >= 0)
+            {
+                mTargetNodeIndex--;
+            }
+        }
     }
 }

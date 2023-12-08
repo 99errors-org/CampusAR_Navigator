@@ -15,14 +15,15 @@ public class cPathfinding : MonoBehaviour
     int mNodeReachThreshold = 20;                           // How close the user must be to the node before the node is considered to be reached
 
     /* -------- Unity Methods -------- */
-    void Start()
-    {
-        
-    }
 
     void Update()
     {
-        if (cUser_Manager.mInstance.GetTargetNodeIndex() != cUser_Manager.kNullTargetNodeIndex) { cArrowManager.DirectArrow(cUser_Manager.mInstance.GetTargetNode()); } // If there is a target selected, pathfind to the target
+        if (cUser_Manager.mInstance.GetTargetNodeIndex() != cUser_Manager.kNullTargetNodeIndex)
+        {
+            Debug.Log("Direct to target");
+            // If there is a target selected, pathfind to the target            
+            cArrowManager.mInstance.DirectArrow(cUser_Manager.mInstance.GetTargetNode());
+        }
         else
         {
             //If there is not a target selected, set C+T building as the target
@@ -118,7 +119,7 @@ public class cPathfinding : MonoBehaviour
         if (mCurrentPath.Count == 0) { FindNodePath(startNode, targetNode); mCurrentPathPosition = 0; }   
         
         // Point the arrow towards the target node
-        cArrowManager.DirectArrow(mCurrentPath[mCurrentPathPosition]);
+        cArrowManager.mInstance.DirectArrow(mCurrentPath[mCurrentPathPosition]);
 
         // If the user is within n meters of the node, start pathfinding to the next node
         if (DistanceToNextNode < mNodeReachThreshold)

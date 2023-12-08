@@ -23,10 +23,7 @@ public class cArrowManager : MonoBehaviour
     /*------ Constants ---------*/
     private const float kDistanceInfrontOfUser = 7.12f;                                 // How much distance in front of the user to place the arrow;
 
-    private const float kArrowYPosition = -1.04f;                                       // position the arrow a bit to the ground
-
-    /*------ Variables ---------*/
-    private int mCurrentTargetNodeIndex = cUser_Manager.kNullTargetNodeIndex;           
+    private const float kArrowYPosition = -1.04f;                                       // position the arrow a bit to the ground 
 
     private void Awake()
     {
@@ -50,8 +47,7 @@ public class cArrowManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        mCurrentTargetNodeIndex = cUser_Manager.mInstance.GetTargetNodeIndex();          // Gets the current target nodes index 
-        if (mCurrentTargetNodeIndex == cUser_Manager.kNullTargetNodeIndex)          // If the target node is not set it returns -1 
+        if (cUser_Manager.mInstance.GetTargetNodeIndex() == cUser_Manager.kNullTargetNodeIndex)          // If the target node is not set it returns -1 
         {
             return;                                                                 // Doesn't run the updating code 
         }
@@ -84,7 +80,7 @@ public class cArrowManager : MonoBehaviour
     /// Rotates the arrow to the correct position. Callable from outside the class
     /// </summary>
     /// <param name="targetNode"></param>
-    public static void DirectArrow(cNode targetNode)
+    public void DirectArrow(cNode targetNode)
     {
         //Find the angle between the user and target
         float rotationAngle = cGPSMaths.GetAngle(cUser_Manager.mInstance.mUserLastLocation, targetNode.GetGPSLocation());
@@ -93,6 +89,6 @@ public class cArrowManager : MonoBehaviour
         rotationAngle -= cUser_Manager.mInstance.mUserLastCompassRotation;
 
         //Set the arrow to face the angle towards the target
-        cArrowManager.mInstance.RotateArrow(rotationAngle);
+        RotateArrow(rotationAngle);
     }
 }

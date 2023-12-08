@@ -84,12 +84,6 @@ public class cNode_Manager : MonoBehaviour
             mNodes.Add(_node);
             mPathNodes.Add(_node);
         }
-
-
-        /*  ----- Test Node ----- */
-        cNode_Building testNode = new cNode_Building("Test Node", new Vector2(53.763798f, -2.708177f), new List<cNode>());
-        mNodes.Add(testNode);
-        mBuildingNodes.Add(testNode);
     }
 
     /// <summary>
