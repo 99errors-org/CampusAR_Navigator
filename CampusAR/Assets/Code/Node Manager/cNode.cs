@@ -102,7 +102,7 @@ public class cNode_Building : cNode
         mGeoPosition = GPSPosition;
         mConnectedNodes = connectedNodes;
 
-        mBuildingName = nodeName;
+        mBuildingName = buildingName;
         mBuildingDescription = buildingDescription;
         mBuildingAbbreviation = buildingAbbreviation;
     }
