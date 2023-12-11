@@ -64,8 +64,10 @@ public class cArrowManager : MonoBehaviour
     /// <summary>
     /// Rotates the arrow to the correct position. Callable from outside the class
     /// </summary>
-    public void DirectArrow(cNode targetNode)
+    public void DirectArrow(int targetNodeIndex)
     {
+        cNode targetNode = cNode_Manager.mInstance.mNodes[targetNodeIndex];
+
         //Find the angle between the user and target
         float rotationAngle = cGPSMaths.GetAngle(cUser_Manager.mInstance.mUserLastLocation, targetNode.GetGPSLocation());
 
