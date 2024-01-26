@@ -152,6 +152,18 @@ public class cNode_Manager : MonoBehaviour
             // Name the in-world object.
             _node.name = "Node - " + pathNode.GetNodeName();
 
+            // Find the TextMeshPro component and update the text
+            TextMeshPro tmp = _node.GetComponentInChildren<TextMeshPro>();
+            if (tmp != null)
+            {
+                tmp.text = pathNode.GetNodeName();
+                Debug.Log("Updated TextMeshPro with: " + pathNode.GetNodeName());
+            }
+            else
+            {
+                Debug.LogError("TextMeshPro component not found on the instantiated node.");
+            }
+
             // Add node to list of spawned nodes.
             mWorldNodes.Add(_node);
         }
