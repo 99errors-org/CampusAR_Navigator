@@ -8,23 +8,23 @@ using TMPro;
 
 public class cNode_Manager : MonoBehaviour
 {
-	/* -------- References -------- */
-	
+    /* -------- References -------- */
+
     /* Singleton */
-    public static cNode_Manager                     mInstance;                                  // Singleton instance, used to reference this class globally.
-    
+    public static cNode_Manager mInstance;                                  // Singleton instance, used to reference this class globally.
+
     /* -------- Prefabs -------- */
-    
+
     [Title("Node Prefabs")]
-    [SerializeField] private GameObject             pNode_Building;                             // Prefab for the building nodes, used when generating the map.
-    [SerializeField] private GameObject             pNode_Path;                                 // Prefab for the path nodes, used when generating the map.
+    [SerializeField] private GameObject pNode_Building;                             // Prefab for the building nodes, used when generating the map.
+    [SerializeField] private GameObject pNode_Path;                                 // Prefab for the path nodes, used when generating the map.
 
     /* -------- Variables -------- */
-    
-    public List<cNode>                              mNodes = new List<cNode>();                 // A list of all the nodes.
-    public List<cNode_Building>                     mBuildingNodes = new List<cNode_Building>();// A list of all the building nodes
-    public List<cNode>                              mPathNodes = new List<cNode>();             // A list of all the path nodes
-    private List<GameObject>                        mWorldNodes = new List<GameObject>();       // A list of all the instantiaed nodes in-world.
+
+    public List<cNode> mNodes = new List<cNode>();                 // A list of all the nodes.
+    public List<cNode_Building> mBuildingNodes = new List<cNode_Building>();// A list of all the building nodes
+    public List<cNode> mPathNodes = new List<cNode>();             // A list of all the path nodes
+    private List<GameObject> mWorldNodes = new List<GameObject>();       // A list of all the instantiaed nodes in-world.
 
     /* -------- Unity Methods -------- */
 
@@ -53,6 +53,7 @@ public class cNode_Manager : MonoBehaviour
     /// </summary>
     public void LoadNodeList()
     {
+        float yPadding = 10.0f;
         // Load all buildings.
         TextAsset[] _buildingNodes = Resources.LoadAll<TextAsset>("Nodes\\Buildings\\");
 
@@ -63,6 +64,10 @@ public class cNode_Manager : MonoBehaviour
 
             // Convert file to node.
             JsonUtility.FromJsonOverwrite(_buildingNodes[i].ToString(), _node);
+
+            // ----------
+
+            // ----------
 
             // Add the node.
             mNodes.Add(_node);
@@ -118,6 +123,18 @@ public class cNode_Manager : MonoBehaviour
 
             // Name the in-world object.
             _node.name = "Node - " + buildingNode.GetBuildingName();
+
+            // Find the TextMeshPro component and update the text
+            TextMeshPro tmp = _node.GetComponentInChildren<TextMeshPro>();
+            if (tmp != null)
+            {
+                tmp.text = buildingNode.GetBuildingName();
+                Debug.Log("Updated TextMeshPro with: " + buildingNode.GetBuildingName());
+            }
+            else
+            {
+                Debug.LogError("TextMeshPro component not found on the instantiated node.");
+            }
 
             // Add node to list of spawned nodes.
             mWorldNodes.Add(_node);
