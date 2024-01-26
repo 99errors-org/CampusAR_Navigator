@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class cUI_Manager : MonoBehaviour
 {
@@ -56,5 +57,6 @@ public class cUI_Manager : MonoBehaviour
     public void HandleSettingsButton()
     {
         Debug.Log("You have clicked the Settings button!");
+        SceneManager.LoadScene("SettingsScene");
     }
 }
