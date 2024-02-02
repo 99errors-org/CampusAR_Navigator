@@ -78,6 +78,8 @@ public class cNode_Manager : MonoBehaviour
 
         for (int i = 0; i < _pathNodes.Length; i++)
         {
+            Debug.Log(_pathNodes[i].ToString());
+
             // Create new node for storing.
             cNode _node = new cNode();
 
@@ -139,7 +141,7 @@ public class cNode_Manager : MonoBehaviour
             _node.transform.position = cGPSMaths.GetVector(_userPosition, pathNode.GetGPSLocation());
 
             // Name the in-world object.
-            _node.name = "Node - " + pathNode.GetBuildingName();
+            _node.name = "Node - " + pathNode.GetNodeName();
 
             // Add node to list of spawned nodes.
             mWorldNodes.Add(_node);
