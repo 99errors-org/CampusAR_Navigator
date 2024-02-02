@@ -9,11 +9,14 @@ public class cUI_Manager : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI rBuildingNameField;
     [SerializeField] private RectTransform rBuildingListContext;
+    [SerializeField] private RectTransform rBuildingDrawer;
 
     [SerializeField] private GameObject pBuildingListButton;
 
     private cNode currentBuildingNode; // Reference to the current cNode_Building instance
     private bool mListPopulated = false;    // Whether the building list has been populated.
+
+    private bool mOpenBuildingDrawer = false;
 
     // Update is called once per frame
     void FixedUpdate()
@@ -21,6 +24,8 @@ public class cUI_Manager : MonoBehaviour
         UpdateBuildingNameField();
 
         PopulateBuildingList();
+
+        AnimationController();
     }
 
     /* ---- Private Methods ---- */
@@ -68,6 +73,20 @@ public class cUI_Manager : MonoBehaviour
         }
     }
 
+    private void AnimationController()
+    {
+        float _speed = 10.0f;
+
+        if (mOpenBuildingDrawer && rBuildingDrawer.position.y < rBuildingDrawer.sizeDelta.y)
+        {
+            rBuildingDrawer.position = Vector2.Lerp(rBuildingDrawer.position, new Vector2(rBuildingDrawer.position.x, rBuildingDrawer.sizeDelta.y), _speed * Time.fixedDeltaTime);
+        }
+        else if (!mOpenBuildingDrawer && rBuildingDrawer.position.y > 0.0f)
+        {
+            rBuildingDrawer.position = Vector2.Lerp(rBuildingDrawer.position, new Vector2(rBuildingDrawer.position.x, -1.0f), _speed * Time.fixedDeltaTime);
+        }
+    }
+
     /* ---- Public Methods ---- */
 
     public void HandleFloatingActionButton()
@@ -88,6 +107,8 @@ public class cUI_Manager : MonoBehaviour
     public void HandleCreateTourButton()
     {
         Debug.Log("You have clicked the CreateTour button!");
+
+        mOpenBuildingDrawer = !mOpenBuildingDrawer;
     }
 
     public void HandleSettingsButton()
