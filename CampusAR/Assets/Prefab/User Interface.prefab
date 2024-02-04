@@ -34,9 +34,9 @@ RectTransform:
   - {fileID: 9167920221644651266}
   - {fileID: 453937924861702214}
   - {fileID: 844736463123495114}
-  - {fileID: 2563360493058109563}
-  - {fileID: 7897181651244627273}
   - {fileID: 8096348601905592630}
+  - {fileID: 7897181651244627273}
+  - {fileID: 2563360493058109563}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -802,7 +802,7 @@ PrefabInstance:
     - target: {fileID: 978363514040562429, guid: 4bfffa68a4a31f343982c78f686d7091,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -19.99997
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 978363514040562429, guid: 4bfffa68a4a31f343982c78f686d7091,
         type: 3}

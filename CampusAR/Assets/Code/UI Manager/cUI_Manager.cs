@@ -3,20 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 
 public class cUI_Manager : MonoBehaviour
 {
 
+    /* -------- Variables -------- */
     [SerializeField] private TextMeshProUGUI rBuildingNameField;
-    [SerializeField] private RectTransform rBuildingListContext;
+    [SerializeField] private RectTransform rBuildingListContent;
     [SerializeField] private RectTransform rBuildingDrawer;
 
     [SerializeField] private GameObject pBuildingListButton;
+
+    [SerializeField] private RectTransform pCreateTourButton;
+    [SerializeField] private RectTransform pSelectBuildingButton;
+    [SerializeField] private RectTransform pSelectTourButton;
 
     private cNode currentBuildingNode; // Reference to the current cNode_Building instance
     private bool mListPopulated = false;    // Whether the building list has been populated.
 
     private bool mOpenBuildingDrawer = false;
+    private bool mActionButtonsVisible = false;
+
+
 
     // Update is called once per frame
     void FixedUpdate()
@@ -29,6 +38,11 @@ public class cUI_Manager : MonoBehaviour
     }
 
     /* ---- Private Methods ---- */
+
+    private void ToggleBuildingDrawer()
+    {
+        mOpenBuildingDrawer = !mOpenBuildingDrawer;
+    }
 
     private void UpdateBuildingNameField()
     {
@@ -48,13 +62,13 @@ public class cUI_Manager : MonoBehaviour
         if (cNode_Manager.mInstance != null && !mListPopulated)
         {
             // Set the length of the scrollview content.
-            rBuildingListContext.sizeDelta = new Vector2(rBuildingListContext.sizeDelta.x, cNode_Manager.mInstance.mNodes.Count * pBuildingListButton.GetComponent<RectTransform>().sizeDelta.y);
+            rBuildingListContent.sizeDelta = new Vector2(rBuildingListContent.sizeDelta.x, cNode_Manager.mInstance.mNodes.Count * pBuildingListButton.GetComponent<RectTransform>().sizeDelta.y);
         
             // Create building nodes.
             for (int i = 0; i < cNode_Manager.mInstance.mNodes.Count; i++)
             {
                 // Instantiate.
-                GameObject _building = Instantiate(pBuildingListButton, rBuildingListContext);
+                GameObject _building = Instantiate(pBuildingListButton, rBuildingListContent);
 
                 // Position.
                 _building.GetComponent<RectTransform>().localPosition = new Vector2(_building.GetComponent<RectTransform>().sizeDelta.x * 0.5f, -(_building.GetComponent<RectTransform>().sizeDelta.y * 0.5f + _building.GetComponent<RectTransform>().sizeDelta.y * i));
@@ -89,26 +103,78 @@ public class cUI_Manager : MonoBehaviour
 
     /* ---- Public Methods ---- */
 
+    public void HideBuildingDrawer()
+    {
+        mOpenBuildingDrawer = false;
+    }
+
     public void HandleFloatingActionButton()
     {
         Debug.Log("You have clicked the floating button!");
+        StartCoroutine(AnimateButtons());
+    }
+
+    IEnumerator AnimateButtons()
+    {
+        float time = 0;
+        float duration = 0.25f;
+        AnimationCurve curve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+
+        if (!mActionButtonsVisible)
+        {
+            SetButtonsActive(true);
+        }
+        else if(mActionButtonsVisible)
+        {
+            SetButtonsActive(false);
+        }
+
+
+        Vector3 originalScale = pCreateTourButton.transform.localScale;
+
+        while (time < duration)
+        {
+            float t = curve.Evaluate(time / duration);
+
+            SetButtonsScale(originalScale, t);
+
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        mActionButtonsVisible = !mActionButtonsVisible;
+    }
+
+    void SetButtonsActive(bool active)
+    {
+        pCreateTourButton.gameObject.SetActive(active);
+        pSelectBuildingButton.gameObject.SetActive(active);
+        pSelectTourButton.gameObject.SetActive(active);
+    }
+
+    void SetButtonsScale(Vector3 originalScale, float scale)
+    {
+        pCreateTourButton.transform.localScale = originalScale * scale;
+        pSelectBuildingButton.transform.localScale = originalScale * scale;
+        pSelectTourButton.transform.localScale = originalScale * scale;
     }
 
     public void HandleSelectBuildingButton()
     {
         Debug.Log("You have clicked the SelectBuilding button!");
+        ToggleBuildingDrawer();
     }
 
     public void HandleSelectTourButton()
     {
         Debug.Log("You have clicked the SelectTour button!");
+        ToggleBuildingDrawer();
     }
 
     public void HandleCreateTourButton()
     {
         Debug.Log("You have clicked the CreateTour button!");
-
-        mOpenBuildingDrawer = !mOpenBuildingDrawer;
+        ToggleBuildingDrawer();
     }
 
     public void HandleSettingsButton()
