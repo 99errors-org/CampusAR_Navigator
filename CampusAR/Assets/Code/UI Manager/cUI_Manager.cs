@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Unity.Properties;
 
 public class cUI_Manager : MonoBehaviour
 {
@@ -13,9 +14,14 @@ public class cUI_Manager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI rBuildingNameField;
     [SerializeField] private RectTransform rBuildingListContent;
     [SerializeField] private RectTransform rBuildingDrawer;
+    [SerializeField] private RectTransform rSelectTourDrawer;
+    [SerializeField] private RectTransform rCreateTourDrawer;
 
+    // Button for each building in instantiated list of drawer
     [SerializeField] private GameObject pBuildingListButton;
 
+
+    // References for each small action button
     [SerializeField] private RectTransform pCreateTourButton;
     [SerializeField] private RectTransform pSelectBuildingButton;
     [SerializeField] private RectTransform pSelectTourButton;
@@ -23,16 +29,31 @@ public class cUI_Manager : MonoBehaviour
     private cNode currentBuildingNode; // Reference to the current cNode_Building instance
     private bool mListPopulated = false;    // Whether the building list has been populated.
 
-    private bool mOpenBuildingDrawer = false;
+    // Separate bools for each drawer component
+    private bool isBuildingDrawerOpen = false;
+    private bool isSelectTourDrawerOpen = false;
+    private bool isCreateTourDrawerOpen = false;
+
+    // Bool to control the smaller action buttons
     private bool mActionButtonsVisible = false;
+
+    Dictionary<string, RectTransform> drawerPanels = new Dictionary<string, RectTransform>();
+
+    void Awake()
+    {
+        // Initialise the dictionary with the serialized RectTransforms
+        drawerPanels.Add("BuildingDrawer", rBuildingDrawer);
+        drawerPanels.Add("SelectTourDrawer", rSelectTourDrawer);
+        drawerPanels.Add("CreateTourDrawer", rCreateTourDrawer);
+    }
 
     void Start()
     {
+        // Editor values are set at 2f, this ensures the scale is set to 0f at runtime
         pCreateTourButton.transform.localScale = Vector3.zero;
         pSelectBuildingButton.transform.localScale = Vector3.zero;
         pSelectTourButton.transform.localScale = Vector3.zero;
     }
-
 
 
     // Update is called once per frame
@@ -42,15 +63,15 @@ public class cUI_Manager : MonoBehaviour
 
         PopulateBuildingList();
 
-        AnimationController();
+        if(Application.isEditor)
+        {
+            ToggleDrawer(rBuildingDrawer, ref isBuildingDrawerOpen);
+            ToggleDrawer(rSelectTourDrawer, ref isSelectTourDrawerOpen);
+            ToggleDrawer(rCreateTourDrawer, ref isCreateTourDrawerOpen);
+        }
     }
 
     /* ---- Private Methods ---- */
-
-    private void ToggleBuildingDrawer()
-    {
-        mOpenBuildingDrawer = !mOpenBuildingDrawer;
-    }
 
     private void SetButtonsActive(bool active)
     {
@@ -109,25 +130,61 @@ public class cUI_Manager : MonoBehaviour
         }
     }
 
-    private void AnimationController()
+    private void ToggleDrawer(RectTransform drawer, ref bool isOpen)
     {
-        float _speed = 10.0f;
+        Debug.Log($"Toggling drawer {drawer.name}. IsOpen: {isOpen}");
+        float targetY = isOpen ? drawer.sizeDelta.y : 0.0f;
+        float currentY = drawer.position.y;
 
-        if (mOpenBuildingDrawer && rBuildingDrawer.position.y < rBuildingDrawer.sizeDelta.y)
-        {
-            rBuildingDrawer.position = Vector2.Lerp(rBuildingDrawer.position, new Vector2(rBuildingDrawer.position.x, rBuildingDrawer.sizeDelta.y), _speed * Time.fixedDeltaTime);
-        }
-        else if (!mOpenBuildingDrawer && rBuildingDrawer.position.y > 0.0f)
-        {
-            rBuildingDrawer.position = Vector2.Lerp(rBuildingDrawer.position, new Vector2(rBuildingDrawer.position.x, -1.0f), _speed * Time.fixedDeltaTime);
-        }
+        float _speed = 10.0f;
+        float newY = Mathf.Lerp(currentY, targetY, _speed * Time.fixedDeltaTime);
+
+        drawer.position = new Vector2(drawer.position.x, newY);
+    }
+
+    private void HideDrawer(RectTransform drawer, ref bool isOpen)
+    {
+        isOpen = false;
+        ToggleDrawer(drawer, ref isOpen);
     }
 
     /* ---- Public Methods ---- */
 
+    public void CloseAllDrawers()
+    {
+        if (isBuildingDrawerOpen)
+        {
+            isBuildingDrawerOpen = false;
+            ToggleDrawer(rBuildingDrawer, ref isBuildingDrawerOpen);
+        }
+
+        if (isSelectTourDrawerOpen)
+        {
+            isSelectTourDrawerOpen = false;
+            ToggleDrawer(rSelectTourDrawer, ref isSelectTourDrawerOpen);
+        }
+
+        if (isCreateTourDrawerOpen)
+        {
+            isCreateTourDrawerOpen = false;
+            ToggleDrawer(rCreateTourDrawer, ref isCreateTourDrawerOpen);
+        }
+    }
+
+
     public void HideBuildingDrawer()
     {
-        mOpenBuildingDrawer = false;
+        HideDrawer(rBuildingDrawer, ref isBuildingDrawerOpen);
+    }
+
+    public void HideSelectTourDrawer()
+    {
+        HideDrawer(rSelectTourDrawer, ref isSelectTourDrawerOpen);
+    }
+
+    public void HideCreateTourDrawer()
+    {
+        HideDrawer(rCreateTourDrawer, ref isCreateTourDrawerOpen);
     }
 
     public void HandleFloatingActionButton()
@@ -164,25 +221,28 @@ public class cUI_Manager : MonoBehaviour
     }
 
 
-    void HandleSelectBuildingButton()
+    public void HandleSelectBuildingButton()
     {
         Debug.Log("You have clicked the SelectBuilding button!");
-        ToggleBuildingDrawer();
+        isBuildingDrawerOpen = !isBuildingDrawerOpen;
+        ToggleDrawer(rBuildingDrawer, ref isBuildingDrawerOpen);
     }
 
-    void HandleSelectTourButton()
+    public void HandleSelectTourButton()
     {
         Debug.Log("You have clicked the SelectTour button!");
-        ToggleBuildingDrawer();
+        isSelectTourDrawerOpen = !isSelectTourDrawerOpen;
+        ToggleDrawer(rSelectTourDrawer, ref isSelectTourDrawerOpen);
     }
 
-    void HandleCreateTourButton()
+    public void HandleCreateTourButton()
     {
         Debug.Log("You have clicked the CreateTour button!");
-        ToggleBuildingDrawer();
+        isCreateTourDrawerOpen = !isCreateTourDrawerOpen;
+        ToggleDrawer(rCreateTourDrawer, ref isCreateTourDrawerOpen);
     }
 
-    void HandleSettingsButton()
+    public void HandleSettingsButton()
     {
         Debug.Log("You have clicked the Settings button!");
         SceneManager.LoadScene("SettingsScene");
