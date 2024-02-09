@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class cUI_Manager : MonoBehaviour
 {
@@ -25,6 +26,13 @@ public class cUI_Manager : MonoBehaviour
     private bool mOpenBuildingDrawer = false;
     private bool mActionButtonsVisible = false;
 
+    void Start()
+    {
+        pCreateTourButton.transform.localScale = Vector3.zero;
+        pSelectBuildingButton.transform.localScale = Vector3.zero;
+        pSelectTourButton.transform.localScale = Vector3.zero;
+    }
+
 
 
     // Update is called once per frame
@@ -42,6 +50,20 @@ public class cUI_Manager : MonoBehaviour
     private void ToggleBuildingDrawer()
     {
         mOpenBuildingDrawer = !mOpenBuildingDrawer;
+    }
+
+    private void SetButtonsActive(bool active)
+    {
+        pCreateTourButton.GetComponent<Button>().enabled = active;
+        pSelectBuildingButton.GetComponent<Button>().enabled = active;
+        pSelectTourButton.GetComponent<Button>().enabled = active;
+    }
+
+    private void SetButtonsScale(Vector3 scale)
+    {
+        pCreateTourButton.transform.localScale = scale;
+        pSelectBuildingButton.transform.localScale = scale;
+        pSelectTourButton.transform.localScale = scale;
     }
 
     private void UpdateBuildingNameField()
@@ -63,7 +85,7 @@ public class cUI_Manager : MonoBehaviour
         {
             // Set the length of the scrollview content.
             rBuildingListContent.sizeDelta = new Vector2(rBuildingListContent.sizeDelta.x, cNode_Manager.mInstance.mNodes.Count * pBuildingListButton.GetComponent<RectTransform>().sizeDelta.y);
-        
+
             // Create building nodes.
             for (int i = 0; i < cNode_Manager.mInstance.mNodes.Count; i++)
             {
@@ -120,64 +142,47 @@ public class cUI_Manager : MonoBehaviour
         float duration = 0.25f;
         AnimationCurve curve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
-        if (!mActionButtonsVisible)
-        {
-            SetButtonsActive(true);
-        }
-        else if(mActionButtonsVisible)
-        {
-            SetButtonsActive(false);
-        }
+        // Determine the target scale based on visibility, 0 if visible, 2.0f if not visible
+        Vector3 targetScale = mActionButtonsVisible ? Vector3.zero : Vector3.one * 2.0f;
 
-
+        // Grab current scale of button
         Vector3 originalScale = pCreateTourButton.transform.localScale;
 
         while (time < duration)
         {
             float t = curve.Evaluate(time / duration);
 
-            SetButtonsScale(originalScale, t);
+            SetButtonsScale(Vector3.Lerp(originalScale, targetScale, t));
 
             time += Time.deltaTime;
             yield return null;
         }
 
+        // Toggle visibility and update boolean
+        SetButtonsActive(!mActionButtonsVisible);
         mActionButtonsVisible = !mActionButtonsVisible;
     }
 
-    void SetButtonsActive(bool active)
-    {
-        pCreateTourButton.gameObject.SetActive(active);
-        pSelectBuildingButton.gameObject.SetActive(active);
-        pSelectTourButton.gameObject.SetActive(active);
-    }
 
-    void SetButtonsScale(Vector3 originalScale, float scale)
-    {
-        pCreateTourButton.transform.localScale = originalScale * scale;
-        pSelectBuildingButton.transform.localScale = originalScale * scale;
-        pSelectTourButton.transform.localScale = originalScale * scale;
-    }
-
-    public void HandleSelectBuildingButton()
+    void HandleSelectBuildingButton()
     {
         Debug.Log("You have clicked the SelectBuilding button!");
         ToggleBuildingDrawer();
     }
 
-    public void HandleSelectTourButton()
+    void HandleSelectTourButton()
     {
         Debug.Log("You have clicked the SelectTour button!");
         ToggleBuildingDrawer();
     }
 
-    public void HandleCreateTourButton()
+    void HandleCreateTourButton()
     {
         Debug.Log("You have clicked the CreateTour button!");
         ToggleBuildingDrawer();
     }
 
-    public void HandleSettingsButton()
+    void HandleSettingsButton()
     {
         Debug.Log("You have clicked the Settings button!");
         SceneManager.LoadScene("SettingsScene");
