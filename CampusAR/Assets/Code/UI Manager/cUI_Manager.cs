@@ -63,16 +63,18 @@ public class cUI_Manager : MonoBehaviour
 
         PopulateBuildingList();
 
-        if(Application.isEditor)
-        {
-            ToggleDrawer(rBuildingDrawer, ref isBuildingDrawerOpen);
-            ToggleDrawer(rSelectTourDrawer, ref isSelectTourDrawerOpen);
-            ToggleDrawer(rCreateTourDrawer, ref isCreateTourDrawerOpen);
-        }
+        ToggleDrawer(rBuildingDrawer, ref isBuildingDrawerOpen);
+        ToggleDrawer(rSelectTourDrawer, ref isSelectTourDrawerOpen);
+        ToggleDrawer(rCreateTourDrawer, ref isCreateTourDrawerOpen);
     }
 
     /* ---- Private Methods ---- */
 
+
+    /// <summary>
+    /// Sets the activity state of action buttons.
+    /// </summary>
+    /// <param name="active">Boolean indicating the activity state.</param>
     private void SetButtonsActive(bool active)
     {
         pCreateTourButton.GetComponent<Button>().enabled = active;
@@ -80,6 +82,10 @@ public class cUI_Manager : MonoBehaviour
         pSelectTourButton.GetComponent<Button>().enabled = active;
     }
 
+    /// <summary>
+    /// Sets the scale of action buttons.
+    /// </summary>
+    /// <param name="scale">The target scale for the buttons.</param>
     private void SetButtonsScale(Vector3 scale)
     {
         pCreateTourButton.transform.localScale = scale;
@@ -87,19 +93,30 @@ public class cUI_Manager : MonoBehaviour
         pSelectTourButton.transform.localScale = scale;
     }
 
+    /// <summary>
+    /// Updates the visibility and content of the building name field based on the selected building node.
+    /// </summary>
     private void UpdateBuildingNameField()
     {
         // Check if current building node is selected.
         rBuildingNameField.gameObject.SetActive(currentBuildingNode != null);
 
-        // Check if the currentBuildingNode is not null
-        if (currentBuildingNode != null)
+        if(rBuildingNameField != null)
         {
-            // Update the text content of the TextMeshPro field with the building name
-            rBuildingNameField.text = "Building Name: " + currentBuildingNode.GetBuildingName();
+            rBuildingNameField.gameObject.SetActive(currentBuildingNode != null);
+
+             // Check if the currentBuildingNode is not null
+            if (currentBuildingNode != null)
+            {
+                // Update the text content of the TextMeshPro field with the building name
+                rBuildingNameField.text = currentBuildingNode.GetBuildingName();
+            }
         }
     }
 
+    /// <summary>
+    /// Populates the building list in the UI based on available building nodes.
+    /// </summary>
     private void PopulateBuildingList()
     {
         if (cNode_Manager.mInstance != null && !mListPopulated)
@@ -120,6 +137,19 @@ public class cUI_Manager : MonoBehaviour
                 _building.transform.Find("BuildingTag (TMP)").GetComponent<TextMeshProUGUI>().text = "Nuts"; // <--- Change this.
                 _building.transform.Find("BuildingName (TMP)").GetComponent<TextMeshProUGUI>().text = cNode_Manager.mInstance.mNodes[i].GetBuildingName();
                 _building.transform.Find("Distance (TMP)").GetComponent<TextMeshProUGUI>().text = "69 m"; // <--- Change this.
+
+                // Capture the current cNode for the button click event
+                cNode clickedNode = cNode_Manager.mInstance.mNodes[i];
+
+                _building.GetComponent<Button>().onClick.AddListener(() =>
+                {
+                    if (rBuildingNameField != null)
+                    {
+                        rBuildingNameField.gameObject.SetActive(true);
+                        currentBuildingNode = clickedNode;
+                        cUser_Manager.mInstance.SetTargetNode(i);
+                    }
+                });
             }
 
             mListPopulated = true;
@@ -130,9 +160,17 @@ public class cUI_Manager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Toggles the visibility of a drawer based on its current state.
+    /// </summary>
+    /// <param name="drawer">The RectTransform of the drawer to toggle.</param>
+    /// <param name="isOpen">Reference to the boolean indicating the state of the drawer.</param>
     private void ToggleDrawer(RectTransform drawer, ref bool isOpen)
     {
-        Debug.Log($"Toggling drawer {drawer.name}. IsOpen: {isOpen}");
+        if(Application.isEditor)
+        {
+            Debug.Log($"Toggling drawer {drawer.name}. IsOpen: {isOpen}");
+        }
         float targetY = isOpen ? drawer.sizeDelta.y : 0.0f;
         float currentY = drawer.position.y;
 
@@ -142,6 +180,11 @@ public class cUI_Manager : MonoBehaviour
         drawer.position = new Vector2(drawer.position.x, newY);
     }
 
+    /// <summary>
+    /// Hides a drawer by setting its state to closed and triggering the toggle.
+    /// </summary>
+    /// <param name="drawer">The RectTransform of the drawer to hide.</param>
+    /// <param name="isOpen">Reference to the boolean indicating the state of the drawer.</param>
     private void HideDrawer(RectTransform drawer, ref bool isOpen)
     {
         isOpen = false;
@@ -150,6 +193,9 @@ public class cUI_Manager : MonoBehaviour
 
     /* ---- Public Methods ---- */
 
+    /// <summary>
+    /// Closes all drawers if open.
+    /// </summary>
     public void CloseAllDrawers()
     {
         if (isBuildingDrawerOpen)
@@ -171,28 +217,43 @@ public class cUI_Manager : MonoBehaviour
         }
     }
 
-
+    /// <summary>
+    /// Hides the building drawer if open.
+    /// </summary>
     public void HideBuildingDrawer()
     {
         HideDrawer(rBuildingDrawer, ref isBuildingDrawerOpen);
     }
 
+    /// <summary>
+    /// Hides the select tour drawer if open.
+    /// </summary>
     public void HideSelectTourDrawer()
     {
         HideDrawer(rSelectTourDrawer, ref isSelectTourDrawerOpen);
     }
 
+    /// <summary>
+    /// Hides the create tour drawer if open.
+    /// </summary>
     public void HideCreateTourDrawer()
     {
         HideDrawer(rCreateTourDrawer, ref isCreateTourDrawerOpen);
     }
 
+    /// <summary>
+    /// Handles the click event of the floating action button, animating buttons.
+    /// </summary>
     public void HandleFloatingActionButton()
     {
         Debug.Log("You have clicked the floating button!");
         StartCoroutine(AnimateButtons());
     }
 
+    /// <summary>
+    /// Animates the action buttons by scaling them.
+    /// </summary>
+    /// <returns>An enumerator for coroutine.</returns>
     IEnumerator AnimateButtons()
     {
         float time = 0;
@@ -202,13 +263,13 @@ public class cUI_Manager : MonoBehaviour
         // Determine the target scale based on visibility, 0 if visible, 2.0f if not visible
         Vector3 targetScale = mActionButtonsVisible ? Vector3.zero : Vector3.one * 2.0f;
 
-        // Grab current scale of button
+        // Grab current scale of one of the buttons (this will be used for all small action buttons)
         Vector3 originalScale = pCreateTourButton.transform.localScale;
 
         while (time < duration)
         {
             float t = curve.Evaluate(time / duration);
-
+            // Lerp between initial scale that is conditionally 2 or 0 if the buttons are visible
             SetButtonsScale(Vector3.Lerp(originalScale, targetScale, t));
 
             time += Time.deltaTime;
@@ -220,7 +281,9 @@ public class cUI_Manager : MonoBehaviour
         mActionButtonsVisible = !mActionButtonsVisible;
     }
 
-
+    /// <summary>
+    /// Handles the click event of the Select Building button, toggling the building drawer.
+    /// </summary>
     public void HandleSelectBuildingButton()
     {
         Debug.Log("You have clicked the SelectBuilding button!");
@@ -228,6 +291,9 @@ public class cUI_Manager : MonoBehaviour
         ToggleDrawer(rBuildingDrawer, ref isBuildingDrawerOpen);
     }
 
+    /// <summary>
+    /// Handles the click event of the Select Tour button, toggling the select tour drawer.
+    /// </summary>
     public void HandleSelectTourButton()
     {
         Debug.Log("You have clicked the SelectTour button!");
@@ -235,6 +301,9 @@ public class cUI_Manager : MonoBehaviour
         ToggleDrawer(rSelectTourDrawer, ref isSelectTourDrawerOpen);
     }
 
+    /// <summary>
+    /// Handles click event of the Create Tour button, toggling the create tour drawer
+    /// </summary>
     public void HandleCreateTourButton()
     {
         Debug.Log("You have clicked the CreateTour button!");
@@ -242,6 +311,9 @@ public class cUI_Manager : MonoBehaviour
         ToggleDrawer(rCreateTourDrawer, ref isCreateTourDrawerOpen);
     }
 
+    /// <summary>
+    /// Handles the click event of the Settings button, navigates to Settings scene
+    /// </summary>
     public void HandleSettingsButton()
     {
         Debug.Log("You have clicked the Settings button!");
