@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using Unity.Properties;
 
 public class cUI_Manager : MonoBehaviour
 {
@@ -101,11 +99,11 @@ public class cUI_Manager : MonoBehaviour
         // Check if current building node is selected.
         rBuildingNameField.gameObject.SetActive(currentBuildingNode != null);
 
-        if(rBuildingNameField != null)
+        if (rBuildingNameField != null)
         {
             rBuildingNameField.gameObject.SetActive(currentBuildingNode != null);
 
-             // Check if the currentBuildingNode is not null
+            // Check if the currentBuildingNode is not null
             if (currentBuildingNode != null)
             {
                 // Update the text content of the TextMeshPro field with the building name
@@ -133,10 +131,16 @@ public class cUI_Manager : MonoBehaviour
                 // Position.
                 _building.GetComponent<RectTransform>().localPosition = new Vector2(_building.GetComponent<RectTransform>().sizeDelta.x * 0.5f, -(_building.GetComponent<RectTransform>().sizeDelta.y * 0.5f + _building.GetComponent<RectTransform>().sizeDelta.y * i));
 
+                // Get raw distance for text content
+                float _distanceFloat = cGPSMaths.GetDistance(cNode_Manager.mInstance.mNodes[i].GetGPSLocation(), cUser_Manager.mInstance.mUserLastLocation);
+
+                // Convert distance to integer
+                int _distance = Mathf.FloorToInt(_distanceFloat);
+
                 // Set Values.
-                _building.transform.Find("BuildingTag (TMP)").GetComponent<TextMeshProUGUI>().text = "Nuts"; // <--- Change this.
+                _building.transform.Find("BuildingTag (TMP)").GetComponent<TextMeshProUGUI>().text = cNode_Manager.mInstance.mNodes[i].GetBuildingAbbreviation();
                 _building.transform.Find("BuildingName (TMP)").GetComponent<TextMeshProUGUI>().text = cNode_Manager.mInstance.mNodes[i].GetBuildingName();
-                _building.transform.Find("Distance (TMP)").GetComponent<TextMeshProUGUI>().text = "69 m"; // <--- Change this.
+                _building.transform.Find("Distance (TMP)").GetComponent<TextMeshProUGUI>().text = _distance.ToString() + " m";
 
                 // Capture the current cNode for the button click event
                 cNode clickedNode = cNode_Manager.mInstance.mNodes[i];
@@ -167,7 +171,7 @@ public class cUI_Manager : MonoBehaviour
     /// <param name="isOpen">Reference to the boolean indicating the state of the drawer.</param>
     private void ToggleDrawer(RectTransform drawer, ref bool isOpen)
     {
-        if(Application.isEditor)
+        if (Application.isEditor)
         {
             Debug.Log($"Toggling drawer {drawer.name}. IsOpen: {isOpen}");
         }

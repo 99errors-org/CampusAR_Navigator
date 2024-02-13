@@ -357,6 +357,7 @@ GameObject:
   - component: {fileID: 328238685}
   - component: {fileID: 328238686}
   - component: {fileID: 328238687}
+  - component: {fileID: 328238688}
   m_Layer: 0
   m_Name: Manager (User Interface)
   m_TagString: Untagged
@@ -417,6 +418,21 @@ MonoBehaviour:
     type: 3}
   pNode_Path: {fileID: 4289030117292186799, guid: 50d73379f56c64c4eaef987f8e3bd542,
     type: 3}
+--- !u!114 &328238688
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 328238684}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42d6153305cd79b48a1c9bfebb37a848, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rInitPanel: {fileID: 0}
+  rDebugText: {fileID: 0}
+  mCamera: {fileID: 0}
 --- !u!224 &444047956 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6609863369442037560, guid: 93d08112532dbd041b71901d1f76930a,
@@ -1347,6 +1363,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4147145642909483775, guid: be7390dde397afe41be06ebdd367ecd9,
+        type: 3}
+      propertyPath: m_fontSizeMin
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 4147145642909483775, guid: be7390dde397afe41be06ebdd367ecd9,
+        type: 3}
+      propertyPath: m_VerticalAlignment
+      value: 512
+      objectReference: {fileID: 0}
+    - target: {fileID: 4147145642909483775, guid: be7390dde397afe41be06ebdd367ecd9,
+        type: 3}
+      propertyPath: m_enableWordWrapping
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4482419720560873200, guid: be7390dde397afe41be06ebdd367ecd9,
         type: 3}
