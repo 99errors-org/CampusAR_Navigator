@@ -131,7 +131,7 @@ public class cUI_Manager : MonoBehaviour
                 // Position.
                 _building.GetComponent<RectTransform>().localPosition = new Vector2(_building.GetComponent<RectTransform>().sizeDelta.x * 0.5f, -(_building.GetComponent<RectTransform>().sizeDelta.y * 0.5f + _building.GetComponent<RectTransform>().sizeDelta.y * i));
 
-                // Get raw distance for text content
+                // Get raw distance between player and target node
                 float _distanceFloat = cGPSMaths.GetDistance(cNode_Manager.mInstance.mNodes[i].GetGPSLocation(), cUser_Manager.mInstance.mUserLastLocation);
 
                 // Convert distance to integer
@@ -163,6 +163,8 @@ public class cUI_Manager : MonoBehaviour
             // Update the building Distance.
         }
     }
+
+
 
     /// <summary>
     /// Toggles the visibility of a drawer based on its current state.

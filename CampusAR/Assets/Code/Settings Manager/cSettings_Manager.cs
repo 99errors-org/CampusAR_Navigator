@@ -8,13 +8,35 @@ using TMPro;
 public class cSettings_Manager : MonoBehaviour
 {
 
-    [SerializeField] private TMPro.TMP_Dropdown tmpDropdown;
+    [SerializeField] private TMP_Dropdown tmpDropdown;
 
 
     // Start is called before the first frame update
     void Start()
     {
+        // Fetch the stored metric preference from PlayerPrefs
+        string storedPreference = PlayerPrefs.GetString("MetricsPreference", "");
 
+        // If a preference is found in PlayerPrefs, set the dropdown value
+        if (!string.IsNullOrEmpty(storedPreference))
+        {
+            // Find the index of the stored preference in dropdown options
+            int index = -1;
+            for (int i = 0; i < tmpDropdown.options.Count; i++)
+            {
+                if (tmpDropdown.options[i].text == storedPreference)
+                {
+                    index = i;
+                    break;
+                }
+            }
+
+            // If the stored preference is found, set the dropdown value
+            if (index != -1)
+            {
+                tmpDropdown.value = index;
+            }
+        }
     }
 
     // Update is called once per frame
@@ -30,6 +52,21 @@ public class cSettings_Manager : MonoBehaviour
 
     public void SaveMetricsPreference()
     {
-        Debug.Log(tmpDropdown.options[tmpDropdown.value].text);
+
+        string selectionOption = tmpDropdown.options[tmpDropdown.value].text;
+
+        PlayerPrefs.SetString("MetricsPreference", selectionOption);
+        PlayerPrefs.Save();
+
+        if (Application.isEditor)
+        {
+            Debug.Log("Selected option: " + selectionOption);
+        }
+
+        if (Application.isEditor)
+        {
+            string fetchedPreference = PlayerPrefs.GetString("MetricsPreference");
+            Debug.Log("Fetched Metrics Preference: " + fetchedPreference);
+        }
     }
 }
