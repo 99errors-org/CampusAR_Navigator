@@ -9,11 +9,9 @@ using UnityEngine;
 
 public class cDisplayBuildingInfo : MonoBehaviour
 {
-    [SerializeField] private GameObject pNode_Building;          // Prefab for the building nodes, used when generating the map.))
-
-    private TextMeshPro _tmp_text;
-    private float mTimer;                                       // stores the time from to see if certain time has passed
-    private float mDelayTime = 5.0f;                               // Time to pause between calling the building function
+    private TextMeshPro _tmp_text;                              // Stores the text object of the current building in loop
+    private float mTimer;                                       // Stores the time from to see if certain time has passed
+    private float mDelayTime = 5.0f;                            // Time to pause between calling the building function
 
     // Start is called before the first frame update
     void Start()
@@ -42,7 +40,7 @@ public class cDisplayBuildingInfo : MonoBehaviour
 
 
     // Checks if the building is near then sets building text to active
-    void DisplayBuildingText()
+    private void DisplayBuildingText()
     {
         float _distanceFromUser;
         for (int i = 0; i < cNode_Manager.mInstance.mBuildingNodes.Count; i++)
