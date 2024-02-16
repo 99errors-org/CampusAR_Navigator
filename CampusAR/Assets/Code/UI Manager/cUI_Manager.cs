@@ -16,6 +16,8 @@ public class cUI_Manager : MonoBehaviour
     [SerializeField] private RectTransform rBuildingDrawer;
     [SerializeField] private RectTransform rSelectTourDrawer;
     [SerializeField] private RectTransform rCreateTourDrawer;
+    [SerializeField] private RectTransform rCreateTourContent;
+    [SerializeField] private TextMeshProUGUI rTourQueueContent;
 
     [SerializeField] private RectTransform rCreateTourButton;
     [SerializeField] private RectTransform rSelectBuildingButton;
@@ -32,7 +34,8 @@ public class cUI_Manager : MonoBehaviour
     private cNode currentBuildingNode;
 
     // Whether the building list has been populated.
-    private bool mListPopulated = false;
+    private bool mBuildingListPopulated = false;
+    private bool mCreateTourListPopulated = false;
 
     // Separate bools for each drawer component
     private bool isBuildingDrawerOpen = false;
@@ -69,6 +72,7 @@ public class cUI_Manager : MonoBehaviour
         UpdateBuildingNameField();
 
         PopulateBuildingList();
+        PopulateCreateTourList();
 
         ToggleDrawer(rBuildingDrawer, ref isBuildingDrawerOpen);
         ToggleDrawer(rSelectTourDrawer, ref isSelectTourDrawerOpen);
@@ -126,7 +130,7 @@ public class cUI_Manager : MonoBehaviour
     /// </summary>
     private void PopulateBuildingList()
     {
-        if (cNode_Manager.mInstance != null && !mListPopulated)
+        if (cNode_Manager.mInstance != null && !mBuildingListPopulated)
         {
             // Set the length of the scrollview content.
             rBuildingListContent.sizeDelta = new Vector2(rBuildingListContent.sizeDelta.x, cNode_Manager.mInstance.mNodes.Count * pBuildingListButton.GetComponent<RectTransform>().sizeDelta.y);
@@ -168,14 +172,87 @@ public class cUI_Manager : MonoBehaviour
                 });
             }
 
-            mListPopulated = true;
+            mBuildingListPopulated = true;
         }
-        else if (cNode_Manager.mInstance != null && mListPopulated)
+        else if (cNode_Manager.mInstance != null && mBuildingListPopulated)
         {
             // Update the building Distance.
         }
     }
 
+    /// <summary>
+    /// Populates the create tour list in the UI of all building nodes to add to the queue.
+    /// </summary>
+    private void PopulateCreateTourList()
+    {
+        if (cNode_Manager.mInstance != null && !mCreateTourListPopulated)
+        {
+            // Set the length of the scrollview content.
+            rCreateTourContent.sizeDelta = new Vector2(rCreateTourContent.sizeDelta.x, cNode_Manager.mInstance.mNodes.Count * pBuildingListButton.GetComponent<RectTransform>().sizeDelta.y);
+
+            // Create building nodes.
+            for (int i = 0; i < cNode_Manager.mInstance.mNodes.Count; i++)
+            {
+                int currentIndex = i;
+
+                // Instantiate.
+
+                GameObject _building = Instantiate(pBuildingListButton, rCreateTourContent);
+
+                // Position.
+                _building.GetComponent<RectTransform>().localPosition = new Vector2(_building.GetComponent<RectTransform>().sizeDelta.x * 0.5f, -(_building.GetComponent<RectTransform>().sizeDelta.y * 0.5f + _building.GetComponent<RectTransform>().sizeDelta.y * i));
+
+                // Get raw distance between player and target node
+                float _distanceFloat = cGPSMaths.GetDistance(cNode_Manager.mInstance.mNodes[i].GetGPSLocation(), cUser_Manager.mInstance.mUserLastLocation);
+
+                // Convert distance to integer
+                int _distance = Mathf.FloorToInt(_distanceFloat);
+
+                // Set Values.
+                _building.transform.Find("BuildingTag (TMP)").GetComponent<TextMeshProUGUI>().text = cNode_Manager.mInstance.mNodes[i].GetBuildingAbbreviation();
+                _building.transform.Find("BuildingName (TMP)").GetComponent<TextMeshProUGUI>().text = cNode_Manager.mInstance.mNodes[i].GetBuildingName();
+
+                string storedPreference = PlayerPrefs.GetString("MetricsPreference", "");
+                string distanceUnit = storedPreference == "Kilometres (km)" ? "m" : storedPreference == "Miles (mi)" ? "mi" : "";
+                _building.transform.Find("Distance (TMP)").GetComponent<TextMeshProUGUI>().text = $"{_distance} {distanceUnit}";
+
+                _building.GetComponent<Button>().onClick.AddListener(() =>
+                {
+                    // Check if the building is already in the queue content
+                    if (rTourQueueContent.text.Contains(cNode_Manager.mInstance.mNodes[currentIndex].GetBuildingAbbreviation()))
+                    {
+                        // Remove the building node from the queue content
+                        rTourQueueContent.text = rTourQueueContent.text.Replace(cNode_Manager.mInstance.mNodes[currentIndex].GetBuildingAbbreviation() + ", ", "");
+
+                        // Change background color back to white
+                        Color whiteColor = Color.white;
+                        _building.GetComponent<Image>().color = whiteColor;
+                    }
+                    else
+                    {
+                        // Add the building to the queue content
+                        rTourQueueContent.text += cNode_Manager.mInstance.mNodes[currentIndex].GetBuildingAbbreviation() + ", ";
+
+                        // Change background color to grey
+                        Color greyColor = new Color(0.8f, 0.8f, 0.8f); // Adjust the values based on your preference
+                        _building.GetComponent<Image>().color = greyColor;
+
+                        if (Application.isEditor)
+                        {
+                            Debug.Log(cNode_Manager.mInstance.mNodes[currentIndex].GetBuildingName());
+                        }
+                        cPathfinding.mInstance.AddTourBuilding(currentIndex);
+                    }
+                });
+            }
+
+            mCreateTourListPopulated = true;
+        }
+        else if (cNode_Manager.mInstance != null && mCreateTourListPopulated)
+        {
+            // Update the building Distance.
+        }
+    }
 
     /// <summary>
     /// Toggles the visibility of a drawer based on its current state.
@@ -208,6 +285,10 @@ public class cUI_Manager : MonoBehaviour
         ToggleDrawer(drawer, ref isOpen);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="inputText"></param>
     private void UpdateBuildingNodesVisibility(string inputText)
     {
         foreach (Transform child in rBuildingListContent.transform)

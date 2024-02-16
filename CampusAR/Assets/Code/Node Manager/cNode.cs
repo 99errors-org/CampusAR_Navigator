@@ -2,17 +2,33 @@ using System.Collections;
 using System.Collections.Generic;
 using TetraCreations.Attributes;
 using UnityEngine;
+using UnityEngine.InputSystem.Utilities;
 
 public class cNode
 {
+    public static cNode nullNode;
+
 	/* -------- Variables -------- */
 	[Title("Node Information")]
-	[SerializeField] protected string		mNodeName;                              // The name of this node.
-	[SerializeField] protected Vector2		mGeoPosition;                           // The GPS location of the Node, X = Latitude, Y = Longitude.
-	[SerializeField] protected List<string>	mConnectedNodes = new List<string>();   // A list of all the connected nodes that the user can get to from this node.
+	[SerializeField] protected string		    mNodeName;                              // The name of this node.
+	[SerializeField] protected Vector2          mGeoPosition;                           // The GPS location of the Node, X = Latitude, Y = Longitude.
+	[SerializeField] protected List<cNode>      mConnectedNodes = new List<cNode>();    // A list of all the connected nodes that the user can get to from this node.
 
+    /* -------- Constructors -------- */
 
-	/* -------- Public Methods -------- */
+    public cNode()
+    {
+
+    }
+
+    public cNode(string nodeName, Vector2 GPSPosition, List<cNode> connectedNodes)
+    {
+        mNodeName = nodeName;
+        mGeoPosition = GPSPosition;
+        mConnectedNodes = connectedNodes;
+    }
+
+    /* -------- Public Methods -------- */
 
     /// <summary>
     /// Returns the name of the node.
@@ -31,6 +47,11 @@ public class cNode
 	{
 		return mGeoPosition;
 	}
+
+    public List<cNode> GetConnectedNodes()
+    {
+        return mConnectedNodes;
+    }
 
 	/// <summary>
 	/// Get the name of this building.
@@ -67,6 +88,24 @@ public class cNode_Building : cNode
 	[SerializeField] private string			mBuildingName;					// The name of the building at this specific node.
 	[SerializeField] private string			mBuildingDescription;           // The description of this nodes building.	
     [SerializeField] private string			mBuildingAbbreviation;          // The abbraviation of this building, for example HB for Harris Building.
+
+    /* -------- Constructors -------- */
+
+    public cNode_Building()
+    {
+
+    }
+
+    public cNode_Building(string nodeName, Vector2 GPSPosition, List<cNode> connectedNodes, string buildingName, string buildingDescription, string buildingAbbreviation)
+    {
+        mNodeName = nodeName;
+        mGeoPosition = GPSPosition;
+        mConnectedNodes = connectedNodes;
+
+        mBuildingName = buildingName;
+        mBuildingDescription = buildingDescription;
+        mBuildingAbbreviation = buildingAbbreviation;
+    }
 
     /* -------- Public Methods -------- */
 
