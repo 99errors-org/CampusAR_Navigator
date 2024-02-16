@@ -1,66 +1,68 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-public class cPathfinding : MonoBehaviour
+class Path
 {
-    /* -------- Variables -------- */
+    public const int kNodeReachThreshold = 20;
+    private List<int> mPath = new List<int>();               // Chain of nodes working from the users start position to the final target destination
+    private int mPathPosition = 0;                           // Index of how far into the list Path the user has traversed
 
-    /* Singleton */
-    public static cPathfinding mInstance;
-
-    private List<int> mTourBuildingQueue = new List<int>();         // List of buildings the user wants to visit in  
-
-    private List<int> mCurrentPath = new List<int>();           // Chain of nodes working from the users start position to the final target destination
-    private int mCurrentPathPosition = 0;                           // Index of how far into the list Path the user has traversed
-    private int mNodeReachThreshold = 20;                           // How close the user must be to the node before the node is considered to be reached
-
-    /* -------- Unity Methods -------- */
-
-    void Update()
+    public Path() 
     {
-        if (cUser_Manager.mInstance.GetTargetNodeIndex() != cUser_Manager.kNullTargetNodeIndex)
+        mPathPosition = 0;
+    }
+    public Path(List<int> newPath)
+    {
+        mPath = newPath;
+        mPathPosition = 0;
+    }
+
+    public bool isEmpty()
+    {
+        if (mPath.Count == 0)
         {
-            // If there is a target selected, pathfind to the target            
-            cArrowManager.mInstance.DirectArrow(cUser_Manager.mInstance.GetTargetNodeIndex());
+            return true;
         }
         else
         {
-            //If there is not a target selected, set C+T building as the target
-            //This entire else statement is a temporary addition for testing purposes, to be deleted once we have a real mechanism to set the target node
-            for (int nodeIndex = 0; nodeIndex < cNode_Manager.mInstance.mBuildingNodes.Count; nodeIndex++)
-            {
-                if (cNode_Manager.mInstance.mBuildingNodes[nodeIndex].GetNodeName() == "Test Node")
-                {
-                    cUser_Manager.mInstance.SetTargetNode(nodeIndex);
-                    break;
-                }
-            }
+            return false;
         }
     }
+    public int GetCurrentNode()
+    {
+        if (!isEmpty())
+        {
+            return mPath[mPathPosition];
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    public void CurrentNodeReached()
+    {
+        mPathPosition++;
+    }
 
-    /* -------- Private Methods -------- */
-
-    /// <summary>
-    /// Finds the next node to travel to from the current node.
-    /// </summary>
-    /// <param name="currentNode"></param>
-    /// <param name="targetNode"></param>
-    /// <returns></returns>
-    private static int FindNextNode(int currentNode, int targetNode) 
+    // Finds the next node to travel to from the current node.
+    private static int FindNextNode(int currentNode, int targetNode)
     {
         // Initialise node to return
         int nextNode = cUser_Manager.kNullTargetNodeIndex;
 
-        // Shortest distance is set to -1 as a known null value. Distance cannot be less that 0
+        // Shortest distance is set to -1 as a known null value. Distance (scalar) cannot be less that 0
         float shortestDistance = -1;
 
         // For each node that is connected/accessible to the current node
         for (int i = 0; i < cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes().Count; i++)
         {
             // Find the distance from the connected node to the target
-            float distanceFromNodeToTarget = cGPSMaths.GetDistance(cNode_Manager.mInstance.mNodes[targetNode].GetGPSLocation(), cNode_Manager.mInstance.mNodes[i].GetGPSLocation());
+            float distanceFromNodeToTarget = cGPSMaths.GetDistance(cNode_Manager.mInstance.mNodes[targetNode].GetGPSLocation(), cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[1].GetGPSLocation());
 
             // Set the node with the shortest distance as the next node to travel to
             if (distanceFromNodeToTarget < shortestDistance || shortestDistance == -1)
@@ -74,13 +76,7 @@ public class cPathfinding : MonoBehaviour
         return nextNode;
     }
 
-    /// <summary>
-    /// Finds a path of nodes from the start position to the end postion. Returns a list of nodes
-    /// </summary>
-    /// <param name="startNode"></param>
-    /// <param name="targetNode"></param>
-    /// <returns></returns>
-    private static List<int> FindNodePath(int startNode, int targetNode)
+    public void CreatePath(int startNode, int targetNode)
     {
         // Create a list to store all the nodes in a path from the user to the target destination
         List<int> path = new List<int>();
@@ -107,8 +103,52 @@ public class cPathfinding : MonoBehaviour
             }
         }
 
-        return path;
+        mPath = path;
+        mPathPosition = 0;
     }
+}
+
+public class cPathfinding : MonoBehaviour
+{
+    /* -------- Variables -------- */
+
+    /* Singleton */
+    public static cPathfinding mInstance;
+
+    private List<int> mTourBuildingQueue = new List<int>();         // List of buildings the user wants to visit in
+    private int mTourBuildingQueuePosition = 0;                     // Position of the user in the tour
+
+    Path mCurrentPath = new Path();
+
+    /* -------- Unity Methods -------- */
+
+    void Update()
+    {
+        //if (cUser_Manager.mInstance.GetTargetNodeIndex() != cUser_Manager.kNullTargetNodeIndex)
+        //{
+        //    // If there is a target selected, pathfind to the target            
+        //    cArrowManager.mInstance.DirectArrow(cUser_Manager.mInstance.GetTargetNodeIndex());
+        //}
+        //else
+        //{
+        //    //If there is not a target selected, set C+T building as the target
+        //    //This entire else statement is a temporary addition for testing purposes, to be deleted once we have a real mechanism to set the target node
+        //    for (int nodeIndex = 0; nodeIndex < cNode_Manager.mInstance.mBuildingNodes.Count; nodeIndex++)
+        //    {
+        //        if (cNode_Manager.mInstance.mBuildingNodes[nodeIndex].GetNodeName() == "Test Node")
+        //        {
+        //            cUser_Manager.mInstance.SetTargetNode(nodeIndex);
+        //            break;
+        //        }
+        //    }
+        //}
+
+        
+    }
+
+    /* -------- Private Methods -------- */
+
+    
 
     /* -------- Public Methods -------- */
 
@@ -118,22 +158,21 @@ public class cPathfinding : MonoBehaviour
     /// <param name="startNode"></param>
     /// <param name="targetNode"></param>
     /// <returns></returns>
-    public bool PathfindingV2(int startNode, int targetNode)
+    public bool RunBuildingPathfinding(int targetNode)
     {
         // If path is empty, create a path to the target
-        if (mCurrentPath.Count == 0)
+        if (mCurrentPath.isEmpty())
         {
-            FindNodePath(startNode, targetNode); 
-            mCurrentPathPosition = 0;
+            mCurrentPath.CreatePath(GetClosestNode(), targetNode); 
         }   
         
         // Point the arrow towards the target node
-        cArrowManager.mInstance.DirectArrow(mCurrentPath[mCurrentPathPosition]);
+        cArrowManager.mInstance.DirectArrow(mCurrentPath.GetCurrentNode());
 
         // If the user is within n meters of the node, start pathfinding to the next node
-        if (DistanceToNextNode < mNodeReachThreshold)
+        if (DistanceToNextNode < Path.kNodeReachThreshold)
         {
-            if (mCurrentPath[mCurrentPathPosition] == targetNode)
+            if (mCurrentPath.GetCurrentNode() == targetNode)
             {
                 // Target reached.
                 return true;
@@ -141,9 +180,32 @@ public class cPathfinding : MonoBehaviour
             else
             {
                 // Move to pathfinding to the next node in the path
-                mCurrentPathPosition++;
+                mCurrentPath.CurrentNodeReached();
             }
 
+        }
+
+        return false;
+    }
+
+    public bool RunTourPathfinding()
+    {
+        // If there is a building tour queue
+        if (mTourBuildingQueue.Count > 0)
+        {
+            // Run the pathfinding to the building in the queue
+            if (RunBuildingPathfinding(mTourBuildingQueue[mTourBuildingQueuePosition])) 
+            { 
+                // When it reaches the target building in the queue, move to the next building in the queue
+                mTourBuildingQueuePosition++; 
+            }
+
+            // If the user visits everything in the queue
+            if (mTourBuildingQueuePosition > mTourBuildingQueue.Count)
+            {
+                // Exit pathfinding
+                return true;
+            }
         }
 
         return false;
@@ -154,7 +216,29 @@ public class cPathfinding : MonoBehaviour
     {
         get
         {
-            return cGPSMaths.GetDistance(cUser_Manager.mInstance.mUserLastLocation, cNode_Manager.mInstance.mNodes[mCurrentPath[mCurrentPathPosition]].GetGPSLocation());
+            return cGPSMaths.GetDistance(cUser_Manager.mInstance.mUserLastLocation, cNode_Manager.mInstance.mNodes[mCurrentPath.GetCurrentNode()].GetGPSLocation());
         }
+    }
+
+    // Returns the closest node to the users last GPS position
+    public int GetClosestNode()
+    {
+        // Set initial values to known bad values
+        int closestNode = -1;
+        float closestDistance = 100000;
+
+        for (int i = 0; i < cNode_Manager.mInstance.mNodes.Count; i++)
+        {
+            // For each node in the mNodes list, check its distance from the user
+            float distanceToNode = cGPSMaths.GetDistance(cUser_Manager.mInstance.mUserLastLocation, cNode_Manager.mInstance.mNodes[i].GetGPSLocation());
+            if (distanceToNode<closestDistance)
+            {
+                // If it's distance is the new closest distance, set this node to be the current closest node
+                closestNode = i;
+                closestDistance = distanceToNode;
+            }
+        }
+
+        return closestNode;
     }
 }

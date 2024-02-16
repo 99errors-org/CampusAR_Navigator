@@ -71,7 +71,7 @@ public class cUser_Manager : MonoBehaviour
 
     private void Start()
     {
-        // Set the location and rotation of the user if debugging.
+                // Set the location and rotation of the user if debugging.
         if (Application.isEditor)
         {
             // Set debug location (Outside the Student Centre).
