@@ -4,8 +4,11 @@
         "x": 53.76775546349844,
         "y": -2.7047938595969025
     },
-    "mConnectedNodes": [],
     "mNodeType": 0,
-    "mIndex": 1,
+    "mConnectedNodes": [
+        "p24",
+        "b31"
+    ],
+    "mIndex": 0,
     "mID": "p01"
 }
