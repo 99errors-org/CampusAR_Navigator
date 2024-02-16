@@ -8,33 +8,42 @@ using UnityEngine.UI;
 public class cUI_Manager : MonoBehaviour
 {
 
-    /* -------- Variables -------- */
+    /* -------- References -------- */
+
     [SerializeField] private TextMeshProUGUI rBuildingNameField;
+
     [SerializeField] private RectTransform rBuildingListContent;
     [SerializeField] private RectTransform rBuildingDrawer;
     [SerializeField] private RectTransform rSelectTourDrawer;
     [SerializeField] private RectTransform rCreateTourDrawer;
 
-    // Button for each building in instantiated list of drawer
-    [SerializeField] private GameObject pBuildingListButton;
+    [SerializeField] private RectTransform rCreateTourButton;
+    [SerializeField] private RectTransform rSelectBuildingButton;
+    [SerializeField] private RectTransform rSelectTourButton;
 
+    [SerializeField] private TMP_InputField rBuildingSearchInput;
 
-    // References for each small action button
-    [SerializeField] private RectTransform pCreateTourButton;
-    [SerializeField] private RectTransform pSelectBuildingButton;
-    [SerializeField] private RectTransform pSelectTourButton;
+    /* -------- Variables -------- */
 
-    private cNode currentBuildingNode; // Reference to the current cNode_Building instance
-    private bool mListPopulated = false;    // Whether the building list has been populated.
+    // Bool to control the smaller action buttons
+    private bool mActionButtonsVisible = false;
+
+    // Reference to the current cNode_Building instance
+    private cNode currentBuildingNode;
+
+    // Whether the building list has been populated.
+    private bool mListPopulated = false;
 
     // Separate bools for each drawer component
     private bool isBuildingDrawerOpen = false;
     private bool isSelectTourDrawerOpen = false;
     private bool isCreateTourDrawerOpen = false;
 
-    // Bool to control the smaller action buttons
-    private bool mActionButtonsVisible = false;
 
+    // Button for each building in instantiated list of drawer
+    [SerializeField] private GameObject pBuildingListButton;
+
+    // Dictionary to store each drawerPanel 
     Dictionary<string, RectTransform> drawerPanels = new Dictionary<string, RectTransform>();
 
     void Awake()
@@ -48,9 +57,9 @@ public class cUI_Manager : MonoBehaviour
     void Start()
     {
         // Editor values are set at 2f, this ensures the scale is set to 0f at runtime
-        pCreateTourButton.transform.localScale = Vector3.zero;
-        pSelectBuildingButton.transform.localScale = Vector3.zero;
-        pSelectTourButton.transform.localScale = Vector3.zero;
+        rCreateTourButton.transform.localScale = Vector3.zero;
+        rSelectBuildingButton.transform.localScale = Vector3.zero;
+        rSelectTourButton.transform.localScale = Vector3.zero;
     }
 
 
@@ -75,9 +84,9 @@ public class cUI_Manager : MonoBehaviour
     /// <param name="active">Boolean indicating the activity state.</param>
     private void SetButtonsActive(bool active)
     {
-        pCreateTourButton.GetComponent<Button>().enabled = active;
-        pSelectBuildingButton.GetComponent<Button>().enabled = active;
-        pSelectTourButton.GetComponent<Button>().enabled = active;
+        rCreateTourButton.GetComponent<Button>().enabled = active;
+        rSelectBuildingButton.GetComponent<Button>().enabled = active;
+        rSelectTourButton.GetComponent<Button>().enabled = active;
     }
 
     /// <summary>
@@ -86,9 +95,9 @@ public class cUI_Manager : MonoBehaviour
     /// <param name="scale">The target scale for the buttons.</param>
     private void SetButtonsScale(Vector3 scale)
     {
-        pCreateTourButton.transform.localScale = scale;
-        pSelectBuildingButton.transform.localScale = scale;
-        pSelectTourButton.transform.localScale = scale;
+        rCreateTourButton.transform.localScale = scale;
+        rSelectBuildingButton.transform.localScale = scale;
+        rSelectTourButton.transform.localScale = scale;
     }
 
     /// <summary>
@@ -140,7 +149,10 @@ public class cUI_Manager : MonoBehaviour
                 // Set Values.
                 _building.transform.Find("BuildingTag (TMP)").GetComponent<TextMeshProUGUI>().text = cNode_Manager.mInstance.mNodes[i].GetBuildingAbbreviation();
                 _building.transform.Find("BuildingName (TMP)").GetComponent<TextMeshProUGUI>().text = cNode_Manager.mInstance.mNodes[i].GetBuildingName();
-                _building.transform.Find("Distance (TMP)").GetComponent<TextMeshProUGUI>().text = _distance.ToString() + " m";
+
+                string storedPreference = PlayerPrefs.GetString("MetricsPreference", "");
+                string distanceUnit = storedPreference == "Kilometres (km)" ? "m" : storedPreference == "Miles (mi)" ? "mi" : "";
+                _building.transform.Find("Distance (TMP)").GetComponent<TextMeshProUGUI>().text = $"{_distance} {distanceUnit}";
 
                 // Capture the current cNode for the button click event
                 cNode clickedNode = cNode_Manager.mInstance.mNodes[i];
@@ -163,7 +175,6 @@ public class cUI_Manager : MonoBehaviour
             // Update the building Distance.
         }
     }
-
 
 
     /// <summary>
@@ -195,6 +206,65 @@ public class cUI_Manager : MonoBehaviour
     {
         isOpen = false;
         ToggleDrawer(drawer, ref isOpen);
+    }
+
+    private void UpdateBuildingNodesVisibility(string inputText)
+    {
+        foreach (Transform child in rBuildingListContent.transform)
+        {
+            GameObject buildingButton = child.gameObject;
+            string buildingName = buildingButton.transform.Find("BuildingName (TMP)").GetComponent<TextMeshProUGUI>().text;
+
+
+            int levenshteinDistance = CalculateLevenshteinDistance(buildingName, inputText);
+
+            // Check if the search input is a substring of the building name or vice versa
+            bool isSubstringMatch = buildingName.ToLower().Contains(inputText.ToLower()) || inputText.ToLower().Contains(buildingName.ToLower());
+
+            // Set your threshold distance as needed
+            int levenshteinThreshold = 9;
+            int substringThreshold = 0;
+
+            // Enable or disable the button based on combined conditions
+            bool isActive = (levenshteinDistance <= levenshteinThreshold) || (isSubstringMatch && levenshteinDistance <= substringThreshold);
+            buildingButton.SetActive(isActive);
+        }
+    }
+
+    /// <summary>
+    /// Calculates the Levenshtein Distance between two strings.
+    /// </summary>
+    /// <param name="s1">The first string.</param>
+    /// <param name="s2">The second string.</param>
+    /// <returns>
+    /// The minimum number of single-character edits required to transform
+    /// the first string into the second string (Levenshtein Distance).
+    /// </returns>
+    private int CalculateLevenshteinDistance(string s1, string s2)
+    {
+        s1 = s1.ToLower();
+        s2 = s2.ToLower();
+
+        int[,] distance = new int[s1.Length + 1, s2.Length + 1];
+
+        for (int i = 0; i <= s1.Length; i++)
+        {
+            for (int j = 0; j <= s2.Length; j++)
+            {
+                if (i == 0)
+                    distance[i, j] = j;
+                else if (j == 0)
+                    distance[i, j] = i;
+                else
+                    distance[i, j] = Mathf.Min(
+                        distance[i - 1, j] + 1,
+                        distance[i, j - 1] + 1,
+                        distance[i - 1, j - 1] + (s1[i - 1] == s2[j - 1] ? 0 : 1)
+                    );
+            }
+        }
+
+        return distance[s1.Length, s2.Length];
     }
 
     /* ---- Public Methods ---- */
@@ -270,7 +340,7 @@ public class cUI_Manager : MonoBehaviour
         Vector3 targetScale = mActionButtonsVisible ? Vector3.zero : Vector3.one * 2.0f;
 
         // Grab current scale of one of the buttons (this will be used for all small action buttons)
-        Vector3 originalScale = pCreateTourButton.transform.localScale;
+        Vector3 originalScale = rCreateTourButton.transform.localScale;
 
         while (time < duration)
         {
@@ -292,7 +362,10 @@ public class cUI_Manager : MonoBehaviour
     /// </summary>
     public void HandleSelectBuildingButton()
     {
-        Debug.Log("You have clicked the SelectBuilding button!");
+        if (Application.isEditor)
+        {
+            Debug.Log("You have clicked the SelectBuilding button!");
+        }
         isBuildingDrawerOpen = !isBuildingDrawerOpen;
         ToggleDrawer(rBuildingDrawer, ref isBuildingDrawerOpen);
     }
@@ -302,7 +375,10 @@ public class cUI_Manager : MonoBehaviour
     /// </summary>
     public void HandleSelectTourButton()
     {
-        Debug.Log("You have clicked the SelectTour button!");
+        if (Application.isEditor)
+        {
+            Debug.Log("You have clicked the SelectTour button!");
+        }
         isSelectTourDrawerOpen = !isSelectTourDrawerOpen;
         ToggleDrawer(rSelectTourDrawer, ref isSelectTourDrawerOpen);
     }
@@ -312,7 +388,10 @@ public class cUI_Manager : MonoBehaviour
     /// </summary>
     public void HandleCreateTourButton()
     {
-        Debug.Log("You have clicked the CreateTour button!");
+        if (Application.isEditor)
+        {
+            Debug.Log("You have clicked the CreateTour button!");
+        }
         isCreateTourDrawerOpen = !isCreateTourDrawerOpen;
         ToggleDrawer(rCreateTourDrawer, ref isCreateTourDrawerOpen);
     }
@@ -322,7 +401,20 @@ public class cUI_Manager : MonoBehaviour
     /// </summary>
     public void HandleSettingsButton()
     {
-        Debug.Log("You have clicked the Settings button!");
+        if (Application.isEditor)
+        {
+            Debug.Log("You have clicked the Settings button!");
+        }
         SceneManager.LoadScene("SettingsScene");
+    }
+
+    /// <summary>
+    /// Building search input value changed.
+    /// </summary>
+    public void OnSearchInputValueChanged()
+    {
+        string inputValue = rBuildingSearchInput.text;
+        // Call the function to update building nodes based on Levenshtein distance
+        UpdateBuildingNodesVisibility(inputValue);
     }
 }

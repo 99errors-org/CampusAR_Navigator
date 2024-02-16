@@ -45,11 +45,17 @@ public class cSettings_Manager : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Handle the go back button on Settings scene. Returns to Home scene
+    /// </summary>
     public void HandleGoBackButton()
     {
         SceneManager.LoadScene("UserInterface");
     }
 
+    /// <summary>
+    /// Stores the selected dropdown value inside Unity's PlayerPrefs class. Will persist between sessions and scenes
+    /// </summary>
     public void SaveMetricsPreference()
     {
 
