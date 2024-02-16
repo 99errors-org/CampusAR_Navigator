@@ -9,10 +9,11 @@ using UnityEngine;
 
 public class cDisplayBuildingInfo : MonoBehaviour
 {
-    [SerializeField] private GameObject pNode_Building;                             // Prefab for the building nodes, used when generating the map.))
+    [SerializeField] private GameObject pNode_Building;          // Prefab for the building nodes, used when generating the map.))
 
-    private const float mkRequiredTime = 25.0f;
     private TextMeshPro _tmp_text;
+    private float mTimer;                                       // stores the time from to see if certain time has passed
+    private float mDelayTime = 5.0f;                               // Time to pause between calling the building function
 
     // Start is called before the first frame update
     void Start()
@@ -27,7 +28,16 @@ public class cDisplayBuildingInfo : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        Invoke("DisplayBuildingText",mkRequiredTime); 
+        mTimer += Time.deltaTime;
+
+        if (mTimer > mDelayTime) 
+        {
+            DisplayBuildingText();
+
+            //Subtracting the time interval from the elapsed time accounts for any excess time that may
+            //have passed since the timer became larger than the required delay.
+            mTimer -= mDelayTime;
+        }
     }
 
 
