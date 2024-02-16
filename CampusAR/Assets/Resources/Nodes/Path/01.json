@@ -5,5 +5,7 @@
         "y": -2.7047938595969025
     },
     "mConnectedNodes": [],
-    "mNodeType": 0
+    "mNodeType": 0,
+    "mIndex": 1,
+    "mID": "p01"
 }
