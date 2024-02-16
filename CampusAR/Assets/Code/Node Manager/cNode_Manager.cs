@@ -24,7 +24,7 @@ public class cNode_Manager : MonoBehaviour
     public List<cNode>                              mNodes { get; private set; } = new List<cNode>();                     // A list of all the nodes.
     public List<cNode_Building>                     mBuildingNodes { get; private set; } = new List<cNode_Building>();    // A list of all the building nodes. mBuildingNodes[0] is a dummy node. Nodes are loading in index order so mBuildingNodes[5] = node with index 5
     public List<cNode>                              mPathNodes { get; private set; } = new List<cNode>();                 // A list of all the path nodes. mPathNodes[0] is a dummy node. Nodes are loading in index order so mPathNodes[5] = node with index 5
-    public List<GameObject>                        mWorldNodes { get; private set; } = new List<GameObject>();            // A list of all the instantiaed nodes in-world.
+    public List<GameObject>                         mWorldNodes { get; private set; } = new List<GameObject>();            // A list of all the instantiaed nodes in-world.
 
 
     /* -------- Unity Methods -------- */

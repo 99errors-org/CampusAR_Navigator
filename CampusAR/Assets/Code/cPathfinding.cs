@@ -6,6 +6,7 @@ using System.IO;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using Unity.VisualScripting;
 
 
 class Path
@@ -69,23 +70,32 @@ class Path
         }
         Debug.Log(conNodeStr);
 
+
+        // looping through every connected node
         for (int i = 0; i < cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes().Count; i++)
         {
-            int k = i;
+            Debug.Log("Checking connected node: " + cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[i].GetNodeID());
             // Find the distance from the connected node to the target
-            float distanceFromNodeToTarget = cGPSMaths.GetDistance(cNode_Manager.mInstance.mNodes[targetNode].GetGPSLocation(), cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[k].GetGPSLocation());
-            Debug.Log("Distance From Node To Target: " + distanceFromNodeToTarget.ToString() + ", " + cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[k].GetNodeID());
+            Debug.Log("Target node: " + cNode_Manager.mInstance.mNodes[targetNode].GetNodeID());
+            Vector3 targetLocation = cNode_Manager.mInstance.mNodes[targetNode].GetUnityLocation();
+
+            Vector3 currConnectedNodeLocation = cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[i].GetUnityLocation();
+
+            Debug.Log("Target GPS: " + targetLocation.ToString());
+            Debug.Log("current Connected Node GPS: " + currConnectedNodeLocation.ToString());
+
+            float distanceFromNodeToTarget = cGPSMaths.GetUnityDistance(currConnectedNodeLocation, targetLocation);
+            Debug.Log("Distance From Node To Target: " + distanceFromNodeToTarget.ToString() + ", " + cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[i].GetNodeID());
 
             // Set the node with the shortest distance as the next node to travel to
             if (distanceFromNodeToTarget < shortestDistance || shortestDistance == -1)
             {
                 // Update the current shortest distance to beat
                 shortestDistance = distanceFromNodeToTarget;
-                nextNode = cNode_Manager.mInstance.mNodes.IndexOf(cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[k]);
+                nextNode = cNode_Manager.mInstance.mNodes.IndexOf(cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[i]);
             }
         }
 
-        Debug.Log("Next node: " + nextNode.ToString());
         Debug.Log("Next node (index): " + cNode_Manager.mInstance.mNodes[nextNode].GetNodeID());
         return nextNode;
     }
