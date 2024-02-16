@@ -30,6 +30,35 @@ public static class cGPSMaths
         return _distance;
     }
 
+    public static float GetShortDistance(Vector2 pos1, Vector2 pos2)
+    {
+        // Earth's radius in meters
+        float R = 6371000;
+
+        // Convert latitudes and longitudes from degrees to radians
+        float lat1 = pos1.x * Mathf.Deg2Rad;
+        float lat2 = pos2.x * Mathf.Deg2Rad;
+        float lon1 = pos1.y * Mathf.Deg2Rad;
+        float lon2 = pos2.y * Mathf.Deg2Rad;
+
+        // Convert lat/long to Cartesian coordinates
+        float x1 = R * Mathf.Cos(lat1) * Mathf.Cos(lon1);
+        float y1 = R * Mathf.Cos(lat1) * Mathf.Sin(lon1);
+
+        float x2 = R * Mathf.Cos(lat2) * Mathf.Cos(lon2);
+        float y2 = R * Mathf.Cos(lat2) * Mathf.Sin(lon2);
+
+        // Calculate Euclidean distance
+        float distance = Mathf.Sqrt(Mathf.Pow(x2 - x1, 2) + Mathf.Pow(y2 - y1, 2));
+
+        return distance;
+    }
+
+    public static float GetUnityDistance(Vector3 _pos1, Vector3 _pos2)
+    {
+        return Vector3.Distance(_pos1, _pos2);
+    }
+
     /// <summary>
     /// Gets the angle between two GPS positions.
     /// </summary>
