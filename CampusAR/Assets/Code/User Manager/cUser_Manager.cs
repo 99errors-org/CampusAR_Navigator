@@ -344,6 +344,11 @@ public class cUser_Manager : MonoBehaviour
         }
     }
 
+    // returns users last location to diplay building information
+    public Vector2 GetUserLocation()
+    {
+        return mUserLastLocation;
+    }
     public kDistanceUnit GetUserDistnacePrefrence()
     {
         return mUsersDistancePrefrence;

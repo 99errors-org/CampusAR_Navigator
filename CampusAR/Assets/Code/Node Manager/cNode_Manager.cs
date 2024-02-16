@@ -24,7 +24,7 @@ public class cNode_Manager : MonoBehaviour
     public List<cNode> mNodes = new List<cNode>();                 // A list of all the nodes.
     public List<cNode_Building> mBuildingNodes = new List<cNode_Building>();// A list of all the building nodes
     public List<cNode> mPathNodes = new List<cNode>();             // A list of all the path nodes
-    private List<GameObject> mWorldNodes = new List<GameObject>();       // A list of all the instantiaed nodes in-world.
+    public List<GameObject> mWorldNodes = new List<GameObject>();       // A list of all the instantiaed nodes in-world.
 
     /* -------- Unity Methods -------- */
 
@@ -53,7 +53,6 @@ public class cNode_Manager : MonoBehaviour
     /// </summary>
     public void LoadNodeList()
     {
-        float yPadding = 10.0f;
         // Load all buildings.
         TextAsset[] _buildingNodes = Resources.LoadAll<TextAsset>("Nodes\\Buildings\\");
 
@@ -79,7 +78,7 @@ public class cNode_Manager : MonoBehaviour
 
         for (int i = 0; i < _pathNodes.Length; i++)
         {
-            Debug.Log(_pathNodes[i].ToString());
+            //Debug.Log(_pathNodes[i].ToString());
 
             // Create new node for storing.
             cNode _node = new cNode();
@@ -99,13 +98,11 @@ public class cNode_Manager : MonoBehaviour
     public void CorrectNodes(Vector2 _userPosition)
     {
         // Move all the nodes to the correct positions.
-        for (int i = 0; i < mNodes.Count; i++)
+        for (int i = 0; i < mWorldNodes.Count; i++)
         {
             mWorldNodes[i].transform.localPosition = cGPSMaths.GetVector(_userPosition, mNodes[i].GetGPSLocation());
         }
 
-        // Rotate the nodes container to point north.
-        rNodeContainer.rotation = Quaternion.Euler(0.0f, -cUser_Manager.mInstance.mNorthOffset, 0.0f);
     }
 
     /// <summary>
@@ -120,7 +117,7 @@ public class cNode_Manager : MonoBehaviour
         foreach (cNode buildingNode in mBuildingNodes)
         {
             // Create the node
-            _node = Instantiate(pNode_Building, rNodeContainer);
+            _node = Instantiate(pNode_Building);
 
             // Position the node correctly, and align it with the North bearing relative to the user.
             _node.transform.position = cGPSMaths.GetVector(_userPosition, buildingNode.GetGPSLocation());
@@ -128,17 +125,19 @@ public class cNode_Manager : MonoBehaviour
             // Name the in-world object.
             _node.name = "Node - " + buildingNode.GetBuildingName();
 
-            // Find the TextMeshPro component and update the text
+            // Find the TextMeshPro component and update the text.
             TextMeshPro tmp = _node.GetComponentInChildren<TextMeshPro>();
             if (tmp != null)
             {
-                tmp.text = buildingNode.GetBuildingName();
-                Debug.Log("Updated TextMeshPro with: " + buildingNode.GetBuildingName());
+                // Setting the text component of node to building name and description.
+                tmp.text = (buildingNode.GetBuildingName()+"\n"+buildingNode.GetBuildingDescription());
             }
             else
             {
                 Debug.LogError("TextMeshPro component not found on the instantiated node.");
             }
+            // Setting the text to inactive
+            tmp.gameObject.SetActive(false);
 
             // Add node to list of spawned nodes.
             mWorldNodes.Add(_node);
@@ -148,7 +147,7 @@ public class cNode_Manager : MonoBehaviour
         foreach (cNode pathNode in mPathNodes)
         {
             // Create the node
-            _node = Instantiate(pNode_Path, rNodeContainer);
+            _node = Instantiate(pNode_Path);
 
             // Position the node correctly, and align it with the North bearing relative to the user.
             _node.transform.position = cGPSMaths.GetVector(_userPosition, pathNode.GetGPSLocation());
@@ -156,20 +155,9 @@ public class cNode_Manager : MonoBehaviour
             // Name the in-world object.
             _node.name = "Node - " + pathNode.GetNodeName();
 
-            // Find the TextMeshPro component and update the text
-            TextMeshPro tmp = _node.GetComponentInChildren<TextMeshPro>();
-            if (tmp != null)
-            {
-                tmp.text = pathNode.GetNodeName();
-                Debug.Log("Updated TextMeshPro with: " + pathNode.GetNodeName());
-            }
-            else
-            {
-                Debug.LogError("TextMeshPro component not found on the instantiated node.");
-            }
-
             // Add node to list of spawned nodes.
             mWorldNodes.Add(_node);
         }
     }
+
 }
