@@ -7,8 +7,8 @@
     "mConnectedNodes": [],
     "mNodeType": 1,
     "mBuildingName": "Student Centre",
-    "mBuildingDescription": "Get support, \nCareers Fairs\nGrab a coffee\nVisit roof garden.",
+    "mBuildingDescription": "",
     "mBuildingAbbreviation": "STU",
-    "index": 28,
+    "mIndex": 28,
     "mID": "b29"
 }
