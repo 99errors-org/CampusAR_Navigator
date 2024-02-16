@@ -113,7 +113,7 @@ public class cPathfinding : MonoBehaviour
 
     /* Singleton */
     public static cPathfinding mInstance;
-    public float mNodeReachThreshold = 20;
+    public const float mNodeReachThreshold = 20;
 
     private List<int> mTourBuildingQueue = new List<int>();         // List of buildings the user wants to visit in
     private int mTourBuildingQueuePosition = 0;                     // Position of the user in the tour
@@ -124,26 +124,7 @@ public class cPathfinding : MonoBehaviour
 
     void Update()
     {
-        //if (cUser_Manager.mInstance.GetTargetNodeIndex() != cUser_Manager.kNullTargetNodeIndex)
-        //{
-        //    // If there is a target selected, pathfind to the target            
-        //    cArrowManager.mInstance.DirectArrow(cUser_Manager.mInstance.GetTargetNodeIndex());
-        //}
-        //else
-        //{
-        //    //If there is not a target selected, set C+T building as the target
-        //    //This entire else statement is a temporary addition for testing purposes, to be deleted once we have a real mechanism to set the target node
-        //    for (int nodeIndex = 0; nodeIndex < cNode_Manager.mInstance.mBuildingNodes.Count; nodeIndex++)
-        //    {
-        //        if (cNode_Manager.mInstance.mBuildingNodes[nodeIndex].GetNodeName() == "Test Node")
-        //        {
-        //            cUser_Manager.mInstance.SetTargetNode(nodeIndex);
-        //            break;
-        //        }
-        //    }
-        //}
 
-        
     }
 
     /* -------- Private Methods -------- */
