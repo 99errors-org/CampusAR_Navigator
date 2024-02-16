@@ -8,7 +8,6 @@ using UnityEngine;
 
 class Path
 {
-    public const int kNodeReachThreshold = 20;
     private List<int> mPath = new List<int>();               // Chain of nodes working from the users start position to the final target destination
     private int mPathPosition = 0;                           // Index of how far into the list Path the user has traversed
 
@@ -114,6 +113,7 @@ public class cPathfinding : MonoBehaviour
 
     /* Singleton */
     public static cPathfinding mInstance;
+    public float mNodeReachThreshold = 20;
 
     private List<int> mTourBuildingQueue = new List<int>();         // List of buildings the user wants to visit in
     private int mTourBuildingQueuePosition = 0;                     // Position of the user in the tour
@@ -170,7 +170,7 @@ public class cPathfinding : MonoBehaviour
         cArrowManager.mInstance.DirectArrow(mCurrentPath.GetCurrentNode());
 
         // If the user is within n meters of the node, start pathfinding to the next node
-        if (DistanceToNextNode < Path.kNodeReachThreshold)
+        if (DistanceToNextNode < mNodeReachThreshold)
         {
             if (mCurrentPath.GetCurrentNode() == targetNode)
             {

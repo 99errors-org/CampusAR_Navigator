@@ -9,7 +9,6 @@ using UnityEngine;
 
 public class cDisplayBuildingInfo : MonoBehaviour
 {
-    private const float kDistanceToDisplayText = 15.0f;
     [SerializeField] private GameObject pNode_Building;                             // Prefab for the building nodes, used when generating the map.))
 
     private const float mkRequiredTime = 25.0f;
@@ -45,7 +44,7 @@ public class cDisplayBuildingInfo : MonoBehaviour
             if (_tmp_text != null)
             {
                 // If the building is near display the text
-                if (_distanceFromUser < kDistanceToDisplayText)
+                if (_distanceFromUser < cPathfinding.mInstance.mNodeReachThreshold)
                 {
                     _tmp_text.gameObject.SetActive(true);  
                 }
