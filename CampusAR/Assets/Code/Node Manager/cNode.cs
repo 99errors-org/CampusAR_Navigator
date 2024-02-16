@@ -8,11 +8,16 @@ public class cNode
 {
     public static cNode nullNode;
 
-	/* -------- Variables -------- */
+    /* -------- Variables -------- */
+    private const char mPathNodeIdentifier = 'p';
+    private const char mBuildingNodeIndentifier = 'b';
+
 	[Title("Node Information")]
 	[SerializeField] protected string		    mNodeName;                              // The name of this node.
 	[SerializeField] protected Vector2          mGeoPosition;                           // The GPS location of the Node, X = Latitude, Y = Longitude.
-	[SerializeField] protected List<cNode>      mConnectedNodes = new List<cNode>();    // A list of all the connected nodes that the user can get to from this node.
+	[SerializeField] protected List<string>     mConnectedNodes = new List<string>();   // A list of all the connected nodes that the user can get to from this node.
+    [SerializeField] protected int              mIndex;                                 // Numeric identifier. Does not differentiate between path nodes and building nodes
+    [SerializeField] protected string           mID;                                    // Universal identifier to track between path and building nodes. Indexes will be preceded by a 'p' for a path node and a 'b' for a building node
 
     /* -------- Constructors -------- */
 
@@ -21,7 +26,7 @@ public class cNode
 
     }
 
-    public cNode(string nodeName, Vector2 GPSPosition, List<cNode> connectedNodes)
+    public cNode(string nodeName, Vector2 GPSPosition, List<string> connectedNodes)
     {
         mNodeName = nodeName;
         mGeoPosition = GPSPosition;
@@ -39,6 +44,16 @@ public class cNode
         return mNodeName;
     }
 
+    public int GetNodeIndex()
+    {
+        return mIndex;
+    }
+
+    public string GetNodeID()
+    {
+        return mID;
+    }
+
 	/// <summary>
 	/// Get the position of this node in Latitude and Longitude.
 	/// </summary>
@@ -50,7 +65,28 @@ public class cNode
 
     public List<cNode> GetConnectedNodes()
     {
-        return mConnectedNodes;
+        List<cNode> connectedNodeList = new List<cNode>();
+
+        foreach (string rawNode in mConnectedNodes)
+        {
+            int nodeStringLength = rawNode.Length;
+            char nodeType = rawNode[0];
+            int nodeIndex = int.Parse(rawNode.Substring(1, nodeStringLength - 1));
+
+
+            if (rawNode[0] == mPathNodeIdentifier)
+            {
+                // If the node is a path node
+                connectedNodeList.Add(cNode_Manager.mInstance.mPathNodes[nodeIndex]);
+            }
+            else if (rawNode[0] == mBuildingNodeIndentifier)
+            {
+                // If the node is a path node
+                connectedNodeList.Add(cNode_Manager.mInstance.mBuildingNodes[nodeIndex]);
+            }
+        }
+
+        return connectedNodeList;
     }
 
 	/// <summary>
@@ -96,7 +132,7 @@ public class cNode_Building : cNode
 
     }
 
-    public cNode_Building(string nodeName, Vector2 GPSPosition, List<cNode> connectedNodes, string buildingName, string buildingDescription, string buildingAbbreviation)
+    public cNode_Building(string nodeName, Vector2 GPSPosition, List<string> connectedNodes, string buildingName, string buildingDescription, string buildingAbbreviation)
     {
         mNodeName = nodeName;
         mGeoPosition = GPSPosition;

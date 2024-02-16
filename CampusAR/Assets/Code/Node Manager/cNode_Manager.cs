@@ -25,10 +25,10 @@ public class cNode_Manager : MonoBehaviour
     /* -------- Variables -------- */
     
     public List<cNode>                              mNodes { get; private set; } = new List<cNode>();                     // A list of all the nodes.
-    public List<cNode_Building>                     mBuildingNodes { get; private set; } = new List<cNode_Building>();    // A list of all the building nodes
-    public List<cNode>                              mPathNodes { get; private set; } = new List<cNode>();                 // A list of all the path nodes
-    
-    private List<GameObject>                        mWorldNodes = new List<GameObject>();           // A list of all the instantiaed nodes in-world.
+    public List<cNode_Building>                     mBuildingNodes { get; private set; } = new List<cNode_Building>();    // A list of all the building nodes. mBuildingNodes[0] is a dummy node. Nodes are loading in index order so mBuildingNodes[5] = node with index 5
+    public List<cNode>                              mPathNodes { get; private set; } = new List<cNode>();                 // A list of all the path nodes. mPathNodes[0] is a dummy node. Nodes are loading in index order so mPathNodes[5] = node with index 5
+
+    private List<GameObject>                        mWorldNodes = new List<GameObject>();                                 // A list of all the instantiaed nodes in-world.
 
     /* -------- Unity Methods -------- */
 
@@ -57,6 +57,13 @@ public class cNode_Manager : MonoBehaviour
     /// </summary>
     public void LoadNodeList()
     {
+        mNodes.Clear();
+        mBuildingNodes.Clear();
+        mPathNodes.Clear();
+
+        mBuildingNodes.Add(new cNode_Building());
+        mPathNodes.Add(new cNode());
+
         // Load all buildings.
         TextAsset[] _buildingNodes = Resources.LoadAll<TextAsset>("Nodes\\Buildings\\");
 
@@ -87,6 +94,19 @@ public class cNode_Manager : MonoBehaviour
             // Add the node.
             mNodes.Add(_node);
             mPathNodes.Add(_node);
+        }
+
+        Debug.Log("---- Building Nodes ----");
+        foreach (cNode_Building node in cNode_Manager.mInstance.mBuildingNodes)
+        {
+            Debug.Log("Node Index: " + node.GetNodeIndex() + "; Node ID: " + node.GetNodeID() + "; Position in List: " + cNode_Manager.mInstance.mBuildingNodes.IndexOf(node) + "; Node Name: " + node.GetNodeName());
+        }
+
+        Debug.Log("\n\n---- Path Nodes ----");
+
+        foreach (cNode node in cNode_Manager.mInstance.mPathNodes)
+        {
+            Debug.Log("Node Index: " + node.GetNodeIndex() + "; Node ID: " + node.GetNodeID() + "; Position in List: " + cNode_Manager.mInstance.mPathNodes.IndexOf(node) + "; Node Name: " + node.GetNodeName());
         }
     }
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,7 +62,7 @@ class Path
         for (int i = 0; i < cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes().Count; i++)
         {
             // Find the distance from the connected node to the target
-            float distanceFromNodeToTarget = cGPSMaths.GetDistance(cNode_Manager.mInstance.mNodes[targetNode].GetGPSLocation(), cNode_Manager.mInstance.mNodes[i].GetGPSLocation());
+            float distanceFromNodeToTarget = cGPSMaths.GetDistance(cNode_Manager.mInstance.mNodes[targetNode].GetGPSLocation(), cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[1].GetGPSLocation());
 
             // Set the node with the shortest distance as the next node to travel to
             if (distanceFromNodeToTarget < shortestDistance || shortestDistance == -1)
@@ -123,24 +124,26 @@ public class cPathfinding : MonoBehaviour
 
     void Update()
     {
-        if (cUser_Manager.mInstance.GetTargetNodeIndex() != cUser_Manager.kNullTargetNodeIndex)
-        {
-            // If there is a target selected, pathfind to the target            
-            cArrowManager.mInstance.DirectArrow(cUser_Manager.mInstance.GetTargetNodeIndex());
-        }
-        else
-        {
-            //If there is not a target selected, set C+T building as the target
-            //This entire else statement is a temporary addition for testing purposes, to be deleted once we have a real mechanism to set the target node
-            for (int nodeIndex = 0; nodeIndex < cNode_Manager.mInstance.mBuildingNodes.Count; nodeIndex++)
-            {
-                if (cNode_Manager.mInstance.mBuildingNodes[nodeIndex].GetNodeName() == "Test Node")
-                {
-                    cUser_Manager.mInstance.SetTargetNode(nodeIndex);
-                    break;
-                }
-            }
-        }
+        //if (cUser_Manager.mInstance.GetTargetNodeIndex() != cUser_Manager.kNullTargetNodeIndex)
+        //{
+        //    // If there is a target selected, pathfind to the target            
+        //    cArrowManager.mInstance.DirectArrow(cUser_Manager.mInstance.GetTargetNodeIndex());
+        //}
+        //else
+        //{
+        //    //If there is not a target selected, set C+T building as the target
+        //    //This entire else statement is a temporary addition for testing purposes, to be deleted once we have a real mechanism to set the target node
+        //    for (int nodeIndex = 0; nodeIndex < cNode_Manager.mInstance.mBuildingNodes.Count; nodeIndex++)
+        //    {
+        //        if (cNode_Manager.mInstance.mBuildingNodes[nodeIndex].GetNodeName() == "Test Node")
+        //        {
+        //            cUser_Manager.mInstance.SetTargetNode(nodeIndex);
+        //            break;
+        //        }
+        //    }
+        //}
+
+        
     }
 
     /* -------- Private Methods -------- */
