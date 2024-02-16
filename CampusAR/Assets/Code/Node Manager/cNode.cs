@@ -72,6 +72,7 @@ public class cNode
             int nodeStringLength = rawNode.Length;
             char nodeType = rawNode[0];
             int nodeIndex = int.Parse(rawNode.Substring(1, nodeStringLength - 1));
+            nodeIndex -= 1;
 
 
             if (rawNode[0] == mPathNodeIdentifier)

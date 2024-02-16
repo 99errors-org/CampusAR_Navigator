@@ -2,9 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+
 
 class Path
 {
@@ -34,7 +36,7 @@ class Path
     }
     public int GetCurrentNode()
     {
-        if (!isEmpty())
+        if (!isEmpty() && mPathPosition < mPath.Count())
         {
             return mPath[mPathPosition];
         }
@@ -57,21 +59,34 @@ class Path
         // Shortest distance is set to -1 as a known null value. Distance (scalar) cannot be less that 0
         float shortestDistance = -1;
 
-        // For each node that is connected/accessible to the current node
+        //// For each node that is connected/accessible to the current node
+        Debug.Log("Connected Node Count: " + cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes().Count.ToString());
+
+        string conNodeStr = "";
+        foreach (cNode node in cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes())
+        {
+            conNodeStr += node.GetNodeID() + ", ";
+        }
+        Debug.Log(conNodeStr);
+
         for (int i = 0; i < cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes().Count; i++)
         {
+            int k = i;
             // Find the distance from the connected node to the target
-            float distanceFromNodeToTarget = cGPSMaths.GetDistance(cNode_Manager.mInstance.mNodes[targetNode].GetGPSLocation(), cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[1].GetGPSLocation());
+            float distanceFromNodeToTarget = cGPSMaths.GetDistance(cNode_Manager.mInstance.mNodes[targetNode].GetGPSLocation(), cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[k].GetGPSLocation());
+            Debug.Log("Distance From Node To Target: " + distanceFromNodeToTarget.ToString() + ", " + cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[k].GetNodeID());
 
             // Set the node with the shortest distance as the next node to travel to
             if (distanceFromNodeToTarget < shortestDistance || shortestDistance == -1)
             {
                 // Update the current shortest distance to beat
                 shortestDistance = distanceFromNodeToTarget;
-                nextNode = i;
+                nextNode = cNode_Manager.mInstance.mNodes.IndexOf(cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[k]);
             }
         }
 
+        Debug.Log("Next node: " + nextNode.ToString());
+        Debug.Log("Next node (index): " + cNode_Manager.mInstance.mNodes[nextNode].GetNodeID());
         return nextNode;
     }
 
@@ -93,6 +108,7 @@ class Path
             if (nextNode == targetNode)
             {
                 path.Add(nextNode);
+                Debug.Log("EXXXXXIIIIITTTT!!!!!");
                 break;
             }
             else
@@ -105,11 +121,25 @@ class Path
         mPath = path;
         mPathPosition = 0;
     }
+
+    public void PrintPath()
+    {
+        string pathString = "";
+        foreach (int node in mPath)
+        {
+            string pathID = cNode_Manager.mInstance.mNodes[node].GetNodeID();
+            pathString += pathID;
+            pathString += ", ";
+        }
+        Debug.Log("Path Chain: " + pathString);
+    }
 }
 
 public class cPathfinding : MonoBehaviour
 {
     /* -------- Variables -------- */
+
+    public bool doOnce = true;
 
     /* Singleton */
     public static cPathfinding mInstance;
@@ -124,7 +154,21 @@ public class cPathfinding : MonoBehaviour
 
     void Update()
     {
+        if (doOnce)
+        {
+            int startNode = 0;
+            int endNode = 21;
 
+            int _startNode = cNode_Manager.mInstance.mNodes.IndexOf(cNode_Manager.mInstance.mPathNodes[startNode]);
+            Debug.Log("Start Node (ID): " + cNode_Manager.mInstance.mNodes[_startNode].GetNodeID());
+            int _endNode = cNode_Manager.mInstance.mNodes.IndexOf(cNode_Manager.mInstance.mPathNodes[endNode]);
+            Debug.Log("End Node (ID): " + cNode_Manager.mInstance.mNodes[_endNode].GetNodeID());
+
+            mCurrentPath.CreatePath(_startNode, _endNode);
+            mCurrentPath.PrintPath();
+
+            doOnce = false;
+        }
     }
 
     /* -------- Private Methods -------- */
