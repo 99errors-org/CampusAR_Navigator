@@ -113,7 +113,7 @@ public class cPathfinding : MonoBehaviour
 
     /* Singleton */
     public static cPathfinding mInstance;
-    public const float mNodeReachThreshold = 20;
+    public static float mNodeReachThreshold = 20;
 
     private List<int> mTourBuildingQueue = new List<int>();         // List of buildings the user wants to visit in
     private int mTourBuildingQueuePosition = 0;                     // Position of the user in the tour

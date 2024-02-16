@@ -58,8 +58,8 @@ public class cNode_Manager : MonoBehaviour
         mBuildingNodes.Clear();
         mPathNodes.Clear();
 
-        mBuildingNodes.Add(new cNode_Building());
-        mPathNodes.Add(new cNode());
+        //mBuildingNodes.Add(new cNode_Building());
+        //mPathNodes.Add(new cNode());
 
         // Load all buildings.
         TextAsset[] _buildingNodes = Resources.LoadAll<TextAsset>("Nodes\\Buildings\\");

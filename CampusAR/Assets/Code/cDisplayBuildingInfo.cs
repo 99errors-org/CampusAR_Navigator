@@ -54,17 +54,17 @@ public class cDisplayBuildingInfo : MonoBehaviour
             if (_tmp_text != null)
             {
                 // If the building is near display the text
-                if (_distanceFromUser < cPathfinding.mInstance.mNodeReachThreshold)
-                {
-                    _tmp_text.gameObject.SetActive(true);  
-                }
-                else
+                if (_distanceFromUser >= cPathfinding.mNodeReachThreshold)
                 {
                     if (_tmp_text.gameObject.activeSelf)
                     {
                         _tmp_text.gameObject.SetActive(false);
                     }
-                }    
+                }
+                else
+                {
+                    _tmp_text.gameObject.SetActive(true);
+                }
             }
             else
             {
