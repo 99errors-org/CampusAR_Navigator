@@ -8,5 +8,7 @@
     "mNodeType": 1,
     "mBuildingName": "Eden Building",
     "mBuildingDescription": "",
-    "mBuildingAbbreviation": ""
+    "mBuildingAbbreviation": "ER",
+    "index": 11,
+    "mID": "b11"
 }

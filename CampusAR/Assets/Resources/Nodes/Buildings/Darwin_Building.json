@@ -8,5 +8,7 @@
     "mNodeType": 1,
     "mBuildingName": "Darwin Building",
     "mBuildingDescription": "",
-    "mBuildingAbbreviation": ""
+    "mBuildingAbbreviation": "DB",
+    "index": 8,
+    "mID": "b08"
 }

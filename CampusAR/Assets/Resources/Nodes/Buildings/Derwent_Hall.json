@@ -8,5 +8,7 @@
     "mNodeType": 1,
     "mBuildingName": "Derwent Hall",
     "mBuildingDescription": "",
-    "mBuildingAbbreviation": ""
+    "mBuildingAbbreviation": "DW",
+    "index": 9,
+    "mID": "b09"
 }

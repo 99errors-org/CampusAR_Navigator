@@ -8,5 +8,7 @@
     "mNodeType": 1,
     "mBuildingName": "Engineering Innovation Centre",
     "mBuildingDescription": "",
-    "mBuildingAbbreviation": ""
+    "mBuildingAbbreviation": "EIC",
+    "index": 13,
+    "mID": "b13"
 }

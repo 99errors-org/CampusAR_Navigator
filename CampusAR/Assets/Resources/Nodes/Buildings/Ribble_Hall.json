@@ -8,5 +8,7 @@
     "mNodeType": 1,
     "mBuildingName": "Ribble Hall",
     "mBuildingDescription": "",
-    "mBuildingAbbreviation": ""
+    "mBuildingAbbreviation": "RI",
+    "index": 25,
+    "mID": "b25"
 }

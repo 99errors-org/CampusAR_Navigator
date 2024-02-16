@@ -8,5 +8,7 @@
     "mNodeType": 1,
     "mBuildingName": "Edward Building",
     "mBuildingDescription": "",
-    "mBuildingAbbreviation": ""
+    "mBuildingAbbreviation": "EB",
+    "index": 12,
+    "mID": "b12"
 }

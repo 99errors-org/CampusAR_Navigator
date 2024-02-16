@@ -1,9 +1,11 @@
 {
     "mNodeName": "24",
     "mGeoPosition": {
-        "x": 53.76096018870238,
-        "y": -2.7089668726225047
+        "x": 53.766917,
+        "y": -2.70476
     },
     "mConnectedNodes": [],
-    "mNodeType": 0
+    "mNodeType": 0,
+    "mIndex": 24,
+    "mID": "p24"
 }

@@ -8,5 +8,7 @@
     "mNodeType": 1,
     "mBuildingName": "Student Centre",
     "mBuildingDescription": "Get support, \nCareers Fairs\nGrab a coffee\nVisit roof garden.",
-    "mBuildingAbbreviation": ""
+    "mBuildingAbbreviation": "STU",
+    "index": 28,
+    "mID": "b28"
 }

@@ -8,5 +8,7 @@
     "mNodeType": 1,
     "mBuildingName": "Brook Building",
     "mBuildingDescription": "",
-    "mBuildingAbbreviation": ""
+    "mBuildingAbbreviation": "BB",
+    "index": 5,
+    "mID": "b05"
 }

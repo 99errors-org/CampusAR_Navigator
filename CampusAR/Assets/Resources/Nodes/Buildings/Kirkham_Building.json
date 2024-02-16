@@ -8,5 +8,7 @@
     "mNodeType": 1,
     "mBuildingName": "Kirkham Building",
     "mBuildingDescription": "",
-    "mBuildingAbbreviation": ""
+    "mBuildingAbbreviation": "KM",
+    "index": 20,
+    "mID": "b20"
 }

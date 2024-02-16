@@ -8,5 +8,7 @@
     "mNodeType": 1,
     "mBuildingName": "Chandler Building",
     "mBuildingDescription": "",
-    "mBuildingAbbreviation": ""
+    "mBuildingAbbreviation": "CB",
+    "index": 6,
+    "mID": "b06"
 }

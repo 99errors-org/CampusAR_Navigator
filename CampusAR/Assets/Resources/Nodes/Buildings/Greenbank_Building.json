@@ -8,5 +8,7 @@
     "mNodeType": 1,
     "mBuildingName": "Greenbank Building",
     "mBuildingDescription": "",
-    "mBuildingAbbreviation": ""
+    "mBuildingAbbreviation": "GR",
+    "index": 16,
+    "mID": "b16"
 }

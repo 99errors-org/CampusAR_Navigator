@@ -8,5 +8,7 @@
     "mNodeType": 1,
     "mBuildingName": "Foster Building",
     "mBuildingDescription": "",
-    "mBuildingAbbreviation": ""
+    "mBuildingAbbreviation": "FB",
+    "index": 14,
+    "mID": "b14"
 }

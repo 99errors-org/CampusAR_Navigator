@@ -8,5 +8,7 @@
     "mNodeType": 1,
     "mBuildingName": "Allen Building",
     "mBuildingDescription": "",
-    "mBuildingAbbreviation": ""
+    "mBuildingAbbreviation": "AL",
+    "index": 4,
+    "mID": "b04"
 }

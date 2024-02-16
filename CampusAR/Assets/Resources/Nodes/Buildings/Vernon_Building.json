@@ -8,5 +8,7 @@
     "mNodeType": 1,
     "mBuildingName": "Vernon Building",
     "mBuildingDescription": "",
-    "mBuildingAbbreviation": ""
+    "mBuildingAbbreviation": "VE",
+    "index": 30,
+    "mID": "b30"
 }

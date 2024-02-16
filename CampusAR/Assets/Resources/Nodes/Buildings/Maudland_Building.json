@@ -8,5 +8,7 @@
     "mNodeType": 1,
     "mBuildingName": "Maudland Building",
     "mBuildingDescription": "",
-    "mBuildingAbbreviation": ""
+    "mBuildingAbbreviation": "MB",
+    "index": 23,
+    "mID": "b23"
 }
