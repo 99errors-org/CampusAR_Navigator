@@ -7,6 +7,7 @@ Class, function and variable documentation
 - cGPSMaths
 - cArrowManager
 - cUser_Manager
+- cDisplayBuildingInfo
 
 ## cNode.cs
 *Nodes are individual points on the map that users can navigate to.*
@@ -233,3 +234,21 @@ public cNode GetTargetNode()                     // Returns the target node, as 
 public void ChangeCurrentNode(bool _increment)   // Changes the currently selected node, increments down the list
 ```
 
+## cDisplayBuildingInfo.cs
+
+-- Class Variables --
+```C#
+private TextMeshPro _tmp_text;                              // Stores the text object of the current building in loop
+private float mTimer;                                       // Stores the time from to see if certain time has passed
+private float mDelayTime = 5.0f;                            // Time to pause between calling the building function
+```
+
+-- Unity Functions --
+```C#
+private void FixedUpdate();
+```
+
+-- Private Functions --
+```C#
+private void DisplayBuildingText()                          // Checks if the building is near then sets building text to active
+```
