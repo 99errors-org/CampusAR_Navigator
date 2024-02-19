@@ -4,7 +4,9 @@
         "x": 53.764945918362216,
         "y": -2.7084755882444584
     },
-    "mConnectedNodes": [],
+    "mConnectedNodes": [
+        "p25"
+    ],
     "mNodeType": 1,
     "mBuildingName": "Victoria Building",
     "mBuildingDescription": "",

@@ -4,7 +4,11 @@
         "x": 53.76574046566518,
         "y": -2.708730749211238
     },
-    "mConnectedNodes": [],
+    "mConnectedNodes": [
+        "p04",
+        "p34",
+        "p35"
+    ],
     "mNodeType": 1,
     "mBuildingName": "Douglas Hall",
     "mBuildingDescription": "",

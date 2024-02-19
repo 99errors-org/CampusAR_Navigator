@@ -4,7 +4,9 @@
         "x": 53.766149840612435,
         "y": -2.7073122298619414
     },
-    "mConnectedNodes": [],
+    "mConnectedNodes": [
+        "p33"
+    ],
     "mNodeType": 1,
     "mBuildingName": "Eden Building",
     "mBuildingDescription": "",

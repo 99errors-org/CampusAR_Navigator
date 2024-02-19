@@ -4,7 +4,9 @@
         "x": 53.76389413308366,
         "y": -2.71077190303943
     },
-    "mConnectedNodes": [],
+    "mConnectedNodes": [
+        "p15"
+    ],
     "mNodeType": 1,
     "mBuildingName": "Hanover Building",
     "mBuildingDescription": "",

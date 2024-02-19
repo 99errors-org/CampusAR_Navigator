@@ -4,7 +4,10 @@
         "x": 53.76444140498335,
         "y": -2.7092804003694293
     },
-    "mConnectedNodes": [],
+    "mConnectedNodes": [
+        "p10",
+        "p14"
+    ],
     "mNodeType": 1,
     "mBuildingName": "53 Degrees",
     "mBuildingDescription": "",

@@ -4,7 +4,9 @@
         "x": 53.76548076046974,
         "y": -2.706784364209533
     },
-    "mConnectedNodes": [],
+    "mConnectedNodes": [
+        "p07"
+    ],
     "mNodeType": 1,
     "mBuildingName": "Greenbank Building",
     "mBuildingDescription": "",

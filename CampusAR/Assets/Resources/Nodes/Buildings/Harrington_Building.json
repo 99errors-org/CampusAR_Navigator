@@ -4,7 +4,9 @@
         "x": 53.76537295469777,
         "y": -2.7074578609050306
     },
-    "mConnectedNodes": [],
+    "mConnectedNodes": [
+        "p06"
+    ],
     "mNodeType": 1,
     "mBuildingName": "Harrington Building",
     "mBuildingDescription": "",

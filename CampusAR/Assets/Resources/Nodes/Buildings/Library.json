@@ -4,7 +4,9 @@
         "x": 53.76406906800041,
         "y": -2.707400827140156
     },
-    "mConnectedNodes": [],
+    "mConnectedNodes": [
+        "p26"
+    ],
     "mNodeType": 1,
     "mBuildingName": "Library",
     "mBuildingDescription": "",

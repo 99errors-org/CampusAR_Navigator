@@ -4,7 +4,12 @@
         "x": 53.760493848758045,
         "y": -2.709268424341801
     },
-    "mConnectedNodes": [],
+    "mConnectedNodes": [
+        "p17",
+        "p19",
+        "p20",
+        "p22"
+    ],
     "mNodeType": 1,
     "mBuildingName": "Sir Tom Finney Sports Centre",
     "mBuildingDescription": "",

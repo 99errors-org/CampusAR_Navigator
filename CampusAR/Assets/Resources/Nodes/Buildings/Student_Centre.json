@@ -4,7 +4,10 @@
         "x": 53.76282812209615,
         "y": -2.7073813645247915
     },
-    "mConnectedNodes": [],
+    "mConnectedNodes": [
+        "p13",
+        "p14"
+    ],
     "mNodeType": 1,
     "mBuildingName": "Student Centre",
     "mBuildingDescription": "",

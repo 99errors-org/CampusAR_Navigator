@@ -4,7 +4,10 @@
         "x": 53.76229254311304,
         "y": -2.7120502348584457
     },
-    "mConnectedNodes": [],
+    "mConnectedNodes": [
+        "p25",
+        "p27"
+    ],
     "mNodeType": 1,
     "mBuildingName": "Roeburn Hall",
     "mBuildingDescription": "",

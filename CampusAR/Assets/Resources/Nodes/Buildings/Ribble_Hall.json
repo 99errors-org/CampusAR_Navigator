@@ -4,7 +4,9 @@
         "x": 53.76640979000219,
         "y": -2.707051995698255
     },
-    "mConnectedNodes": [],
+    "mConnectedNodes": [
+        "p33"
+    ],
     "mNodeType": 1,
     "mBuildingName": "Ribble Hall",
     "mBuildingDescription": "",

@@ -4,7 +4,10 @@
         "x": 53.76360751869153,
         "y": -2.7090618794201964
     },
-    "mConnectedNodes": [],
+    "mConnectedNodes": [
+        "p14",
+        "p18"
+    ],
     "mNodeType": 1,
     "mBuildingName": "Computing & Technology Building",
     "mBuildingDescription": "",

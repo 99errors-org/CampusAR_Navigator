@@ -4,7 +4,9 @@
         "x": 53.76341794109121,
         "y": -2.7101046307304038
     },
-    "mConnectedNodes": [],
+    "mConnectedNodes": [
+        "p33"
+    ],
     "mNodeType": 1,
     "mBuildingName": "Media Factory",
     "mBuildingDescription": "",

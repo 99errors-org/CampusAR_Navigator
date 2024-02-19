@@ -4,7 +4,9 @@
         "x": 53.765894569916554,
         "y": -2.7090867426808485
     },
-    "mConnectedNodes": [],
+    "mConnectedNodes": [
+        "p33"
+    ],
     "mNodeType": 1,
     "mBuildingName": "Derwent Hall",
     "mBuildingDescription": "",

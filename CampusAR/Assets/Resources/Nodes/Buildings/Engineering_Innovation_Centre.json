@@ -4,7 +4,11 @@
         "x": 53.76254981248048,
         "y": -2.7080567280266266
     },
-    "mConnectedNodes": [],
+    "mConnectedNodes": [
+        "p19",
+        "p20",
+        "p22"
+    ],
     "mNodeType": 1,
     "mBuildingName": "Engineering Innovation Centre",
     "mBuildingDescription": "",

@@ -4,7 +4,10 @@
         "x": 53.76130424379454,
         "y": -2.70946207359028
     },
-    "mConnectedNodes": [],
+    "mConnectedNodes": [
+        "p23",
+        "p25"
+    ],
     "mNodeType": 1,
     "mBuildingName": "Leighton Building",
     "mBuildingDescription": "",

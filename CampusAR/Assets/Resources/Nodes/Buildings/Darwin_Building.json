@@ -4,7 +4,9 @@
         "x": 53.760642390635866,
         "y": -2.708574917983834
     },
-    "mConnectedNodes": [],
+    "mConnectedNodes": [
+        "p25"
+    ],
     "mNodeType": 1,
     "mBuildingName": "Darwin Building",
     "mBuildingDescription": "",

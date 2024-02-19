@@ -4,7 +4,9 @@
         "x": 53.76137102107412,
         "y": -2.7069238158660878
     },
-    "mConnectedNodes": [],
+    "mConnectedNodes": [
+        "p22"
+    ],
     "mNodeType": 1,
     "mBuildingName": "Harris Building",
     "mBuildingDescription": "",

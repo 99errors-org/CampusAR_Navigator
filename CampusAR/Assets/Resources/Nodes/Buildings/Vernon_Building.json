@@ -4,7 +4,11 @@
         "x": 53.76772378815439,
         "y": -2.705666319184817
     },
-    "mConnectedNodes": [],
+    "mConnectedNodes": [
+        "p05",
+        "p09",
+        "p10"
+    ],
     "mNodeType": 1,
     "mBuildingName": "Vernon Building",
     "mBuildingDescription": "",

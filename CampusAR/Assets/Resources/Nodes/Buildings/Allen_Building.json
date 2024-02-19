@@ -4,7 +4,10 @@
         "x": 53.76512411507585,
         "y": -2.707251009603746
     },
-    "mConnectedNodes": [],
+    "mConnectedNodes": [
+        "p07",
+        "p08"
+    ],
     "mNodeType": 1,
     "mBuildingName": "Allen Building",
     "mBuildingDescription": "",

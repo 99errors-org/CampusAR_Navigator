@@ -4,7 +4,9 @@
         "x": 53.76050166571451,
         "y": -2.7048483879443865
     },
-    "mConnectedNodes": [],
+    "mConnectedNodes": [
+        "p33"
+    ],
     "mNodeType": 1,
     "mBuildingName": "Livesey House",
     "mBuildingDescription": "",

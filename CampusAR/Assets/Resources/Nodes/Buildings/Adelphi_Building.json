@@ -4,7 +4,10 @@
         "x": 53.76436073492904,
         "y": -2.708080724842432
     },
-    "mConnectedNodes": [],
+    "mConnectedNodes": [
+        "p09",
+        "p13"
+    ],
     "mNodeType": 1,
     "mBuildingName": "Adelphi Building",
     "mBuildingDescription": "",

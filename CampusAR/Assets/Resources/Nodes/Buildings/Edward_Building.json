@@ -4,7 +4,10 @@
         "x": 53.761066865451355,
         "y": -2.70773158463467
     },
-    "mConnectedNodes": [],
+    "mConnectedNodes": [
+        "p27",
+        "p28"
+    ],
     "mNodeType": 1,
     "mBuildingName": "Edward Building",
     "mBuildingDescription": "",

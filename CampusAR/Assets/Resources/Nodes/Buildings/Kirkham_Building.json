@@ -4,7 +4,9 @@
         "x": 53.76371755865759,
         "y": -2.7103793419076614
     },
-    "mConnectedNodes": [],
+    "mConnectedNodes": [
+        "p15"
+    ],
     "mNodeType": 1,
     "mBuildingName": "Kirkham Building",
     "mBuildingDescription": "",

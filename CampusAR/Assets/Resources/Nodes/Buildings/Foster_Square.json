@@ -4,7 +4,9 @@
         "x": 53.76210057560981,
         "y": -2.7082166528945235
     },
-    "mConnectedNodes": [],
+    "mConnectedNodes": [
+        "p22"
+    ],
     "mNodeType": 1,
     "mBuildingName": "Foster Square",
     "mBuildingDescription": "",

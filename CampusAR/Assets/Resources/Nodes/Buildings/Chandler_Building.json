@@ -4,7 +4,10 @@
         "x": 53.7610542889333,
         "y": -2.7068000894716397
     },
-    "mConnectedNodes": [],
+    "mConnectedNodes": [
+        "p27",
+        "p28"
+    ],
     "mNodeType": 1,
     "mBuildingName": "Chandler Building",
     "mBuildingDescription": "",

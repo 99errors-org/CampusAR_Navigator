@@ -4,7 +4,9 @@
         "x": 53.76172442160782,
         "y": -2.708217955571805
     },
-    "mConnectedNodes": [],
+    "mConnectedNodes": [
+        "p22"
+    ],
     "mNodeType": 1,
     "mBuildingName": "Foster Building",
     "mBuildingDescription": "",

@@ -4,7 +4,10 @@
         "x": 53.76105376735943,
         "y": -2.7081505662100134
     },
-    "mConnectedNodes": [],
+    "mConnectedNodes": [
+        "p07",
+        "p30"
+    ],
     "mNodeType": 1,
     "mBuildingName": "Wharf Building",
     "mBuildingDescription": "",
