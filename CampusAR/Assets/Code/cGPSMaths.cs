@@ -76,4 +76,5 @@ public static class cGPSMaths
         return _vector;
     }
 
+
 }

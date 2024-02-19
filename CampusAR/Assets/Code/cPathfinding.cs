@@ -72,20 +72,27 @@ class Path
         for (int i = 0; i < cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes().Count; i++)
         {
             int k = i;
-            // Find the distance from the connected node to the target
-            float distanceFromNodeToTarget = cGPSMaths.GetDistance(cNode_Manager.mInstance.mNodes[targetNode].GetGPSLocation(), cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[k].GetGPSLocation());
-            Debug.Log("Distance From Node To Target: " + distanceFromNodeToTarget.ToString() + ", " + cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[k].GetNodeID());
-
-            // Set the node with the shortest distance as the next node to travel to
-            if (distanceFromNodeToTarget < shortestDistance || shortestDistance == -1)
+            if (cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[k].GetNodeID()[0] == 'b' && cNode_Manager.mInstance.mNodes[targetNode] != cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[k])
             {
-                // Update the current shortest distance to beat
-                shortestDistance = distanceFromNodeToTarget;
-                nextNode = cNode_Manager.mInstance.mNodes.IndexOf(cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[k]);
+                // Dont traverse through buildings, UNLESS building is the target node
+                Debug.Log("Skipped a building in traversal");
             }
+            else
+            {
+                // Find the distance from the connected node to the target
+                float distanceFromNodeToTarget = Vector2.Distance(cNode_Manager.mInstance.mNodes[targetNode].GetGPSLocation(), cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[k].GetGPSLocation());
+                Debug.Log("Distance From Node To Target: " + distanceFromNodeToTarget.ToString() + ", {Target} " + cNode_Manager.mInstance.mNodes[targetNode].GetNodeID() + ", {Connected Node} " + cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[k].GetNodeID());
+
+                // Set the node with the shortest distance as the next node to travel to
+                if (distanceFromNodeToTarget < shortestDistance || shortestDistance == -1)
+                {
+                    // Update the current shortest distance to beat
+                    shortestDistance = distanceFromNodeToTarget;
+                    nextNode = cNode_Manager.mInstance.mNodes.IndexOf(cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[k]);
+                }
+            }          
         }
 
-        Debug.Log("Next node: " + nextNode.ToString());
         Debug.Log("Next node (index): " + cNode_Manager.mInstance.mNodes[nextNode].GetNodeID());
         return nextNode;
     }
@@ -156,8 +163,8 @@ public class cPathfinding : MonoBehaviour
     {
         if (doOnce)
         {
-            int startNode = 0;
-            int endNode = 21;
+            int startNode = 22;
+            int endNode = 19;
 
             int _startNode = cNode_Manager.mInstance.mNodes.IndexOf(cNode_Manager.mInstance.mPathNodes[startNode]);
             Debug.Log("Start Node (ID): " + cNode_Manager.mInstance.mNodes[_startNode].GetNodeID());
