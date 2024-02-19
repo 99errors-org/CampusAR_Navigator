@@ -10,7 +10,7 @@ using UnityEngine;
 
 class Path
 {
-    private List<int> mPath = new List<int>();               // Chain of nodes working from the users start position to the final target destination
+    public List<int> mPath = new List<int>();               // Chain of nodes working from the users start position to the final target destination
     private int mPathPosition = 0;                           // Index of how far into the list Path the user has traversed
 
     public Path() 
@@ -97,36 +97,45 @@ class Path
         return nextNode;
     }
 
-    public void CreatePath(int startNode, int targetNode)
+    public bool CreatePath(int startNode, int targetNode)
     {
-        // Create a list to store all the nodes in a path from the user to the target destination
-        List<int> path = new List<int>();
-
-        // Add the start node to the path list
-        path.Add(startNode);
-
-        // Repeat until the path is finished
-        while (true)
+        try
         {
-            // Find the next node to travel to
-            int nextNode = FindNextNode(path.Last(), targetNode);
+            // Create a list to store all the nodes in a path from the user to the target destination
+            List<int> path = new List<int>();
 
-            // If the next node is the target, pathing is complete, leave the while loop
-            if (nextNode == targetNode)
+            // Add the start node to the path list
+            path.Add(startNode);
+
+            // Repeat until the path is finished
+            while (true)
             {
-                path.Add(nextNode);
-                Debug.Log("EXXXXXIIIIITTTT!!!!!");
-                break;
+                // Find the next node to travel to
+                int nextNode = FindNextNode(path.Last(), targetNode);
+
+                // If the next node is the target, pathing is complete, leave the while loop
+                if (nextNode == targetNode)
+                {
+                    path.Add(nextNode);
+                    Debug.Log("Exit");
+                    break;
+                }
+                else
+                {
+                    // Otherwise, add the next node to the list and continue pathing
+                    path.Add(nextNode);
+                }
             }
-            else
-            {
-                // Otherwise, add the next node to the list and continue pathing
-                path.Add(nextNode);
-            }
+
+            mPath = path;
+            mPathPosition = 0;
+
+            return true;
         }
-
-        mPath = path;
-        mPathPosition = 0;
+        catch
+        {
+            return false;
+        }        
     }
 
     public void PrintPath()
@@ -147,6 +156,8 @@ public class cPathfinding : MonoBehaviour
     /* -------- Variables -------- */
 
     public bool doOnce = true;
+    public int pathIndex = 0;
+    public int buildingIndex = 0;
 
     /* Singleton */
     public static cPathfinding mInstance;
@@ -161,18 +172,96 @@ public class cPathfinding : MonoBehaviour
 
     void Update()
     {
+        if (pathIndex < cNode_Manager.mInstance.mPathNodes.Count)
+        {
+            cNode startNode = cNode_Manager.mInstance.mPathNodes[pathIndex];
+            cNode endNode = cNode_Manager.mInstance.mBuildingNodes[buildingIndex];
+
+            Debug.Log("Testing path <startNode>" + startNode.GetNodeID() + " to <endNode>" + endNode.GetNodeID());
+            if (mCurrentPath.CreatePath(cNode_Manager.mInstance.mNodes.IndexOf(startNode), cNode_Manager.mInstance.mNodes.IndexOf(endNode)))
+            {
+                string pathString = "";
+                foreach (int node in mCurrentPath.mPath)
+                {
+                    string pathID = cNode_Manager.mInstance.mNodes[node].GetNodeID();
+                    pathString += pathID;
+                    pathString += ", ";
+                }
+                Debug.Log("Test Passed - " + pathString);
+            }
+            else
+            {
+                Debug.LogError("Test Failed");
+            }
+
+            buildingIndex++;
+            if (buildingIndex == cNode_Manager.mInstance.mBuildingNodes.Count)
+            {
+                buildingIndex = 0;
+                pathIndex++;
+            }
+        }
+
+
         if (doOnce)
         {
-            int startNode = 22;
-            int endNode = 19;
+            //foreach (cNode startNode in cNode_Manager.mInstance.mPathNodes)
+            //{
+            //    //foreach (cNode endNode in cNode_Manager.mInstance.mPathNodes)
+            //    //{
+            //    //    if (startNode == endNode) { continue; }
 
-            int _startNode = cNode_Manager.mInstance.mNodes.IndexOf(cNode_Manager.mInstance.mPathNodes[startNode]);
-            Debug.Log("Start Node (ID): " + cNode_Manager.mInstance.mNodes[_startNode].GetNodeID());
-            int _endNode = cNode_Manager.mInstance.mNodes.IndexOf(cNode_Manager.mInstance.mPathNodes[endNode]);
-            Debug.Log("End Node (ID): " + cNode_Manager.mInstance.mNodes[_endNode].GetNodeID());
+            //    //    Debug.Log("Testing path <startNode>" + startNode.GetNodeID() + " to <endNode>" + endNode.GetNodeID());
+            //    //    if (mCurrentPath.CreatePath(cNode_Manager.mInstance.mNodes.IndexOf(startNode), cNode_Manager.mInstance.mNodes.IndexOf(endNode)))
+            //    //    {
+            //    //        string pathString = "";
+            //    //        foreach (int node in mCurrentPath.mPath)
+            //    //        {
+            //    //            string pathID = cNode_Manager.mInstance.mNodes[node].GetNodeID();
+            //    //            pathString += pathID;
+            //    //            pathString += ", ";
+            //    //        }
+            //    //        Debug.Log("Test Passed - " + pathString);
+            //    //    }
+            //    //    else
+            //    //    {
+            //    //        Debug.LogError("Test Failed");
+            //    //    }
+            //    //}
 
-            mCurrentPath.CreatePath(_startNode, _endNode);
-            mCurrentPath.PrintPath();
+            //    foreach (cNode endNode in cNode_Manager.mInstance.mBuildingNodes)
+            //    {
+            //        if (startNode == endNode) { continue; }
+
+            //        Debug.Log("Testing path <startNode>" + startNode.GetNodeID() + " to <endNode>" + endNode.GetNodeID());
+            //        if (mCurrentPath.CreatePath(cNode_Manager.mInstance.mNodes.IndexOf(startNode), cNode_Manager.mInstance.mNodes.IndexOf(endNode)))
+            //        {
+            //            string pathString = "";
+            //            foreach (int node in mCurrentPath.mPath)
+            //            {
+            //                string pathID = cNode_Manager.mInstance.mNodes[node].GetNodeID();
+            //                pathString += pathID;
+            //                pathString += ", ";
+            //            }
+            //            Debug.Log("Test Passed - " + pathString);
+            //        }
+            //        else
+            //        {
+            //            Debug.LogError("Test Failed");
+            //        }
+            //    }
+            //}
+
+            //int startNode = 0;
+            //int endNode = 2;
+
+            //int _startNode = cNode_Manager.mInstance.mNodes.IndexOf(cNode_Manager.mInstance.mPathNodes[startNode]);
+            //Debug.Log("Start Node (ID): " + cNode_Manager.mInstance.mNodes[_startNode].GetNodeID());
+            //int _endNode = cNode_Manager.mInstance.mNodes.IndexOf(cNode_Manager.mInstance.mBuildingNodes[endNode]);
+            //Debug.Log("End Node (ID): " + cNode_Manager.mInstance.mNodes[_endNode].GetNodeID());
+
+            //mCurrentPath.CreatePath(_startNode, _endNode);
+            //mCurrentPath.PrintPath();
 
             doOnce = false;
         }
