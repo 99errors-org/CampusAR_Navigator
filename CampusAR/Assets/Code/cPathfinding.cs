@@ -6,12 +6,11 @@ using System.IO;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using Unity.VisualScripting;
 
 
 class Path
 {
-    private List<int> mPath = new List<int>();               // Chain of nodes working from the users start position to the final target destination
+    public List<int> mPath = new List<int>();               // Chain of nodes working from the users start position to the final target destination
     private int mPathPosition = 0;                           // Index of how far into the list Path the user has traversed
 
     public Path() 
@@ -70,66 +69,73 @@ class Path
         }
         Debug.Log(conNodeStr);
 
-
-        // looping through every connected node
         for (int i = 0; i < cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes().Count; i++)
         {
-            Debug.Log("Checking connected node: " + cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[i].GetNodeID());
-            // Find the distance from the connected node to the target
-            Debug.Log("Target node: " + cNode_Manager.mInstance.mNodes[targetNode].GetNodeID());
-            Vector3 targetLocation = cNode_Manager.mInstance.mNodes[targetNode].GetUnityLocation();
-
-            Vector3 currConnectedNodeLocation = cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[i].GetUnityLocation();
-
-            Debug.Log("Target GPS: " + targetLocation.ToString());
-            Debug.Log("current Connected Node GPS: " + currConnectedNodeLocation.ToString());
-
-            float distanceFromNodeToTarget = cGPSMaths.GetUnityDistance(currConnectedNodeLocation, targetLocation);
-            Debug.Log("Distance From Node To Target: " + distanceFromNodeToTarget.ToString() + ", " + cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[i].GetNodeID());
-
-            // Set the node with the shortest distance as the next node to travel to
-            if (distanceFromNodeToTarget < shortestDistance || shortestDistance == -1)
+            int k = i;
+            if (cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[k].GetNodeID()[0] == 'b' && cNode_Manager.mInstance.mNodes[targetNode] != cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[k])
             {
-                // Update the current shortest distance to beat
-                shortestDistance = distanceFromNodeToTarget;
-                nextNode = cNode_Manager.mInstance.mNodes.IndexOf(cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[i]);
+                // Dont traverse through buildings, UNLESS building is the target node
+                Debug.Log("Skipped a building in traversal");
             }
+            else
+            {
+                // Find the distance from the connected node to the target
+                float distanceFromNodeToTarget = Vector2.Distance(cNode_Manager.mInstance.mNodes[targetNode].GetGPSLocation(), cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[k].GetGPSLocation());
+                Debug.Log("Distance From Node To Target: " + distanceFromNodeToTarget.ToString() + ", {Target} " + cNode_Manager.mInstance.mNodes[targetNode].GetNodeID() + ", {Connected Node} " + cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[k].GetNodeID());
+
+                // Set the node with the shortest distance as the next node to travel to
+                if (distanceFromNodeToTarget < shortestDistance || shortestDistance == -1)
+                {
+                    // Update the current shortest distance to beat
+                    shortestDistance = distanceFromNodeToTarget;
+                    nextNode = cNode_Manager.mInstance.mNodes.IndexOf(cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[k]);
+                }
+            }          
         }
 
         Debug.Log("Next node (index): " + cNode_Manager.mInstance.mNodes[nextNode].GetNodeID());
         return nextNode;
     }
 
-    public void CreatePath(int startNode, int targetNode)
+    public bool CreatePath(int startNode, int targetNode)
     {
-        // Create a list to store all the nodes in a path from the user to the target destination
-        List<int> path = new List<int>();
-
-        // Add the start node to the path list
-        path.Add(startNode);
-
-        // Repeat until the path is finished
-        while (true)
+        try
         {
-            // Find the next node to travel to
-            int nextNode = FindNextNode(path.Last(), targetNode);
+            // Create a list to store all the nodes in a path from the user to the target destination
+            List<int> path = new List<int>();
 
-            // If the next node is the target, pathing is complete, leave the while loop
-            if (nextNode == targetNode)
+            // Add the start node to the path list
+            path.Add(startNode);
+
+            // Repeat until the path is finished
+            while (true)
             {
-                path.Add(nextNode);
-                Debug.Log("EXXXXXIIIIITTTT!!!!!");
-                break;
+                // Find the next node to travel to
+                int nextNode = FindNextNode(path.Last(), targetNode);
+
+                // If the next node is the target, pathing is complete, leave the while loop
+                if (nextNode == targetNode)
+                {
+                    path.Add(nextNode);
+                    Debug.Log("Exit");
+                    break;
+                }
+                else
+                {
+                    // Otherwise, add the next node to the list and continue pathing
+                    path.Add(nextNode);
+                }
             }
-            else
-            {
-                // Otherwise, add the next node to the list and continue pathing
-                path.Add(nextNode);
-            }
+
+            mPath = path;
+            mPathPosition = 0;
+
+            return true;
         }
-
-        mPath = path;
-        mPathPosition = 0;
+        catch
+        {
+            return false;
+        }        
     }
 
     public void PrintPath()
@@ -150,6 +156,8 @@ public class cPathfinding : MonoBehaviour
     /* -------- Variables -------- */
 
     public bool doOnce = true;
+    public int pathIndex = 0;
+    public int buildingIndex = 0;
 
     /* Singleton */
     public static cPathfinding mInstance;
@@ -164,18 +172,96 @@ public class cPathfinding : MonoBehaviour
 
     void Update()
     {
+        if (pathIndex < cNode_Manager.mInstance.mPathNodes.Count)
+        {
+            cNode startNode = cNode_Manager.mInstance.mPathNodes[pathIndex];
+            cNode endNode = cNode_Manager.mInstance.mBuildingNodes[buildingIndex];
+
+            Debug.Log("Testing path <startNode>" + startNode.GetNodeID() + " to <endNode>" + endNode.GetNodeID());
+            if (mCurrentPath.CreatePath(cNode_Manager.mInstance.mNodes.IndexOf(startNode), cNode_Manager.mInstance.mNodes.IndexOf(endNode)))
+            {
+                string pathString = "";
+                foreach (int node in mCurrentPath.mPath)
+                {
+                    string pathID = cNode_Manager.mInstance.mNodes[node].GetNodeID();
+                    pathString += pathID;
+                    pathString += ", ";
+                }
+                Debug.Log("Test Passed - " + pathString);
+            }
+            else
+            {
+                Debug.LogError("Test Failed");
+            }
+
+            buildingIndex++;
+            if (buildingIndex == cNode_Manager.mInstance.mBuildingNodes.Count)
+            {
+                buildingIndex = 0;
+                pathIndex++;
+            }
+        }
+
+
         if (doOnce)
         {
-            int startNode = 0;
-            int endNode = 21;
+            //foreach (cNode startNode in cNode_Manager.mInstance.mPathNodes)
+            //{
+            //    //foreach (cNode endNode in cNode_Manager.mInstance.mPathNodes)
+            //    //{
+            //    //    if (startNode == endNode) { continue; }
 
-            int _startNode = cNode_Manager.mInstance.mNodes.IndexOf(cNode_Manager.mInstance.mPathNodes[startNode]);
-            Debug.Log("Start Node (ID): " + cNode_Manager.mInstance.mNodes[_startNode].GetNodeID());
-            int _endNode = cNode_Manager.mInstance.mNodes.IndexOf(cNode_Manager.mInstance.mPathNodes[endNode]);
-            Debug.Log("End Node (ID): " + cNode_Manager.mInstance.mNodes[_endNode].GetNodeID());
+            //    //    Debug.Log("Testing path <startNode>" + startNode.GetNodeID() + " to <endNode>" + endNode.GetNodeID());
+            //    //    if (mCurrentPath.CreatePath(cNode_Manager.mInstance.mNodes.IndexOf(startNode), cNode_Manager.mInstance.mNodes.IndexOf(endNode)))
+            //    //    {
+            //    //        string pathString = "";
+            //    //        foreach (int node in mCurrentPath.mPath)
+            //    //        {
+            //    //            string pathID = cNode_Manager.mInstance.mNodes[node].GetNodeID();
+            //    //            pathString += pathID;
+            //    //            pathString += ", ";
+            //    //        }
+            //    //        Debug.Log("Test Passed - " + pathString);
+            //    //    }
+            //    //    else
+            //    //    {
+            //    //        Debug.LogError("Test Failed");
+            //    //    }
+            //    //}
 
-            mCurrentPath.CreatePath(_startNode, _endNode);
-            mCurrentPath.PrintPath();
+            //    foreach (cNode endNode in cNode_Manager.mInstance.mBuildingNodes)
+            //    {
+            //        if (startNode == endNode) { continue; }
+
+            //        Debug.Log("Testing path <startNode>" + startNode.GetNodeID() + " to <endNode>" + endNode.GetNodeID());
+            //        if (mCurrentPath.CreatePath(cNode_Manager.mInstance.mNodes.IndexOf(startNode), cNode_Manager.mInstance.mNodes.IndexOf(endNode)))
+            //        {
+            //            string pathString = "";
+            //            foreach (int node in mCurrentPath.mPath)
+            //            {
+            //                string pathID = cNode_Manager.mInstance.mNodes[node].GetNodeID();
+            //                pathString += pathID;
+            //                pathString += ", ";
+            //            }
+            //            Debug.Log("Test Passed - " + pathString);
+            //        }
+            //        else
+            //        {
+            //            Debug.LogError("Test Failed");
+            //        }
+            //    }
+            //}
+
+            //int startNode = 0;
+            //int endNode = 2;
+
+            //int _startNode = cNode_Manager.mInstance.mNodes.IndexOf(cNode_Manager.mInstance.mPathNodes[startNode]);
+            //Debug.Log("Start Node (ID): " + cNode_Manager.mInstance.mNodes[_startNode].GetNodeID());
+            //int _endNode = cNode_Manager.mInstance.mNodes.IndexOf(cNode_Manager.mInstance.mBuildingNodes[endNode]);
+            //Debug.Log("End Node (ID): " + cNode_Manager.mInstance.mNodes[_endNode].GetNodeID());
+
+            //mCurrentPath.CreatePath(_startNode, _endNode);
+            //mCurrentPath.PrintPath();
 
             doOnce = false;
         }

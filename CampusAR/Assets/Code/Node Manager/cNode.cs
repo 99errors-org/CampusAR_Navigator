@@ -63,21 +63,6 @@ public class cNode
 		return mGeoPosition;
 	}
 
-    public Vector3 GetUnityLocation()
-    {
-        foreach (GameObject node in cNode_Manager.mInstance.mWorldNodes)
-        {
-            string worldNodeName = "Node - " + GetBuildingName();
-
-            if (node.name == worldNodeName)
-            {
-                return node.transform.position;
-            }
-        }
-
-        return new Vector3(0, 0, 0);
-    }
-
     public List<cNode> GetConnectedNodes()
     {
         List<cNode> connectedNodeList = new List<cNode>();
