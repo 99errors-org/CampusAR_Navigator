@@ -5,7 +5,8 @@
         "y": -2.7069238158660878
     },
     "mConnectedNodes": [
-        "p22"
+        "p22",
+        "p28"
     ],
     "mNodeType": 1,
     "mBuildingName": "Harris Building",
