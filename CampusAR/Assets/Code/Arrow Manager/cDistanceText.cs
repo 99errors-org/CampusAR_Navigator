@@ -46,7 +46,7 @@ public class cDistanceText : MonoBehaviour
 
         if (mDistanceText != null & mDistanceText.gameObject.activeSelf)
         {
-            setDistance(cPathfinding.mInstance.DistanceToNextNode);                 // Sets the distance text to the distance and converts it to users prefrence
+            setDistance(cPathfinding.mInstance.GetDistanceToNextNode());                 // Sets the distance text to the distance and converts it to users prefrence
         }
         else
         {
