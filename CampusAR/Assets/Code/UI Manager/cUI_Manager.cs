@@ -190,12 +190,6 @@ public class cUI_Manager : MonoBehaviour
         // Instantiate.
         GameObject _building = Instantiate(pBuildingListButton, rBuildingListContent);
 
-        // Cache RectTransform component.
-        RectTransform buildingRectTransform = _building.GetComponent<RectTransform>();
-
-        // Position.
-        buildingRectTransform.localPosition = new Vector2(buildingRectTransform.sizeDelta.x * 0.5f, -(buildingRectTransform.sizeDelta.y * 0.5f + buildingRectTransform.sizeDelta.y * index));
-
         // Set Values.
         SetBuildingNodeValues(_building, index);
 
@@ -225,24 +219,17 @@ public class cUI_Manager : MonoBehaviour
         // Instantiate.
         GameObject _building = Instantiate(pBuildingListButton, rCreateTourContent);
 
-        // Cache RectTransform component.
-        RectTransform buildingRectTransform = _building.GetComponent<RectTransform>();
-
-        // Position.
-        buildingRectTransform.localPosition = new Vector2(buildingRectTransform.sizeDelta.x * 0.5f, -(buildingRectTransform.sizeDelta.y * 0.5f + buildingRectTransform.sizeDelta.y * index));
-
         // Set Values.
         SetBuildingNodeValues(_building, index);
 
-        int currentIndex = index;
 
         _building.GetComponent<Button>().onClick.AddListener(() =>
         {
             // Check if the building is already in the queue content
-            if (rTourQueueContent.text.Contains(cNode_Manager.mInstance.mNodes[currentIndex].GetBuildingAbbreviation()))
+            if (rTourQueueContent.text.Contains(cNode_Manager.mInstance.mNodes[index].GetBuildingAbbreviation()))
             {
                 // Remove the building node from the queue content
-                rTourQueueContent.text = rTourQueueContent.text.Replace(cNode_Manager.mInstance.mNodes[currentIndex].GetBuildingAbbreviation() + ", ", "");
+                rTourQueueContent.text = rTourQueueContent.text.Replace(cNode_Manager.mInstance.mNodes[index].GetBuildingAbbreviation() + ", ", "");
 
                 // Change background color back to white
                 Color whiteColor = Color.white;
@@ -251,7 +238,7 @@ public class cUI_Manager : MonoBehaviour
             else
             {
                 // Add the building to the queue content
-                rTourQueueContent.text += cNode_Manager.mInstance.mNodes[currentIndex].GetBuildingAbbreviation() + ", ";
+                rTourQueueContent.text += cNode_Manager.mInstance.mNodes[index].GetBuildingAbbreviation() + ", ";
 
                 // Change background color to grey
                 Color greyColor = new Color(0.8f, 0.8f, 0.8f); // Adjust the values based on your preference
@@ -259,9 +246,9 @@ public class cUI_Manager : MonoBehaviour
 
                 if (Application.isEditor)
                 {
-                    Debug.Log(cNode_Manager.mInstance.mNodes[currentIndex].GetBuildingName());
+                    Debug.Log(cNode_Manager.mInstance.mNodes[index].GetBuildingName());
                 }
-                cPathfinding.mInstance.AddTourBuilding(currentIndex);
+                cPathfinding.mInstance.AddTourBuilding(index);
             }
         });
     }
@@ -331,30 +318,63 @@ public class cUI_Manager : MonoBehaviour
         ToggleDrawer(drawer, ref isOpen);
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="inputText"></param>
-    private void UpdateBuildingNodesVisibility(string inputText)
+    private IEnumerator UpdateNodesWithDelay(string inputText)
+    {
+        // Wait for a short delay before destroying existing building nodes
+        yield return new WaitForSeconds(0.5f);
+
+        // Destroy existing building nodes
+        DestroyBuildingNodes();
+
+        // Instantiate matching building nodes
+        InstantiateMatchingBuildingNodes(inputText);
+    }
+
+
+    private void InstantiateMatchingBuildingNodes(string inputText)
+    {
+        int visibleNodeCount = 0;
+
+        for (int i = 0; i < cNode_Manager.mInstance.mNodes.Count; i++)
+        {
+            string buildingName = cNode_Manager.mInstance.mNodes[i].GetBuildingName();
+
+            int levenshteinDistance = CalculateLevenshteinDistance(buildingName, inputText);
+            bool isSubstringMatch = buildingName.ToLower().Contains(inputText.ToLower()) || inputText.ToLower().Contains(buildingName.ToLower());
+
+            int combinedScore = Mathf.Min(levenshteinDistance, Mathf.Abs(buildingName.Length - inputText.Length));
+
+            if (Application.isEditor)
+            {
+                Debug.Log($"Building: {buildingName}, Levenshtein Distance: {levenshteinDistance}, Combined Score: {combinedScore}");
+            }
+
+            // Adjust the threshold based on your observation
+            if (combinedScore <= mLevenshteinDistance)
+            {
+                CreateBuildingNode(i);
+                visibleNodeCount++;
+            }
+        }
+    }
+
+    private void DestroyBuildingNodes()
     {
         foreach (Transform child in rBuildingListContent.transform)
         {
-            GameObject buildingButton = child.gameObject;
-            string buildingName = buildingButton.transform.Find("BuildingName (TMP)").GetComponent<TextMeshProUGUI>().text;
+            Destroy(child.gameObject);
+        }
+    }
 
+    private void ShowAllBuildingNodes()
+    {
+        // Destroy existing building nodes
+        DestroyBuildingNodes();
 
-            int levenshteinDistance = CalculateLevenshteinDistance(buildingName, inputText);
-
-            // Check if the search input is a substring of the building name or vice versa
-            bool isSubstringMatch = buildingName.ToLower().Contains(inputText.ToLower()) || inputText.ToLower().Contains(buildingName.ToLower());
-
-            // Set your threshold distance as needed
-            int levenshteinThreshold = mLevenshteinDistance;
-            int substringThreshold = 0;
-
-            // Enable or disable the button based on combined conditions
-            bool isActive = (levenshteinDistance <= levenshteinThreshold) || (isSubstringMatch && levenshteinDistance <= substringThreshold);
-            buildingButton.SetActive(isActive);
+        // Instantiate all building nodes
+        for (int i = 0; i < cNode_Manager.mInstance.mNodes.Count; i++)
+        {
+            CreateBuildingNode(i);
         }
     }
 
@@ -541,7 +561,16 @@ public class cUI_Manager : MonoBehaviour
     public void OnSearchInputValueChanged()
     {
         string inputValue = rBuildingSearchInput.text;
-        // Call the function to update building nodes based on Levenshtein distance
-        UpdateBuildingNodesVisibility(inputValue);
+
+        if (string.IsNullOrEmpty(inputValue))
+        {
+            // Input is empty, show all buildings
+            ShowAllBuildingNodes();
+        }
+        else
+        {
+            // Input is not empty, filter and display matching buildings
+            StartCoroutine(UpdateNodesWithDelay(inputValue));
+        }
     }
 }
