@@ -27,6 +27,12 @@ public class cUI_Manager : MonoBehaviour
 
     /* -------- Variables -------- */
 
+    // Speed for animating in any bottom drawer component
+    [SerializeField] private float mDrawerSpeed = 10.0f;
+
+    // distance between search input and building names (lowercase comparison)
+    [SerializeField] private int mLevenshteinDistance = 5;
+
     // Bool to control the smaller action buttons
     private bool mActionButtonsVisible = false;
 
@@ -135,48 +141,16 @@ public class cUI_Manager : MonoBehaviour
             // Set the length of the scrollview content.
             rBuildingListContent.sizeDelta = new Vector2(rBuildingListContent.sizeDelta.x, cNode_Manager.mInstance.mNodes.Count * pBuildingListButton.GetComponent<RectTransform>().sizeDelta.y);
 
-            // Create building nodes.
             for (int i = 0; i < cNode_Manager.mInstance.mNodes.Count; i++)
             {
-                // Instantiate.
-                GameObject _building = Instantiate(pBuildingListButton, rBuildingListContent);
-
-                // Position.
-                _building.GetComponent<RectTransform>().localPosition = new Vector2(_building.GetComponent<RectTransform>().sizeDelta.x * 0.5f, -(_building.GetComponent<RectTransform>().sizeDelta.y * 0.5f + _building.GetComponent<RectTransform>().sizeDelta.y * i));
-
-                // Get raw distance between player and target node
-                float _distanceFloat = cGPSMaths.GetDistance(cNode_Manager.mInstance.mNodes[i].GetGPSLocation(), cUser_Manager.mInstance.mUserLastLocation);
-
-                // Convert distance to integer
-                int _distance = Mathf.FloorToInt(_distanceFloat);
-
-                // Set Values.
-                _building.transform.Find("BuildingTag (TMP)").GetComponent<TextMeshProUGUI>().text = cNode_Manager.mInstance.mNodes[i].GetBuildingAbbreviation();
-                _building.transform.Find("BuildingName (TMP)").GetComponent<TextMeshProUGUI>().text = cNode_Manager.mInstance.mNodes[i].GetBuildingName();
-
-                string storedPreference = PlayerPrefs.GetString("MetricsPreference", "");
-                string distanceUnit = storedPreference == "Kilometres (km)" ? "m" : storedPreference == "Miles (mi)" ? "mi" : "";
-                _building.transform.Find("Distance (TMP)").GetComponent<TextMeshProUGUI>().text = $"{_distance} {distanceUnit}";
-
-                // Capture the current cNode for the button click event
-                cNode clickedNode = cNode_Manager.mInstance.mNodes[i];
-
-                _building.GetComponent<Button>().onClick.AddListener(() =>
-                {
-                    if (rBuildingNameField != null)
-                    {
-                        rBuildingNameField.gameObject.SetActive(true);
-                        currentBuildingNode = clickedNode;
-                        cUser_Manager.mInstance.SetTargetNode(i);
-                    }
-                });
+                CreateBuildingNode(i);
             }
 
             mBuildingListPopulated = true;
         }
         else if (cNode_Manager.mInstance != null && mBuildingListPopulated)
         {
-            // Update the building Distance.
+            UpdateBuildingDistances(rBuildingListContent);
         }
     }
 
@@ -193,64 +167,136 @@ public class cUI_Manager : MonoBehaviour
             // Create building nodes.
             for (int i = 0; i < cNode_Manager.mInstance.mNodes.Count; i++)
             {
-                int currentIndex = i;
-
-                // Instantiate.
-
-                GameObject _building = Instantiate(pBuildingListButton, rCreateTourContent);
-
-                // Position.
-                _building.GetComponent<RectTransform>().localPosition = new Vector2(_building.GetComponent<RectTransform>().sizeDelta.x * 0.5f, -(_building.GetComponent<RectTransform>().sizeDelta.y * 0.5f + _building.GetComponent<RectTransform>().sizeDelta.y * i));
-
-                // Get raw distance between player and target node
-                float _distanceFloat = cGPSMaths.GetDistance(cNode_Manager.mInstance.mNodes[i].GetGPSLocation(), cUser_Manager.mInstance.mUserLastLocation);
-
-                // Convert distance to integer
-                int _distance = Mathf.FloorToInt(_distanceFloat);
-
-                // Set Values.
-                _building.transform.Find("BuildingTag (TMP)").GetComponent<TextMeshProUGUI>().text = cNode_Manager.mInstance.mNodes[i].GetBuildingAbbreviation();
-                _building.transform.Find("BuildingName (TMP)").GetComponent<TextMeshProUGUI>().text = cNode_Manager.mInstance.mNodes[i].GetBuildingName();
-
-                string storedPreference = PlayerPrefs.GetString("MetricsPreference", "");
-                string distanceUnit = storedPreference == "Kilometres (km)" ? "m" : storedPreference == "Miles (mi)" ? "mi" : "";
-                _building.transform.Find("Distance (TMP)").GetComponent<TextMeshProUGUI>().text = $"{_distance} {distanceUnit}";
-
-                _building.GetComponent<Button>().onClick.AddListener(() =>
-                {
-                    // Check if the building is already in the queue content
-                    if (rTourQueueContent.text.Contains(cNode_Manager.mInstance.mNodes[currentIndex].GetBuildingAbbreviation()))
-                    {
-                        // Remove the building node from the queue content
-                        rTourQueueContent.text = rTourQueueContent.text.Replace(cNode_Manager.mInstance.mNodes[currentIndex].GetBuildingAbbreviation() + ", ", "");
-
-                        // Change background color back to white
-                        Color whiteColor = Color.white;
-                        _building.GetComponent<Image>().color = whiteColor;
-                    }
-                    else
-                    {
-                        // Add the building to the queue content
-                        rTourQueueContent.text += cNode_Manager.mInstance.mNodes[currentIndex].GetBuildingAbbreviation() + ", ";
-
-                        // Change background color to grey
-                        Color greyColor = new Color(0.8f, 0.8f, 0.8f); // Adjust the values based on your preference
-                        _building.GetComponent<Image>().color = greyColor;
-
-                        if (Application.isEditor)
-                        {
-                            Debug.Log(cNode_Manager.mInstance.mNodes[currentIndex].GetBuildingName());
-                        }
-                        cPathfinding.mInstance.AddTourBuilding(currentIndex);
-                    }
-                });
+                CreateTourBuildingNode(i);
             }
 
             mCreateTourListPopulated = true;
         }
         else if (cNode_Manager.mInstance != null && mCreateTourListPopulated)
         {
-            // Update the building Distance.
+            UpdateBuildingDistances(rCreateTourContent);
+        }
+    }
+
+    /// <summary>
+    /// Instantiates a building node in the UI.
+    /// Positions the node in the building list content.
+    /// Sets values for the building node based on the given index.
+    /// Captures the current cNode for the button click event, enabling further actions.
+    /// </summary>
+    /// <param name="index"></param>
+    private void CreateBuildingNode(int index)
+    {
+        // Instantiate.
+        GameObject _building = Instantiate(pBuildingListButton, rBuildingListContent);
+
+        // Cache RectTransform component.
+        RectTransform buildingRectTransform = _building.GetComponent<RectTransform>();
+
+        // Position.
+        buildingRectTransform.localPosition = new Vector2(buildingRectTransform.sizeDelta.x * 0.5f, -(buildingRectTransform.sizeDelta.y * 0.5f + buildingRectTransform.sizeDelta.y * index));
+
+        // Set Values.
+        SetBuildingNodeValues(_building, index);
+
+        // Capture the current cNode for the button click event
+        cNode clickedNode = cNode_Manager.mInstance.mNodes[index];
+
+        _building.GetComponent<Button>().onClick.AddListener(() =>
+        {
+            if (rBuildingNameField != null)
+            {
+                rBuildingNameField.gameObject.SetActive(true);
+                currentBuildingNode = clickedNode;
+                cUser_Manager.mInstance.SetTargetNode(index);
+            }
+        });
+    }
+
+    /// <summary>
+    /// Instantiates a building node in the UI for the create tour list.
+    /// Positions the node in the create tour content.
+    /// Sets values for the building node based on the given index.
+    /// Adds an onClick listener to the button, allowing dynamic updates to the tour queue content and button background color.
+    /// </summary>
+    /// <param name="index"></param>
+    private void CreateTourBuildingNode(int index)
+    {
+        // Instantiate.
+        GameObject _building = Instantiate(pBuildingListButton, rCreateTourContent);
+
+        // Cache RectTransform component.
+        RectTransform buildingRectTransform = _building.GetComponent<RectTransform>();
+
+        // Position.
+        buildingRectTransform.localPosition = new Vector2(buildingRectTransform.sizeDelta.x * 0.5f, -(buildingRectTransform.sizeDelta.y * 0.5f + buildingRectTransform.sizeDelta.y * index));
+
+        // Set Values.
+        SetBuildingNodeValues(_building, index);
+
+        int currentIndex = index;
+
+        _building.GetComponent<Button>().onClick.AddListener(() =>
+        {
+            // Check if the building is already in the queue content
+            if (rTourQueueContent.text.Contains(cNode_Manager.mInstance.mNodes[currentIndex].GetBuildingAbbreviation()))
+            {
+                // Remove the building node from the queue content
+                rTourQueueContent.text = rTourQueueContent.text.Replace(cNode_Manager.mInstance.mNodes[currentIndex].GetBuildingAbbreviation() + ", ", "");
+
+                // Change background color back to white
+                Color whiteColor = Color.white;
+                _building.GetComponent<Image>().color = whiteColor;
+            }
+            else
+            {
+                // Add the building to the queue content
+                rTourQueueContent.text += cNode_Manager.mInstance.mNodes[currentIndex].GetBuildingAbbreviation() + ", ";
+
+                // Change background color to grey
+                Color greyColor = new Color(0.8f, 0.8f, 0.8f); // Adjust the values based on your preference
+                _building.GetComponent<Image>().color = greyColor;
+
+                if (Application.isEditor)
+                {
+                    Debug.Log(cNode_Manager.mInstance.mNodes[currentIndex].GetBuildingName());
+                }
+                cPathfinding.mInstance.AddTourBuilding(currentIndex);
+            }
+        });
+    }
+
+    /// <summary>
+    /// Calculates the distance between the building node and the user's last location using GPS.
+    /// Sets the values of the building node, including abbreviation, name, and distance, based on the given index.
+    /// </summary>
+    /// <param name="building">The GameObject representing the building node.</param>
+    /// <param name="index">The index of the building node.</param>
+    private void SetBuildingNodeValues(GameObject building, int index)
+    {
+        float distanceFloat = cGPSMaths.GetDistance(cNode_Manager.mInstance.mNodes[index].GetGPSLocation(), cUser_Manager.mInstance.mUserLastLocation);
+
+        int distance = Mathf.FloorToInt(distanceFloat);
+
+        // Set Values.
+        building.transform.Find("BuildingTag (TMP)").GetComponent<TextMeshProUGUI>().text = cNode_Manager.mInstance.mNodes[index].GetBuildingAbbreviation();
+        building.transform.Find("BuildingName (TMP)").GetComponent<TextMeshProUGUI>().text = cNode_Manager.mInstance.mNodes[index].GetBuildingName();
+
+        string distanceUnit = cDistanceUnitUtility.GetDistanceUnit();
+        building.transform.Find("Distance (TMP)").GetComponent<TextMeshProUGUI>().text = $"{distance} {distanceUnit}";
+    }
+
+    /// <summary>
+    /// Updates the distances for each building node within the specified content area.
+    /// Utilizes the SetBuildingNodeValues function to refresh the distance information in the UI.
+    /// </summary>
+    /// <param name="content">The RectTransform representing the content area.</param>
+    private void UpdateBuildingDistances(RectTransform content)
+    {
+        for (int i = 0; i < content.childCount; i++)
+        {
+            GameObject building = content.GetChild(i).gameObject;
+            SetBuildingNodeValues(building, i);
         }
     }
 
@@ -268,7 +314,7 @@ public class cUI_Manager : MonoBehaviour
         float targetY = isOpen ? drawer.sizeDelta.y : 0.0f;
         float currentY = drawer.position.y;
 
-        float _speed = 10.0f;
+        float _speed = mDrawerSpeed;
         float newY = Mathf.Lerp(currentY, targetY, _speed * Time.fixedDeltaTime);
 
         drawer.position = new Vector2(drawer.position.x, newY);
@@ -303,7 +349,7 @@ public class cUI_Manager : MonoBehaviour
             bool isSubstringMatch = buildingName.ToLower().Contains(inputText.ToLower()) || inputText.ToLower().Contains(buildingName.ToLower());
 
             // Set your threshold distance as needed
-            int levenshteinThreshold = 9;
+            int levenshteinThreshold = mLevenshteinDistance;
             int substringThreshold = 0;
 
             // Enable or disable the button based on combined conditions
