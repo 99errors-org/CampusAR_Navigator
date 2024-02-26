@@ -252,3 +252,114 @@ private void FixedUpdate();
 ```C#
 private void DisplayBuildingText()                          // Checks if the building is near then sets building text to active
 ```
+
+## cUI_Manager.cs
+
+-- References --
+```C#
+[SerializeField] private TextMeshProUGUI rBuildingNameField; // Reference to the TextMeshProUGUI for displaying building names.
+
+[SerializeField] private RectTransform rBuildingListContent; // Reference to the RectTransform for building list content.
+[SerializeField] private RectTransform rBuildingDrawer; // Reference to the RectTransform for the building drawer.
+[SerializeField] private RectTransform rSelectTourDrawer; // Reference to the RectTransform for the select tour drawer.
+[SerializeField] private RectTransform rCreateTourDrawer; // Reference to the RectTransform for the create tour drawer.
+[SerializeField] private RectTransform rCreateTourContent; // Reference to the RectTransform for create tour content.
+[SerializeField] private TextMeshProUGUI rTourQueueContent; // Reference to the TextMeshProUGUI for tour queue content.
+
+[SerializeField] private RectTransform rCreateTourButton; // Reference to the RectTransform for the create tour button.
+[SerializeField] private RectTransform rSelectBuildingButton; // Reference to the RectTransform for the select building button.
+[SerializeField] private RectTransform rSelectTourButton; // Reference to the RectTransform for the select tour button.
+
+[SerializeField] private TMP_InputField rBuildingSearchInput; // Reference to the TMP_InputField for building search input.
+
+```
+-- Class Variables --
+
+```C#
+private bool mActionButtonsVisible = false; // Controls the visibility of smaller action buttons.
+private cNode currentBuildingNode; // Reference to the current cNode_Building instance.
+private bool mBuildingListPopulated = false; // Indicates whether the building list has been populated.
+private bool mCreateTourListPopulated = false; // Indicates whether the create tour list has been populated.
+
+// Separate bools for each drawer component
+private bool isBuildingDrawerOpen = false; // Indicates whether the building drawer is open.
+private bool isSelectTourDrawerOpen = false; // Indicates whether the select tour drawer is open.
+private bool isCreateTourDrawerOpen = false; // Indicates whether the create tour drawer is open.
+
+```
+
+-- Prefabs --
+```C#
+[SerializeField] private GameObject pBuildingListButton; // Prefab for building list buttons.
+```
+
+-- Structures --
+```C#
+Dictionary<string, RectTransform> drawerPanels = new Dictionary<string, RectTransform>(); // Dictionary to store each drawerPanel
+```
+
+-- Unity Functions --
+
+```C#
+private void Awake(); // Called when the script instance is being loaded.
+private void Start(); // Called before the first frame update.
+private void FixedUpdate(); // Called every fixed frame-rate frame.
+```
+
+-- Coroutines --
+
+```C#
+IEnumerator AnimateButtons(); // Coroutine for animating buttons.
+IEnumerator UpdateNodesWithDelay(string inputText) // Coroutine for reinstantiating nodes matching with input.
+```
+
+-- Private Functions --
+
+```C#
+private void SetButtonsActive(bool active); // Sets the activity of smaller action buttons.
+private void SetButtonsScale(Vector3 scale); // Sets the scale of smaller action buttons.
+private void UpdateBuildingNameField(); // Updates the building name field based on the current building node.
+private void PopulateBuildingList(); // Populates the building list in the drawer.
+private void PopulateCreateTourList(); // Populates the create tour list in the drawer.
+private void CreateBuildingNode(int index); // Create node for Select Building panel
+private void CreateTourBuildingNode(int index); // Create node for Create Tour drawer panel
+private void SetBuildingNodeValues(GameObject building, int index); // Sets the value of each node with the abbreviation, name and distance from last known GPS location.
+private void UpdateBuildingDistances(RectTransform content); // Update the distances in the drawer once list is populated.
+private void ToggleDrawer(RectTransform drawer, ref bool isOpen); // Toggles the visibility of a drawer.
+private void HideDrawer(RectTransform drawer, ref bool isOpen); // Hides a specific drawer.
+private void UpdateBuildingNodesVisibility(string inputText); // Updates the visibility of building nodes based on search input.
+private void InstantiateMatchingBuildingNodes(string inputText); // Instantiate nodes that its building name match the input value
+private void DestroyBuildingNodes(); // Destroy all existing building nodes
+private void ShowAllBuildingNodes(); // Destroy existing building nodes and instantiate all nodes.
+private int CalculateLevenshteinDistance(string s1, string s2); // Calculates the Levenshtein distance between two strings.
+```
+
+-- Public Functions --
+
+```C#
+public void CloseAllDrawers();            // Closes all drawers if open.
+public void HideBuildingDrawer();            // Hides the building drawer if open.
+public void HideSelectTourDrawer();            // Hides the select tour drawer if open.
+public void HideCreateTourDrawer();            // Hides the create tour drawer if open.
+public void HandleFloatingActionButton();            // Handles the click event of the floating action button, animating buttons.
+public void HandleSelectBuildingButton();            // Handles the click event of the Select Building button, toggling the building drawer.
+public void HandleSelectTourButton();            // Handles click event of the Select Tour button, toggling the select tour drawer.
+public void HandleCreateTourButton();            // Handles click event of the Create Tour button, toggling the create tour drawer
+public void HandleSettingsButton();            // Handles the click event of the Settings button, navigates to Settings scene
+public void OnSearchInputValueChanged();            // Building search input value changed.
+```
+
+## cDistanceUnitUtility.cs
+
+-- Public Functions --
+```C#
+public static string GetDistanceUnit()            // Gets the preferred distance unit based on user settings.
+```
+
+**Returns:**
+- `string`: The preferred distance unit ("m" for kilometers or "mi" for miles).
+
+**Example:**
+```csharp
+string distanceUnit = cDistanceUnitUtility.GetDistanceUnit();
+// Example usage: If distanceUnit is "mi", the preferred unit is miles.
