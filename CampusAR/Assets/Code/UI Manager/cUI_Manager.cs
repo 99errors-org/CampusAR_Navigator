@@ -192,9 +192,9 @@ public class cUI_Manager : MonoBehaviour
         if (cNode_Manager.mInstance != null && !mBuildingListPopulated)
         {
             // Set the length of the scrollview content.
-            rBuildingListContent.sizeDelta = new Vector2(rBuildingListContent.sizeDelta.x, cNode_Manager.mInstance.mNodes.Count * pBuildingListButton.GetComponent<RectTransform>().sizeDelta.y);
+            rBuildingListContent.sizeDelta = new Vector2(rBuildingListContent.sizeDelta.x, cNode_Manager.mInstance.mBuildingNodes.Count * pBuildingListButton.GetComponent<RectTransform>().sizeDelta.y);
 
-            for (int i = 0; i < cNode_Manager.mInstance.mNodes.Count; i++)
+            for (int i = 0; i < cNode_Manager.mInstance.mBuildingNodes.Count; i++)
             {
                 CreateBuildingNode(i);
             }
@@ -215,10 +215,10 @@ public class cUI_Manager : MonoBehaviour
         if (cNode_Manager.mInstance != null && !mCreateTourListPopulated)
         {
             // Set the length of the scrollview content.
-            rCreateTourContent.sizeDelta = new Vector2(rCreateTourContent.sizeDelta.x, cNode_Manager.mInstance.mNodes.Count * pBuildingListButton.GetComponent<RectTransform>().sizeDelta.y);
+            rCreateTourContent.sizeDelta = new Vector2(rCreateTourContent.sizeDelta.x, cNode_Manager.mInstance.mBuildingNodes.Count * pBuildingListButton.GetComponent<RectTransform>().sizeDelta.y);
 
             // Create building nodes.
-            for (int i = 0; i < cNode_Manager.mInstance.mNodes.Count; i++)
+            for (int i = 0; i < cNode_Manager.mInstance.mBuildingNodes.Count; i++)
             {
                 CreateTourBuildingNode(i);
             }
@@ -247,7 +247,7 @@ public class cUI_Manager : MonoBehaviour
         SetBuildingNodeValues(_building, index);
 
         // Capture the current cNode for the button click event
-        cNode clickedNode = cNode_Manager.mInstance.mNodes[index];
+        cNode clickedNode = cNode_Manager.mInstance.mBuildingNodes[index];
 
         _building.GetComponent<Button>().onClick.AddListener(() =>
         {
@@ -279,10 +279,10 @@ public class cUI_Manager : MonoBehaviour
         _building.GetComponent<Button>().onClick.AddListener(() =>
         {
             // Check if the building is already in the queue content
-            if (rTourQueueContent.text.Contains(cNode_Manager.mInstance.mNodes[index].GetBuildingAbbreviation()))
+            if (rTourQueueContent.text.Contains(cNode_Manager.mInstance.mBuildingNodes[index].GetBuildingAbbreviation()))
             {
                 // Remove the building node from the queue content
-                rTourQueueContent.text = rTourQueueContent.text.Replace(cNode_Manager.mInstance.mNodes[index].GetBuildingAbbreviation() + ", ", "");
+                rTourQueueContent.text = rTourQueueContent.text.Replace(cNode_Manager.mInstance.mBuildingNodes[index].GetBuildingAbbreviation() + ", ", "");
 
                 // Change background color back to white
                 Color whiteColor = Color.white;
@@ -291,7 +291,7 @@ public class cUI_Manager : MonoBehaviour
             else
             {
                 // Add the building to the queue content
-                rTourQueueContent.text += cNode_Manager.mInstance.mNodes[index].GetBuildingAbbreviation() + ", ";
+                rTourQueueContent.text += cNode_Manager.mInstance.mBuildingNodes[index].GetBuildingAbbreviation() + ", ";
 
                 // Change background color to grey
                 Color greyColor = new Color(0.8f, 0.8f, 0.8f); // Adjust the values based on your preference
@@ -299,7 +299,7 @@ public class cUI_Manager : MonoBehaviour
 
                 if (Application.isEditor)
                 {
-                    Debug.Log(cNode_Manager.mInstance.mNodes[index].GetBuildingName());
+                    Debug.Log(cNode_Manager.mInstance.mBuildingNodes[index].GetBuildingName());
                 }
                 cPathfinding.mInstance.AddTourBuilding(index);
             }
@@ -314,13 +314,13 @@ public class cUI_Manager : MonoBehaviour
     /// <param name="index">The index of the building node.</param>
     private void SetBuildingNodeValues(GameObject building, int index)
     {
-        float distanceFloat = cGPSMaths.GetDistance(cNode_Manager.mInstance.mNodes[index].GetGPSLocation(), cUser_Manager.mInstance.mUserLastLocation);
+        float distanceFloat = cGPSMaths.GetDistance(cNode_Manager.mInstance.mBuildingNodes[index].GetGPSLocation(), cUser_Manager.mInstance.mUserLastLocation);
 
         int distance = Mathf.FloorToInt(distanceFloat);
 
         // Set Values.
-        building.transform.Find("BuildingTag (TMP)").GetComponent<TextMeshProUGUI>().text = cNode_Manager.mInstance.mNodes[index].GetBuildingAbbreviation();
-        building.transform.Find("BuildingName (TMP)").GetComponent<TextMeshProUGUI>().text = cNode_Manager.mInstance.mNodes[index].GetBuildingName();
+        building.transform.Find("BuildingTag (TMP)").GetComponent<TextMeshProUGUI>().text = cNode_Manager.mInstance.mBuildingNodes[index].GetBuildingAbbreviation();
+        building.transform.Find("BuildingName (TMP)").GetComponent<TextMeshProUGUI>().text = cNode_Manager.mInstance.mBuildingNodes[index].GetBuildingName();
 
         string distanceUnit = cDistanceUnitUtility.GetDistanceUnit();
         building.transform.Find("Distance (TMP)").GetComponent<TextMeshProUGUI>().text = $"{distance} {distanceUnit}";
@@ -391,6 +391,10 @@ public class cUI_Manager : MonoBehaviour
                 Debug.Log("inputText.contains(): " + inputText.ToLower().Trim().Contains(buildingName.ToLower().Trim()));
                 Debug.Log("Building name.Contains(): " + buildingName.ToLower().Trim().Contains(inputText.ToLower().Trim()));
                 Debug.Log("isSubstringMatch: " + isSubstringMatch);
+                if (isSubstringMatch)
+                {
+                    Debug.Log($"Building name: {buildingName}");
+                }
             }
 
             /*            int combinedScore = Mathf.Min(levenshteinDistance, Mathf.Abs(buildingName.Length - inputText.Length));
@@ -429,7 +433,7 @@ public class cUI_Manager : MonoBehaviour
         DestroyBuildingNodes();
 
         // Instantiate all building nodes
-        for (int i = 0; i < cNode_Manager.mInstance.mNodes.Count; i++)
+        for (int i = 0; i < cNode_Manager.mInstance.mBuildingNodes.Count; i++)
         {
             CreateBuildingNode(i);
         }
