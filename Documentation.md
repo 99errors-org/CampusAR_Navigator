@@ -8,6 +8,9 @@ Class, function and variable documentation
 - cArrowManager
 - cUser_Manager
 - cDisplayBuildingInfo
+- cUI_Manager
+- cDistanceUnitUtility
+
 
 ## cNode.cs
 *Nodes are individual points on the map that users can navigate to.*
@@ -254,6 +257,7 @@ private void DisplayBuildingText()                          // Checks if the bui
 ```
 
 ## cUI_Manager.cs
+*Manager for all 2D UI elements*
 
 -- References --
 ```C#
@@ -350,6 +354,7 @@ public void OnSearchInputValueChanged();            // Building search input val
 ```
 
 ## cDistanceUnitUtility.cs
+*Class to fetch the distance metric preference from PlayerPrefs*
 
 -- Public Functions --
 ```C#
