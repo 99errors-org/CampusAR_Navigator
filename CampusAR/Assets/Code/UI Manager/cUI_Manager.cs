@@ -379,17 +379,18 @@ public class cUI_Manager : MonoBehaviour
     private void InstantiateMatchingBuildingNodes(string inputText)
     {
 
-        for (int i = 0; i < cNode_Manager.mInstance.mNodes.Count; i++)
+        for (int i = 0; i < cNode_Manager.mInstance.mBuildingNodes.Count; i++)
         {
             int index = i;
-            string buildingName = cNode_Manager.mInstance.mNodes[index].GetBuildingName();
+            string buildingName = cNode_Manager.mInstance.mBuildingNodes[index].GetBuildingName();
 
             // int levenshteinDistance = CalculateLevenshteinDistance(buildingName, inputText);
             bool isSubstringMatch = buildingName.ToLower().Trim().Contains(inputText.ToLower().Trim()) || inputText.ToLower().Trim().Contains(buildingName.ToLower().Trim());
             if (Application.isEditor)
             {
-                Debug.Log(inputText.ToLower());
-                Debug.Log(buildingName.ToLower());
+                Debug.Log("inputText.contains(): " + inputText.ToLower().Trim().Contains(buildingName.ToLower().Trim()));
+                Debug.Log("Building name.Contains(): " + buildingName.ToLower().Trim().Contains(inputText.ToLower().Trim()));
+                Debug.Log("isSubstringMatch: " + isSubstringMatch);
             }
 
             /*            int combinedScore = Mathf.Min(levenshteinDistance, Mathf.Abs(buildingName.Length - inputText.Length));
