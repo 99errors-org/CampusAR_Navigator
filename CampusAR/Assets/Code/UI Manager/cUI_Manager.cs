@@ -48,12 +48,16 @@ public class cUI_Manager : MonoBehaviour
     private bool isSelectTourDrawerOpen = false;
     private bool isCreateTourDrawerOpen = false;
 
+    /* -------- Prefabs -------- */
 
     // Button for each building in instantiated list of drawer
     [SerializeField] private GameObject pBuildingListButton;
 
+    /* -------- Structures -------- */
     // Dictionary to store each drawerPanel 
     Dictionary<string, RectTransform> drawerPanels = new Dictionary<string, RectTransform>();
+
+    /* -------- Unity Functions -------- */
 
     void Awake()
     {
@@ -71,7 +75,6 @@ public class cUI_Manager : MonoBehaviour
         rSelectTourButton.transform.localScale = Vector3.zero;
     }
 
-
     // Update is called once per frame
     void FixedUpdate()
     {
@@ -83,6 +86,56 @@ public class cUI_Manager : MonoBehaviour
         ToggleDrawer(rBuildingDrawer, ref isBuildingDrawerOpen);
         ToggleDrawer(rSelectTourDrawer, ref isSelectTourDrawerOpen);
         ToggleDrawer(rCreateTourDrawer, ref isCreateTourDrawerOpen);
+    }
+
+    /* ---- Coroutines ---- */
+
+    /// <summary>
+    /// Animates the action buttons by scaling them.
+    /// </summary>
+    /// <returns>An enumerator for coroutine.</returns>
+    IEnumerator AnimateButtons()
+    {
+        float time = 0;
+        float duration = 0.25f;
+        AnimationCurve curve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+
+        // Determine the target scale based on visibility, 0 if visible, 2.0f if not visible
+        Vector3 targetScale = mActionButtonsVisible ? Vector3.zero : Vector3.one * 2.0f;
+
+        // Grab current scale of one of the buttons (this will be used for all small action buttons)
+        Vector3 originalScale = rCreateTourButton.transform.localScale;
+
+        while (time < duration)
+        {
+            float t = curve.Evaluate(time / duration);
+            // Lerp between initial scale that is conditionally 2 or 0 if the buttons are visible
+            SetButtonsScale(Vector3.Lerp(originalScale, targetScale, t));
+
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        // Toggle visibility and update boolean
+        SetButtonsActive(!mActionButtonsVisible);
+        mActionButtonsVisible = !mActionButtonsVisible;
+    }
+
+    /// <summary>
+    /// Coroutine function that updates building nodes with a delay.
+    /// </summary>
+    /// <param name="inputText">The input text used for filtering building nodes.</param>
+    /// <returns>An IEnumerator for coroutine execution.</returns>
+    private IEnumerator UpdateNodesWithDelay(string inputText)
+    {
+        // Wait for a short delay before destroying existing building nodes
+        yield return new WaitForSeconds(0.5f);
+
+        // Destroy existing building nodes
+        DestroyBuildingNodes();
+
+        // Instantiate matching building nodes
+        InstantiateMatchingBuildingNodes(inputText);
     }
 
     /* ---- Private Methods ---- */
@@ -318,46 +371,46 @@ public class cUI_Manager : MonoBehaviour
         ToggleDrawer(drawer, ref isOpen);
     }
 
-    private IEnumerator UpdateNodesWithDelay(string inputText)
-    {
-        // Wait for a short delay before destroying existing building nodes
-        yield return new WaitForSeconds(0.5f);
 
-        // Destroy existing building nodes
-        DestroyBuildingNodes();
-
-        // Instantiate matching building nodes
-        InstantiateMatchingBuildingNodes(inputText);
-    }
-
-
+    /// <summary>
+    /// Instantiates building nodes based on the provided input text and certain criteria.
+    /// </summary>
+    /// <param name="inputText">The input text used for filtering building nodes.</param>
     private void InstantiateMatchingBuildingNodes(string inputText)
     {
-        int visibleNodeCount = 0;
 
         for (int i = 0; i < cNode_Manager.mInstance.mNodes.Count; i++)
         {
-            string buildingName = cNode_Manager.mInstance.mNodes[i].GetBuildingName();
+            int index = i;
+            string buildingName = cNode_Manager.mInstance.mNodes[index].GetBuildingName();
 
-            int levenshteinDistance = CalculateLevenshteinDistance(buildingName, inputText);
-            bool isSubstringMatch = buildingName.ToLower().Contains(inputText.ToLower()) || inputText.ToLower().Contains(buildingName.ToLower());
-
-            int combinedScore = Mathf.Min(levenshteinDistance, Mathf.Abs(buildingName.Length - inputText.Length));
-
+            // int levenshteinDistance = CalculateLevenshteinDistance(buildingName, inputText);
+            bool isSubstringMatch = buildingName.ToLower().Trim().Contains(inputText.ToLower().Trim()) || inputText.ToLower().Trim().Contains(buildingName.ToLower().Trim());
             if (Application.isEditor)
             {
-                Debug.Log($"Building: {buildingName}, Levenshtein Distance: {levenshteinDistance}, Combined Score: {combinedScore}");
+                Debug.Log(inputText.ToLower());
+                Debug.Log(buildingName.ToLower());
             }
 
+            /*            int combinedScore = Mathf.Min(levenshteinDistance, Mathf.Abs(buildingName.Length - inputText.Length));
+
+                        if (Application.isEditor)
+                        {
+                            Debug.Log($"Building: {buildingName}, Levenshtein Distance: {levenshteinDistance}, Combined Score: {combinedScore}");
+                        }
+            */
+
             // Adjust the threshold based on your observation
-            if (combinedScore <= mLevenshteinDistance)
+            if (isSubstringMatch)
             {
-                CreateBuildingNode(i);
-                visibleNodeCount++;
+                CreateBuildingNode(index);
             }
         }
     }
 
+    /// <summary>
+    /// Destroys all existing building nodes.
+    /// </summary>
     private void DestroyBuildingNodes()
     {
         foreach (Transform child in rBuildingListContent.transform)
@@ -366,6 +419,9 @@ public class cUI_Manager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Destroys existing building nodes and instantiates all building nodes.
+    /// </summary>
     private void ShowAllBuildingNodes()
     {
         // Destroy existing building nodes
@@ -471,37 +527,6 @@ public class cUI_Manager : MonoBehaviour
     {
         Debug.Log("You have clicked the floating button!");
         StartCoroutine(AnimateButtons());
-    }
-
-    /// <summary>
-    /// Animates the action buttons by scaling them.
-    /// </summary>
-    /// <returns>An enumerator for coroutine.</returns>
-    IEnumerator AnimateButtons()
-    {
-        float time = 0;
-        float duration = 0.25f;
-        AnimationCurve curve = AnimationCurve.EaseInOut(0, 0, 1, 1);
-
-        // Determine the target scale based on visibility, 0 if visible, 2.0f if not visible
-        Vector3 targetScale = mActionButtonsVisible ? Vector3.zero : Vector3.one * 2.0f;
-
-        // Grab current scale of one of the buttons (this will be used for all small action buttons)
-        Vector3 originalScale = rCreateTourButton.transform.localScale;
-
-        while (time < duration)
-        {
-            float t = curve.Evaluate(time / duration);
-            // Lerp between initial scale that is conditionally 2 or 0 if the buttons are visible
-            SetButtonsScale(Vector3.Lerp(originalScale, targetScale, t));
-
-            time += Time.deltaTime;
-            yield return null;
-        }
-
-        // Toggle visibility and update boolean
-        SetButtonsActive(!mActionButtonsVisible);
-        mActionButtonsVisible = !mActionButtonsVisible;
     }
 
     /// <summary>
