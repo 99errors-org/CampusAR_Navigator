@@ -1,10 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using TMPro.Examples;
-using Unity.Tutorials.Core.Editor;
-using Unity.VisualScripting;
-using Unity.XR.CoreUtils;
 using UnityEngine;
 
 public class cDisplayBuildingInfo : MonoBehaviour
