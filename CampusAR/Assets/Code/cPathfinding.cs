@@ -13,7 +13,7 @@ class Path
     public List<int> mPath = new List<int>();               // Chain of nodes working from the users start position to the final target destination
     private int mPathPosition = 0;                          // Index of how far into the list Path the user has traversed
 
-    public Path() 
+    public Path()
     {
         mPathPosition = 0;
     }
@@ -197,6 +197,20 @@ public class cPathfinding : MonoBehaviour
     Path mCurrentPath = new Path();
 
     /* -------- Unity Methods -------- */
+    private void Awake()
+    {
+        // Check if singleton instance has been assigned.
+        if (mInstance == null)
+        {
+            // Assign the singleton instance.
+            mInstance = this;
+        }
+        else
+        {
+            // Destroy this object.
+            Destroy(this);
+        }
+    }
 
     private void Start()
     {
@@ -316,7 +330,6 @@ public class cPathfinding : MonoBehaviour
 
     /* -------- Private Methods -------- */
 
-    
 
     /* -------- Public Methods -------- */
 
@@ -362,10 +375,10 @@ public class cPathfinding : MonoBehaviour
         if (mTourBuildingQueue.Count > 0)
         {
             // Run the pathfinding to the building in the queue
-            if (RunBuildingPathfinding(mTourBuildingQueue[mTourBuildingQueuePosition])) 
-            { 
+            if (RunBuildingPathfinding(mTourBuildingQueue[mTourBuildingQueuePosition]))
+            {
                 // When it reaches the target building in the queue, move to the next building in the queue
-                mTourBuildingQueuePosition++; 
+                mTourBuildingQueuePosition++;
             }
 
             // If the user visits everything in the queue
@@ -400,7 +413,7 @@ public class cPathfinding : MonoBehaviour
         {
             // For each node in the mNodes list, check its distance from the user
             float distanceToNode = cGPSMaths.GetDistance(cUser_Manager.mInstance.mUserLastLocation, cNode_Manager.mInstance.mNodes[i].GetGPSLocation());
-            if (distanceToNode<closestDistance)
+            if (distanceToNode < closestDistance)
             {
                 // If it's distance is the new closest distance, set this node to be the current closest node
                 closestNode = i;
@@ -409,5 +422,11 @@ public class cPathfinding : MonoBehaviour
         }
 
         return closestNode;
+    }
+
+    // Adds a new node to the tour queue
+    public void AddTourBuilding(int buildingIndex)
+    {
+        mTourBuildingQueue.Add(buildingIndex);
     }
 }
