@@ -796,7 +796,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &653847861
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2184,6 +2184,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rBuildingNameField: {fileID: 4147145643026825538}
+  rBuildingDistanceField: {fileID: 7116525081683471322}
   rBuildingListContent: {fileID: 6805159775997429717}
   rBuildingDrawer: {fileID: 1557337618}
   rSelectTourDrawer: {fileID: 1564692123}
@@ -2611,6 +2612,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: SettingsButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 5708692521926482525, guid: 4bfffa68a4a31f343982c78f686d7091,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3099,14 +3105,14 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 48
+  m_fontSize: 49.55
   m_fontSizeBase: 16
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 48
   m_fontSizeMax: 128
   m_fontStyle: 1
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -3175,8 +3181,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 259, y: -177}
-  m_SizeDelta: {x: 0, y: 60}
+  m_AnchoredPosition: {x: 50, y: -177}
+  m_SizeDelta: {x: 600, y: 60}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!224 &5251135828482768733
 RectTransform:
@@ -3645,10 +3651,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 826875309}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 721, y: -177}
-  m_SizeDelta: {x: 0, y: 50}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -50, y: -177}
+  m_SizeDelta: {x: 400, y: 50}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &7041448431331341426
 MonoBehaviour:
@@ -3731,7 +3737,7 @@ MonoBehaviour:
   m_fontSizeMin: 48
   m_fontSizeMax: 96
   m_fontStyle: 1
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 4
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -3760,7 +3766,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: 1.477417, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0

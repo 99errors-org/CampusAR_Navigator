@@ -91,8 +91,11 @@ public class cUser_Manager : MonoBehaviour
     {
         SetUserData();
 
-        // Check the current node.
-        Debug.Log(mTargetNodeIndex);
+        // Check if pointing at a target node.
+        if (mTargetNodeIndex != -1)
+        {
+            cArrowManager.mInstance.DirectArrow(mTargetNodeIndex);
+        }
     }
 
     /* -------- Coroutines -------- */

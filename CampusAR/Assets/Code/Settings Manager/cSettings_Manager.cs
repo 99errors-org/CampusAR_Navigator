@@ -39,12 +39,6 @@ public class cSettings_Manager : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     /// <summary>
     /// Handle the go back button on Settings scene. Returns to Home scene
     /// </summary>

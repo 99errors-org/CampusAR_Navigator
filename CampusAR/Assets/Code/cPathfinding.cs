@@ -4,16 +4,16 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-class Path
+class cPath
 {
     public List<int> mPath = new List<int>();               // Chain of nodes working from the users start position to the final target destination
     private int mPathPosition = 0;                          // Index of how far into the list Path the user has traversed
 
-    public Path()
+    public cPath()
     {
         mPathPosition = 0;
     }
-    public Path(List<int> newPath)
+    public cPath(List<int> newPath)
     {
         mPath = newPath;
         mPathPosition = 0;
@@ -35,7 +35,7 @@ class Path
     }
 
     /// <summary>
-    /// Returns the index of the node the user is currently navugating to
+    /// Returns the index of the node the user is currently navigating to
     /// </summary>
     /// <returns></returns>
     public int GetCurrentNode()
@@ -49,6 +49,7 @@ class Path
             return 0;
         }
     }
+
     public void CurrentNodeReached()
     {
         mPathPosition++;
@@ -190,7 +191,7 @@ public class cPathfinding : MonoBehaviour
     private List<int> mTourBuildingQueue = new List<int>();         // List of buildings the user wants to visit in
     private int mTourBuildingQueuePosition = 0;                     // Position of the user in the tour
 
-    Path mCurrentPath = new Path();
+    cPath mCurrentPath = new cPath();
 
     /* -------- Unity Methods -------- */
     private void Awake()
@@ -323,9 +324,6 @@ public class cPathfinding : MonoBehaviour
         //    buildingTested = true;
         //}
     }
-
-    /* -------- Private Methods -------- */
-
 
     /* -------- Public Methods -------- */
 

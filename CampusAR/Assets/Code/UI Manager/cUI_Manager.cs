@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System;
 
 public class cUI_Manager : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class cUI_Manager : MonoBehaviour
     /* -------- References -------- */
 
     [SerializeField] private TextMeshProUGUI rBuildingNameField;
+    [SerializeField] private TextMeshProUGUI rBuildingDistanceField;
 
     [SerializeField] private RectTransform rBuildingListContent;
     [SerializeField] private RectTransform rBuildingDrawer;
@@ -180,6 +182,15 @@ public class cUI_Manager : MonoBehaviour
             {
                 // Update the text content of the TextMeshPro field with the building name
                 rBuildingNameField.text = currentBuildingNode.GetBuildingName();
+
+                // Get distance.
+                float distanceFloat = cGPSMaths.GetDistance(currentBuildingNode.GetGPSLocation(), cUser_Manager.mInstance.mUserLastLocation);
+
+                // Round down the distance.
+                distanceFloat = Mathf.FloorToInt(distanceFloat);
+
+                // Update the text content of the TextMeshPro field with the building distance.
+                rBuildingDistanceField.text = $"{distanceFloat} " + "m";
             }
         }
     }
@@ -343,11 +354,6 @@ public class cUI_Manager : MonoBehaviour
     /// <param name="isOpen">Reference to the boolean indicating the state of the drawer.</param>
     private void ToggleDrawer(RectTransform drawer, ref bool isOpen)
     {
-        if (Application.isEditor)
-        {
-            Debug.Log($"Toggling drawer {drawer.name}. IsOpen: {isOpen}");
-        }
-
         float targetY = isOpen ? drawer.sizeDelta.y : 0.0f;
         float currentY = drawer.position.y;
 
