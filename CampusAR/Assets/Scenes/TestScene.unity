@@ -266,7 +266,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 120414933}
-  - component: {fileID: 120414934}
   m_Layer: 0
   m_Name: ---- Managers ----
   m_TagString: Untagged
@@ -294,32 +293,6 @@ Transform:
   - {fileID: 2024729793}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &120414934
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 120414932}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 896138e16ade7ff4f92597115af1fd2d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rBuildingNameField: {fileID: 0}
-  rBuildingListContent: {fileID: 0}
-  rBuildingDrawer: {fileID: 0}
-  rSelectTourDrawer: {fileID: 0}
-  rCreateTourDrawer: {fileID: 0}
-  rCreateTourContent: {fileID: 0}
-  rTourQueueContent: {fileID: 0}
-  rCreateTourButton: {fileID: 0}
-  rSelectBuildingButton: {fileID: 0}
-  rSelectTourButton: {fileID: 0}
-  rBuildingSearchInput: {fileID: 0}
-  mDrawerSpeed: 10
-  mLevenshteinDistance: 5
-  pBuildingListButton: {fileID: 0}
 --- !u!1 &123983957
 GameObject:
   m_ObjectHideFlags: 0
@@ -1656,6 +1629,16 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: HideCreateTourDrawer
       objectReference: {fileID: 0}
+    - target: {fileID: 6609863369442037560, guid: 93d08112532dbd041b71901d1f76930a,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6609863369442037560, guid: 93d08112532dbd041b71901d1f76930a,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6888214711078876560, guid: 93d08112532dbd041b71901d1f76930a,
         type: 3}
       propertyPath: m_text
@@ -2785,6 +2768,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6609863369442037560, guid: 93d08112532dbd041b71901d1f76930a,
         type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6609863369442037560, guid: 93d08112532dbd041b71901d1f76930a,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6609863369442037560, guid: 93d08112532dbd041b71901d1f76930a,
+        type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -0.0006533723
       objectReference: {fileID: 0}
@@ -3371,6 +3364,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: HideBuildingDrawer
+      objectReference: {fileID: 0}
+    - target: {fileID: 5999324843968777745, guid: 6841a7c53fc648d4c8ae3ba8e4c61e6a,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5999324843968777745, guid: 6841a7c53fc648d4c8ae3ba8e4c61e6a,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5999324843968777745, guid: 6841a7c53fc648d4c8ae3ba8e4c61e6a,
         type: 3}
