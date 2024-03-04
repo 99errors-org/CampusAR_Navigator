@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-class cPath
+public class cPath
 {
     public List<int> mPath = new List<int>();               // Chain of nodes working from the users start position to the final target destination
     private int mPathPosition = 0;                          // Index of how far into the list Path the user has traversed
@@ -176,7 +176,7 @@ public class cPathfinding : MonoBehaviour
 {
     /* -------- Variables -------- */
 
-    public bool doOnce = true;
+    // Testing variables
     public int startIndex = 0;
     public int endIndex = 0;
     public int repeatNumber = 0;
@@ -191,7 +191,7 @@ public class cPathfinding : MonoBehaviour
     private List<int> mTourBuildingQueue = new List<int>();         // List of buildings the user wants to visit in
     private int mTourBuildingQueuePosition = 0;                     // Position of the user in the tour
 
-    cPath mCurrentPath = new cPath();
+    public cPath mCurrentPath = new cPath();
 
     /* -------- Unity Methods -------- */
     private void Awake()
@@ -229,6 +229,8 @@ public class cPathfinding : MonoBehaviour
 
     void Update()
     {
+        // ----- Testing -----
+
         //List<string> failedPathBuildingTests = new List<string>();
         //List<string> failedBuildingBuildingTests = new List<string>();
 
@@ -323,6 +325,9 @@ public class cPathfinding : MonoBehaviour
         //{
         //    buildingTested = true;
         //}
+
+
+        RunTourPathfinding();
     }
 
     /* -------- Public Methods -------- */
@@ -369,14 +374,14 @@ public class cPathfinding : MonoBehaviour
         if (mTourBuildingQueue.Count > 0)
         {
             // Run the pathfinding to the building in the queue
-            if (RunBuildingPathfinding(mTourBuildingQueue[mTourBuildingQueuePosition]))
+            if (RunBuildingPathfinding(mTourBuildingQueue[0]))
             {
                 // When it reaches the target building in the queue, move to the next building in the queue
-                mTourBuildingQueuePosition++;
+                mTourBuildingQueue.RemoveAt(0);
             }
 
             // If the user visits everything in the queue
-            if (mTourBuildingQueuePosition > mTourBuildingQueue.Count)
+            if (mTourBuildingQueue.Count == 0)
             {
                 // Exit pathfinding
                 return true;

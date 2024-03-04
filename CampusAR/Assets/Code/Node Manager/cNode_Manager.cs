@@ -11,20 +11,20 @@ public class cNode_Manager : MonoBehaviour
     /* -------- References -------- */
 
     /* Singleton */
-    public static cNode_Manager mInstance;                                  // Singleton instance, used to reference this class globally.
+    public static cNode_Manager mInstance;                  // Singleton instance, used to reference this class globally.
 
     /* -------- Prefabs -------- */
 
     [Title("Node Prefabs")]
-    [SerializeField] private GameObject pNode_Building;                             // Prefab for the building nodes, used when generating the map.
-    [SerializeField] private GameObject pNode_Path;                                 // Prefab for the path nodes, used when generating the map.
+    [SerializeField] private GameObject pNode_Building;     // Prefab for the building nodes, used when generating the map.
+    [SerializeField] private GameObject pNode_Path;         // Prefab for the path nodes, used when generating the map.
 
     /* -------- Variables -------- */
 
-    public List<cNode>                              mNodes { get; private set; } = new List<cNode>();                     // A list of all the nodes.
-    public List<cNode_Building>                     mBuildingNodes { get; private set; } = new List<cNode_Building>();    // A list of all the building nodes. mBuildingNodes[0] is a dummy node. Nodes are loading in index order so mBuildingNodes[5] = node with index 5
-    public List<cNode>                              mPathNodes { get; private set; } = new List<cNode>();                 // A list of all the path nodes. mPathNodes[0] is a dummy node. Nodes are loading in index order so mPathNodes[5] = node with index 5
-    public List<GameObject>                        mWorldNodes { get; private set; } = new List<GameObject>();            // A list of all the instantiaed nodes in-world.
+    public List<cNode>                  mNodes { get; private set; } = new List<cNode>();                       // A list of all the nodes.
+    public List<cNode_Building>         mBuildingNodes { get; private set; } = new List<cNode_Building>();      // A list of all the building nodes. mBuildingNodes[0] is a dummy node. Nodes are loading in index order so mBuildingNodes[5] = node with index 5
+    public List<cNode>                  mPathNodes { get; private set; } = new List<cNode>();                   // A list of all the path nodes. mPathNodes[0] is a dummy node. Nodes are loading in index order so mPathNodes[5] = node with index 5
+    public List<GameObject>             mWorldNodes { get; private set; } = new List<GameObject>();             // A list of all the instantiaed nodes in-world.
 
 
     /* -------- Unity Methods -------- */
@@ -72,10 +72,6 @@ public class cNode_Manager : MonoBehaviour
             // Convert file to node.
             JsonUtility.FromJsonOverwrite(_buildingNodes[i].ToString(), _node);
 
-            // ----------
-
-            // ----------
-
             // Add the node.
             mNodes.Add(_node);
             mBuildingNodes.Add(_node);
@@ -98,19 +94,6 @@ public class cNode_Manager : MonoBehaviour
             mNodes.Add(_node);
             mPathNodes.Add(_node);
         }
-
-        Debug.Log("---- Building Nodes ----");
-        foreach (cNode_Building node in cNode_Manager.mInstance.mBuildingNodes)
-        {
-            Debug.Log("Node Index: " + node.GetNodeIndex() + "; Node ID: " + node.GetNodeID() + "; Position in List: " + cNode_Manager.mInstance.mBuildingNodes.IndexOf(node) + "; Node Name: " + node.GetNodeName());
-        }
-
-        Debug.Log("\n\n---- Path Nodes ----");
-
-        foreach (cNode node in cNode_Manager.mInstance.mPathNodes)
-        {
-            Debug.Log("Node Index: " + node.GetNodeIndex() + "; Node ID: " + node.GetNodeID() + "; Position in List: " + cNode_Manager.mInstance.mPathNodes.IndexOf(node) + "; Node Name: " + node.GetNodeName());
-        }
     }
 
     /// <summary>
@@ -123,7 +106,6 @@ public class cNode_Manager : MonoBehaviour
         {
             mWorldNodes[i].transform.localPosition = cGPSMaths.GetVector(_userPosition, mNodes[i].GetGPSLocation());
         }
-
     }
 
     /// <summary>
@@ -162,6 +144,9 @@ public class cNode_Manager : MonoBehaviour
 
             // Add node to list of spawned nodes.
             mWorldNodes.Add(_node);
+
+            // Hide cube.
+            _node.transform.Find("Cube").GetComponent<MeshRenderer>().enabled = false;
         }
 
         //Instantiate all the path nodes
@@ -178,6 +163,9 @@ public class cNode_Manager : MonoBehaviour
 
             // Add node to list of spawned nodes.
             mWorldNodes.Add(_node);
+
+            // Hide cube.
+            _node.transform.Find("Cube").GetComponent<MeshRenderer>().enabled = false;
         }
     }
 

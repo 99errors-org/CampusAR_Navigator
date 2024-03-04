@@ -172,7 +172,7 @@ public class cUI_Manager : MonoBehaviour
     private void UpdateBuildingNameField()
     {
         // Check if current building node is selected.
-        rTopBar.SetActive(currentBuildingNode != null);
+        rTopBar.SetActive(!cPathfinding.mInstance.mCurrentPath.isEmpty());
 
         // Check if the currentBuildingNode is not null
         if (currentBuildingNode != null)
