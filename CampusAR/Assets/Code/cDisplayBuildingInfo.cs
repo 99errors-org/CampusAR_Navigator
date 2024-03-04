@@ -42,12 +42,20 @@ public class cDisplayBuildingInfo : MonoBehaviour
         for (int i = 0; i < cNode_Manager.mInstance.mBuildingNodes.Count; i++)
         {
             GameObject _node = cNode_Manager.mInstance.mWorldNodes[i];
+
+            // Current nodes text component
             _tmp_text = _node.gameObject.transform.Find("Text (TMP)").GetComponent<TextMeshPro>();
+
+            // Current building
             cNode _tmp_building = cNode_Manager.mInstance.mNodes[i];
-            _distanceFromUser = cGPSMaths.GetDistance(cUser_Manager.mInstance.mUserLastLocation, _tmp_building.GetGPSLocation());
+
+            // Distance from the user to the building
+            _distanceFromUser = cGPSMaths.GetDistance(
+                                                cUser_Manager.mInstance.mUserLastLocation, 
+                                                _tmp_building.GetGPSLocation());
             if (_tmp_text != null)
             {
-                // If the building is near display the text
+                // If the building is out of the radius hide the text
                 if (_distanceFromUser >= cPathfinding.mNodeReachThreshold)
                 {
                     if (_tmp_text.gameObject.activeSelf)
