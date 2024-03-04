@@ -11,21 +11,22 @@ public class cUI_Manager : MonoBehaviour
 
     /* -------- References -------- */
 
-    [SerializeField] private TextMeshProUGUI rBuildingNameField;
-    [SerializeField] private TextMeshProUGUI rBuildingDistanceField;
+    [SerializeField] private GameObject         rTopBar;
+    [SerializeField] private TextMeshProUGUI    rBuildingNameField;
+    [SerializeField] private TextMeshProUGUI    rBuildingDistanceField;
 
-    [SerializeField] private RectTransform rBuildingListContent;
-    [SerializeField] private RectTransform rBuildingDrawer;
-    [SerializeField] private RectTransform rSelectTourDrawer;
-    [SerializeField] private RectTransform rCreateTourDrawer;
-    [SerializeField] private RectTransform rCreateTourContent;
-    [SerializeField] private TextMeshProUGUI rTourQueueContent;
+    [SerializeField] private RectTransform      rBuildingListContent;
+    [SerializeField] private RectTransform      rBuildingDrawer;
+    [SerializeField] private RectTransform      rSelectTourDrawer;
+    [SerializeField] private RectTransform      rCreateTourDrawer;
+    [SerializeField] private RectTransform      rCreateTourContent;
+    [SerializeField] private TextMeshProUGUI    rTourQueueContent;
 
-    [SerializeField] private RectTransform rCreateTourButton;
-    [SerializeField] private RectTransform rSelectBuildingButton;
-    [SerializeField] private RectTransform rSelectTourButton;
+    [SerializeField] private RectTransform      rCreateTourButton;
+    [SerializeField] private RectTransform      rSelectBuildingButton;
+    [SerializeField] private RectTransform      rSelectTourButton;
 
-    [SerializeField] private TMP_InputField rBuildingSearchInput;
+    [SerializeField] private TMP_InputField     rBuildingSearchInput;
 
     /* -------- Variables -------- */
 
@@ -171,27 +172,22 @@ public class cUI_Manager : MonoBehaviour
     private void UpdateBuildingNameField()
     {
         // Check if current building node is selected.
-        rBuildingNameField.gameObject.SetActive(currentBuildingNode != null);
+        rTopBar.SetActive(currentBuildingNode != null);
 
-        if (rBuildingNameField != null)
+        // Check if the currentBuildingNode is not null
+        if (currentBuildingNode != null)
         {
-            rBuildingNameField.gameObject.SetActive(currentBuildingNode != null);
+            // Update the text content of the TextMeshPro field with the building name
+            rBuildingNameField.text = currentBuildingNode.GetBuildingName();
 
-            // Check if the currentBuildingNode is not null
-            if (currentBuildingNode != null)
-            {
-                // Update the text content of the TextMeshPro field with the building name
-                rBuildingNameField.text = currentBuildingNode.GetBuildingName();
+            // Get distance.
+            float distanceFloat = cGPSMaths.GetDistance(currentBuildingNode.GetGPSLocation(), cUser_Manager.mInstance.mUserLastLocation);
 
-                // Get distance.
-                float distanceFloat = cGPSMaths.GetDistance(currentBuildingNode.GetGPSLocation(), cUser_Manager.mInstance.mUserLastLocation);
+            // Round down the distance.
+            distanceFloat = Mathf.FloorToInt(distanceFloat);
 
-                // Round down the distance.
-                distanceFloat = Mathf.FloorToInt(distanceFloat);
-
-                // Update the text content of the TextMeshPro field with the building distance.
-                rBuildingDistanceField.text = $"{distanceFloat} " + "m";
-            }
+            // Update the text content of the TextMeshPro field with the building distance.
+            rBuildingDistanceField.text = $"{distanceFloat} " + "m";
         }
     }
 

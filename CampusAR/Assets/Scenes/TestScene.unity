@@ -2183,6 +2183,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 896138e16ade7ff4f92597115af1fd2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rTopBar: {fileID: 826875308}
   rBuildingNameField: {fileID: 4147145643026825538}
   rBuildingDistanceField: {fileID: 7116525081683471322}
   rBuildingListContent: {fileID: 6805159775997429717}
