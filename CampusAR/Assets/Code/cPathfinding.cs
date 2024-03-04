@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-
 class Path
 {
     public List<int> mPath = new List<int>();               // Chain of nodes working from the users start position to the final target destination

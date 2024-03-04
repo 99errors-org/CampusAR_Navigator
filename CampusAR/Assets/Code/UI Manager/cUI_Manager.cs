@@ -397,12 +397,13 @@ public class cUI_Manager : MonoBehaviour
                 }
             }
 
-            /*            int combinedScore = Mathf.Min(levenshteinDistance, Mathf.Abs(buildingName.Length - inputText.Length));
+            /*            
+            int combinedScore = Mathf.Min(levenshteinDistance, Mathf.Abs(buildingName.Length - inputText.Length));
 
-                        if (Application.isEditor)
-                        {
-                            Debug.Log($"Building: {buildingName}, Levenshtein Distance: {levenshteinDistance}, Combined Score: {combinedScore}");
-                        }
+            if (Application.isEditor)
+            {
+                Debug.Log($"Building: {buildingName}, Levenshtein Distance: {levenshteinDistance}, Combined Score: {combinedScore}");
+            }
             */
 
             // Adjust the threshold based on your observation

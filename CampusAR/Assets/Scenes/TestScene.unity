@@ -574,7 +574,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rInitPanel: {fileID: 667729066}
-  rDebug_CurrentNodeText: {fileID: 0}
   rCam: {fileID: 1354141930}
   rCalibrationScreen: {fileID: 653847860}
   rCalibrationText: {fileID: 1142958618}
@@ -797,7 +796,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &653847861
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1293,7 +1292,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Hold your phone still you silly twat
+  m_text: ERROR Label not updated.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

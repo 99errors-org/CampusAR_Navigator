@@ -20,7 +20,6 @@ public class cUser_Manager : MonoBehaviour
 
         /* Init Screen */
     [SerializeField] private GameObject         rInitPanel;                                             // The Initialisation panel.
-    [SerializeField] private TextMeshProUGUI    rDebug_CurrentNodeText;                                 // Text used for debugging the initialisation screen.
 
         /* Calibration Screen */
     [SerializeField] private Transform          rCam;                                                   // Reference to the camera.
@@ -45,9 +44,9 @@ public class cUser_Manager : MonoBehaviour
     public Vector2                              mUserLastLocation { get; private set; }                 // The users last GPS location, used for maintaining accuracy.
     public float                                mUserLastCompassRotation { get; private set; } = 0.0f;  // The users last compass bearing, this is stored to not overwhelm the phone.
 
-
-    public enum kDistanceUnit { m, km, mi};                                                    // Enum for distance unit 
-    private kDistanceUnit mUsersDistancePrefrence = kDistanceUnit.m;                           // Users distance unit prefrence
+    public enum kDistanceUnit { m, km, mi};                                                             // Enum for distance unit 
+    private kDistanceUnit                       mUsersDistancePrefrence = kDistanceUnit.m;              // Users distance unit prefrence
+    
     /* Guiding */
     private int                                 mTargetNodeIndex = kNullTargetNodeIndex;                // The index of the target building/node, if -1 no node is selected.
 
@@ -67,6 +66,9 @@ public class cUser_Manager : MonoBehaviour
         {
             Destroy(this);
         }
+
+        // Attempt to run at 60fps
+        Application.targetFrameRate = 60;
     }
 
     private void Start()
@@ -100,6 +102,9 @@ public class cUser_Manager : MonoBehaviour
         // Check if in editor.
         if (Application.isEditor)
         {
+            // Disable calibration screen.
+            rCalibrationScreen.SetActive(false);
+
             // Create the nodes in-world.
             cNode_Manager.mInstance.InstantiateNodes(mUserLastLocation);
 
