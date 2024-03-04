@@ -90,6 +90,9 @@ public class cUser_Manager : MonoBehaviour
     private void FixedUpdate()
     {
         SetUserData();
+
+        // Check the current node.
+        Debug.Log(mTargetNodeIndex);
     }
 
     /* -------- Coroutines -------- */

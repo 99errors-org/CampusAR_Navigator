@@ -297,10 +297,6 @@ public class cUI_Manager : MonoBehaviour
                 Color greyColor = new Color(0.8f, 0.8f, 0.8f); // Adjust the values based on your preference
                 _building.GetComponent<Image>().color = greyColor;
 
-                if (Application.isEditor)
-                {
-                    Debug.Log(cNode_Manager.mInstance.mBuildingNodes[index].GetBuildingName());
-                }
                 cPathfinding.mInstance.AddTourBuilding(index);
             }
         });
@@ -351,6 +347,7 @@ public class cUI_Manager : MonoBehaviour
         {
             Debug.Log($"Toggling drawer {drawer.name}. IsOpen: {isOpen}");
         }
+
         float targetY = isOpen ? drawer.sizeDelta.y : 0.0f;
         float currentY = drawer.position.y;
 
@@ -531,7 +528,6 @@ public class cUI_Manager : MonoBehaviour
     /// </summary>
     public void HandleFloatingActionButton()
     {
-        Debug.Log("You have clicked the floating button!");
         StartCoroutine(AnimateButtons());
     }
 
@@ -540,10 +536,6 @@ public class cUI_Manager : MonoBehaviour
     /// </summary>
     public void HandleSelectBuildingButton()
     {
-        if (Application.isEditor)
-        {
-            Debug.Log("You have clicked the SelectBuilding button!");
-        }
         isBuildingDrawerOpen = !isBuildingDrawerOpen;
         ToggleDrawer(rBuildingDrawer, ref isBuildingDrawerOpen);
     }
@@ -553,10 +545,6 @@ public class cUI_Manager : MonoBehaviour
     /// </summary>
     public void HandleSelectTourButton()
     {
-        if (Application.isEditor)
-        {
-            Debug.Log("You have clicked the SelectTour button!");
-        }
         isSelectTourDrawerOpen = !isSelectTourDrawerOpen;
         ToggleDrawer(rSelectTourDrawer, ref isSelectTourDrawerOpen);
     }
@@ -566,10 +554,6 @@ public class cUI_Manager : MonoBehaviour
     /// </summary>
     public void HandleCreateTourButton()
     {
-        if (Application.isEditor)
-        {
-            Debug.Log("You have clicked the CreateTour button!");
-        }
         isCreateTourDrawerOpen = !isCreateTourDrawerOpen;
         ToggleDrawer(rCreateTourDrawer, ref isCreateTourDrawerOpen);
     }
@@ -579,10 +563,6 @@ public class cUI_Manager : MonoBehaviour
     /// </summary>
     public void HandleSettingsButton()
     {
-        if (Application.isEditor)
-        {
-            Debug.Log("You have clicked the Settings button!");
-        }
         SceneManager.LoadScene(1);
     }
 
