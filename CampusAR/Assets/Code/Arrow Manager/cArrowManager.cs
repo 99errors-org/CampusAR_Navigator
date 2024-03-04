@@ -56,7 +56,7 @@ public class cArrowManager : MonoBehaviour
     void FixedUpdate()
     {
         // Deactivate the arrow if unused.
-        mArrow.SetActive(cUser_Manager.mInstance.GetTargetNodeIndex() != cUser_Manager.kNullTargetNodeIndex);
+        mArrow.SetActive(!cPathfinding.mInstance.mCurrentPath.isEmpty());
     }
 
     /* -------- Public Methods -------- */
