@@ -71,7 +71,7 @@ public class cUser_Manager : MonoBehaviour
 
     private void Start()
     {
-                // Set the location and rotation of the user if debugging.
+        // Set the location and rotation of the user if debugging.
         if (Application.isEditor)
         {
             // Set debug location (Outside the Student Centre).
@@ -88,7 +88,6 @@ public class cUser_Manager : MonoBehaviour
     private void FixedUpdate()
     {
         SetUserData();
-        Debug_CurrentNode();
     }
 
     /* -------- Coroutines -------- */
@@ -274,22 +273,6 @@ public class cUser_Manager : MonoBehaviour
                     break;
                 }
             }
-        }
-    }
-
-    private void Debug_CurrentNode()
-    {
-        // Check if pointing at a building.
-        if (mTargetNodeIndex == kNullTargetNodeIndex)
-        {
-            rDebug_CurrentNodeText.text = "No Node Selected";
-        }
-        else
-        {
-            rDebug_CurrentNodeText.text =   "Current: " + cNode_Manager.mInstance.mNodes[mTargetNodeIndex].GetNodeName() +
-                                            "\n" + "Distance: " + 
-                                            Mathf.Round(cGPSMaths.GetDistance(mUserLastLocation, cNode_Manager.mInstance.mNodes[mTargetNodeIndex].GetGPSLocation())) + 
-                                            "m";
         }
     }
 
