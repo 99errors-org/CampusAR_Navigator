@@ -50,7 +50,7 @@ public class cSettings_Manager : MonoBehaviour
     /// </summary>
     public void HandleGoBackButton()
     {
-        SceneManager.LoadScene("UserInterface");
+        SceneManager.LoadScene(0);
     }
 
     /// <summary>

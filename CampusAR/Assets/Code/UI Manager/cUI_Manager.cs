@@ -582,7 +582,7 @@ public class cUI_Manager : MonoBehaviour
         {
             Debug.Log("You have clicked the Settings button!");
         }
-        SceneManager.LoadScene("SettingsScene");
+        SceneManager.LoadScene(1);
     }
 
     /// <summary>
