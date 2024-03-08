@@ -20,7 +20,7 @@ public class cPath
     }
 
     /// <summary>
-    /// Returns true if the path object has a node path associated with it. Returns false of there is no path created
+    /// Returns true if the path object has a node path associated with it. Returns false if there is no path created
     /// </summary>
     public bool isEmpty()
     {
@@ -105,7 +105,7 @@ public class cPath
                     shortestDistance = distanceFromNodeToTarget;
                     nextNode = cNode_Manager.mInstance.mNodes.IndexOf(cNode_Manager.mInstance.mNodes[currentNode].GetConnectedNodes()[k]);
                 }
-            }          
+            }
         }
 
         if (outputDebugInformation) { Debug.Log("Next node (index): " + cNode_Manager.mInstance.mNodes[nextNode].GetNodeID()); }
@@ -156,7 +156,7 @@ public class cPath
         catch
         {
             return false;
-        }        
+        }
     }
 
     public void PrintPath()
@@ -340,9 +340,9 @@ public class cPathfinding : MonoBehaviour
         // If path is empty, create a path to the target
         if (mCurrentPath.isEmpty())
         {
-            mCurrentPath.CreatePath(GetClosestNode(), targetNode, false); 
-        }   
-        
+            mCurrentPath.CreatePath(GetClosestNode(), targetNode, false);
+        }
+
         // Point the arrow towards the target node
         cArrowManager.mInstance.DirectArrow(mCurrentPath.GetCurrentNode());
 

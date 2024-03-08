@@ -11,17 +11,17 @@ using UnityEngine.UI;
 
 public class cUser_Manager : MonoBehaviour
 {
-	/* -------- References -------- */
+    /* -------- References -------- */
 
-	/* Singleton */
+    /* Singleton */
     public static cUser_Manager                 mInstance;                                              // Singleton instance, used to reference this class globally.
 
     /* User Interface */
 
-        /* Init Screen */
+    /* Init Screen */
     [SerializeField] private GameObject         rInitPanel;                                             // The Initialisation panel.
 
-        /* Calibration Screen */
+    /* Calibration Screen */
     [SerializeField] private Transform          rCam;                                                   // Reference to the camera.
 
     [SerializeField] private GameObject         rCalibrationScreen;                                     // The Calibration panel.
@@ -35,7 +35,7 @@ public class cUser_Manager : MonoBehaviour
 
     private const float                         kLocationTimeout = 20.0f;                               // The amount of seconds before the location services times out and starts again.
     private const float                         kCalibrationTime = 3.0f;                                // The amount of time it takes to calibrate the north offset.   
-    
+
     /* -------- Variables -------- */
 
     /* GPS */
@@ -44,9 +44,9 @@ public class cUser_Manager : MonoBehaviour
     public Vector2                              mUserLastLocation { get; private set; }                 // The users last GPS location, used for maintaining accuracy.
     public float                                mUserLastCompassRotation { get; private set; } = 0.0f;  // The users last compass bearing, this is stored to not overwhelm the phone.
 
-    public enum kDistanceUnit { m, km, mi};                                                             // Enum for distance unit 
-    private kDistanceUnit                       mUsersDistancePrefrence = kDistanceUnit.m;              // Users distance unit prefrence
-    
+    public enum kDistanceUnit { km, mi };                                                             // Enum for distance unit 
+    private kDistanceUnit                       mUsersDistancePreference = kDistanceUnit.km;              // Users distance unit preference
+
     /* Guiding */
     private int                                 mTargetNodeIndex = kNullTargetNodeIndex;                // The index of the target building/node, if -1 no node is selected.
 
@@ -61,6 +61,7 @@ public class cUser_Manager : MonoBehaviour
         if (mInstance == null)
         {
             mInstance = this;
+            DontDestroyOnLoad(this);
         }
         else
         {
@@ -69,6 +70,13 @@ public class cUser_Manager : MonoBehaviour
 
         // Attempt to run at 60fps
         Application.targetFrameRate = 60;
+
+        // Set Player prefs to default value (km)
+        if (!PlayerPrefs.HasKey("distancemetric"))
+        {
+            PlayerPrefs.SetInt("distancemetric", (int)mUsersDistancePreference);
+            PlayerPrefs.Save();
+        }
     }
 
     private void Start()
@@ -248,10 +256,10 @@ public class cUser_Manager : MonoBehaviour
         // Check if location services is running.
         if (Input.location.status == LocationServiceStatus.Running || Application.isEditor)
         {
-            
+
             if (!Application.isEditor) // In production.
             {
-                
+
 
                 // Set location.
                 mUserLastLocation = new Vector2(Input.location.lastData.latitude, Input.location.lastData.longitude);
@@ -262,27 +270,27 @@ public class cUser_Manager : MonoBehaviour
         }
         else // Location Services not running.
         {
-            switch (Input.location.status)  
+            switch (Input.location.status)
             {
                 case LocationServiceStatus.Initializing: // Initialising.
-                {
-                    // Do nothing.
-                    break;
-                }
+                    {
+                        // Do nothing.
+                        break;
+                    }
                 case LocationServiceStatus.Stopped:
                 case LocationServiceStatus.Failed:
-                {
-                    // Restart the Location and Compass setup.
-                    if (!mCoroutine)
                     {
-                        // Stop the location service.
-                        Input.location.Stop();
+                        // Restart the Location and Compass setup.
+                        if (!mCoroutine)
+                        {
+                            // Stop the location service.
+                            Input.location.Stop();
 
-                        StartCoroutine(LocationCompassSetup());
+                            StartCoroutine(LocationCompassSetup());
+                        }
+
+                        break;
                     }
-
-                    break;
-                }
             }
         }
     }
@@ -343,8 +351,25 @@ public class cUser_Manager : MonoBehaviour
     {
         return mUserLastLocation;
     }
-    public kDistanceUnit GetUserDistnacePrefrence()
+
+    // Save user's distance preference using PlayerPrefs
+    public void SaveUserDistancePreference(kDistanceUnit preference)
     {
-        return mUsersDistancePrefrence;
+        mUsersDistancePreference = preference;
+        PlayerPrefs.SetInt("distancemetric", (int)mUsersDistancePreference);
+        PlayerPrefs.Save();
+    }
+
+    // Retrieve user's distance preference from PlayerPrefs
+    public void LoadUserDistancePreference()
+    {
+        if (PlayerPrefs.HasKey("distancemetric"))
+        {
+            mUsersDistancePreference = (kDistanceUnit)PlayerPrefs.GetInt("distancemetric");
+        }
+    }
+    public kDistanceUnit GetUserDistancePreference()
+    {
+        return mUsersDistancePreference;
     }
 }

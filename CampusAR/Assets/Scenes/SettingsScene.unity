@@ -1697,7 +1697,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1525057049}
         m_TargetAssemblyTypeName: cSettings_Manager, Assembly-CSharp
-        m_MethodName: SaveMetricsPreference
+        m_MethodName: OnDropdownValueChanged
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

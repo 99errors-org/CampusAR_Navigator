@@ -11,7 +11,7 @@ public class cDistanceUnitUtility : MonoBehaviour
     /// <returns>The preferred distance unit ("m" for kilometers or "mi" for miles).</returns>
     public static string GetDistanceUnit()
     {
-        string storedPreference = PlayerPrefs.GetString("MetricsPreference", "");
+        string storedPreference = PlayerPrefs.GetString("distancemetric", "m");
         return storedPreference == "Kilometres (km)" ? "m" : storedPreference == "Miles (mi)" ? "mi" : "";
     }
 }

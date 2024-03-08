@@ -22,8 +22,8 @@ public class cDistanceText : MonoBehaviour
     private TextMeshProUGUI mDistanceText;                                          // Text used to diplay ditance to destination
     private int mCurrentTargetNodeIndex = cUser_Manager.kNullTargetNodeIndex;       // Sets the target node index to -1 
     private float mDistanceToDestination;                                           // Stores the distance to the destination
-    private string mSelectedDistanceUnit = kMeterAbbreviation;                      // Stores the selected unit abbreviation default is meter
-    private float mCurrentUnitMultiplier = kMeterToMeter;                           // Stores the selected unit conversion rate default is meter
+    private string mSelectedDistanceUnit = cUser_Manager.mInstance.GetUserDistancePreference().ToString();  // Stores the selected unit abbreviation default is kilometre
+    private float mCurrentUnitMultiplier = kMeterToMeter;                           // Stores the selected unit conversion rate default is kilometre
     // Start is called before the first frame update
     void Start()
     {
@@ -33,7 +33,7 @@ public class cDistanceText : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     private void FixedUpdate()
@@ -46,7 +46,7 @@ public class cDistanceText : MonoBehaviour
 
         if (mDistanceText != null & mDistanceText.gameObject.activeSelf)
         {
-            setDistance(cPathfinding.mInstance.GetDistanceToNextNode());                 // Sets the distance text to the distance and converts it to users prefrence
+            setDistance(cPathfinding.mInstance.GetDistanceToNextNode());                 // Sets the distance text to the distance and converts it to users preference
         }
         else
         {
@@ -60,12 +60,12 @@ public class cDistanceText : MonoBehaviour
     {
 
 
-        switch (cUser_Manager.mInstance.GetUserDistnacePrefrence())                 // Sets user preferred unit and converts it
+        switch (cUser_Manager.mInstance.GetUserDistancePreference())                 // Sets user preferred unit and converts it
         {
-            case cUser_Manager.kDistanceUnit.m:
-                mSelectedDistanceUnit = kMeterAbbreviation;
-                mCurrentUnitMultiplier = kMeterToMeter;
-                break;
+            /*            case cUser_Manager.kDistanceUnit.m:
+                            mSelectedDistanceUnit = kMeterAbbreviation;
+                            mCurrentUnitMultiplier = kMeterToMeter;
+                            break;*/
             case cUser_Manager.kDistanceUnit.km:
                 mSelectedDistanceUnit = kKilometerAbbreviation;
                 mCurrentUnitMultiplier = kMeterToKilometer;
@@ -84,5 +84,19 @@ public class cDistanceText : MonoBehaviour
     {
         mDistanceToDestination = distanceInMeters * mCurrentUnitMultiplier;
         mDistanceText.text = mDistanceToDestination.ToString() + mSelectedDistanceUnit;     // Setting the the text on the screen
+    }
+
+    public float ConvertToPreferredMetric(float _distance, string _metricPreference)
+    {
+        switch (_metricPreference)
+        {
+            case "km":
+                return _distance * kMeterToKilometer;
+            case "mi":
+                return _distance * kMeterToMiles;
+            default:
+                // If the preference is neither "km" nor "mi", return the distance in meters
+                return _distance * kMeterToMeter;
+        }
     }
 }

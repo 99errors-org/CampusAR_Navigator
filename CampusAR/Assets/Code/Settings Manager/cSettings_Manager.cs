@@ -14,29 +14,21 @@ public class cSettings_Manager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // Fetch the stored metric preference from PlayerPrefs
-        string storedPreference = PlayerPrefs.GetString("MetricsPreference", "");
+        cUser_Manager.mInstance.LoadUserDistancePreference();
+        // Set the dropdown value based on the loaded preference
+        tmpDropdown.value = (int)cUser_Manager.mInstance.GetUserDistancePreference();
+    }
 
-        // If a preference is found in PlayerPrefs, set the dropdown value
-        if (!string.IsNullOrEmpty(storedPreference))
-        {
-            // Find the index of the stored preference in dropdown options
-            int index = -1;
-            for (int i = 0; i < tmpDropdown.options.Count; i++)
-            {
-                if (tmpDropdown.options[i].text == storedPreference)
-                {
-                    index = i;
-                    break;
-                }
-            }
+    // Handle dropdown value change
+    public void OnDropdownValueChanged()
+    {
+        Debug.Log($"Dropdown value changed to: {tmpDropdown.value}");
+        // Set index of dropdown item into player prefs
+        cUser_Manager.mInstance.SaveUserDistancePreference((cUser_Manager.kDistanceUnit)tmpDropdown.value);
 
-            // If the stored preference is found, set the dropdown value
-            if (index != -1)
-            {
-                tmpDropdown.value = index;
-            }
-        }
+        // Save the user's distance preference
+        PlayerPrefs.Save();
+
     }
 
     /// <summary>
@@ -45,28 +37,5 @@ public class cSettings_Manager : MonoBehaviour
     public void HandleGoBackButton()
     {
         SceneManager.LoadScene(0);
-    }
-
-    /// <summary>
-    /// Stores the selected dropdown value inside Unity's PlayerPrefs class. Will persist between sessions and scenes
-    /// </summary>
-    public void SaveMetricsPreference()
-    {
-
-        string selectionOption = tmpDropdown.options[tmpDropdown.value].text;
-
-        PlayerPrefs.SetString("MetricsPreference", selectionOption);
-        PlayerPrefs.Save();
-
-        if (Application.isEditor)
-        {
-            Debug.Log("Selected option: " + selectionOption);
-        }
-
-        if (Application.isEditor)
-        {
-            string fetchedPreference = PlayerPrefs.GetString("MetricsPreference");
-            Debug.Log("Fetched Metrics Preference: " + fetchedPreference);
-        }
     }
 }

@@ -11,22 +11,22 @@ public class cUI_Manager : MonoBehaviour
 
     /* -------- References -------- */
 
-    [SerializeField] private GameObject         rTopBar;
-    [SerializeField] private TextMeshProUGUI    rBuildingNameField;
-    [SerializeField] private TextMeshProUGUI    rBuildingDistanceField;
+    [SerializeField] private GameObject rTopBar;
+    [SerializeField] private TextMeshProUGUI rBuildingNameField;
+    [SerializeField] private TextMeshProUGUI rBuildingDistanceField;
 
-    [SerializeField] private RectTransform      rBuildingListContent;
-    [SerializeField] private RectTransform      rBuildingDrawer;
-    [SerializeField] private RectTransform      rSelectTourDrawer;
-    [SerializeField] private RectTransform      rCreateTourDrawer;
-    [SerializeField] private RectTransform      rCreateTourContent;
-    [SerializeField] private TextMeshProUGUI    rTourQueueContent;
+    [SerializeField] private RectTransform rBuildingListContent;
+    [SerializeField] private RectTransform rBuildingDrawer;
+    [SerializeField] private RectTransform rSelectTourDrawer;
+    [SerializeField] private RectTransform rCreateTourDrawer;
+    [SerializeField] private RectTransform rCreateTourContent;
+    [SerializeField] private TextMeshProUGUI rTourQueueContent;
 
-    [SerializeField] private RectTransform      rCreateTourButton;
-    [SerializeField] private RectTransform      rSelectBuildingButton;
-    [SerializeField] private RectTransform      rSelectTourButton;
+    [SerializeField] private RectTransform rCreateTourButton;
+    [SerializeField] private RectTransform rSelectBuildingButton;
+    [SerializeField] private RectTransform rSelectTourButton;
 
-    [SerializeField] private TMP_InputField     rBuildingSearchInput;
+    [SerializeField] private TMP_InputField rBuildingSearchInput;
 
     /* -------- Variables -------- */
 
@@ -72,6 +72,7 @@ public class cUI_Manager : MonoBehaviour
 
     void Start()
     {
+        cUser_Manager.mInstance.LoadUserDistancePreference();
         // Editor values are set at 2f, this ensures the scale is set to 0f at runtime
         rCreateTourButton.transform.localScale = Vector3.zero;
         rSelectBuildingButton.transform.localScale = Vector3.zero;
@@ -172,7 +173,7 @@ public class cUI_Manager : MonoBehaviour
     private void UpdateBuildingNameField()
     {
         // Check if current building node is selected.
-        rTopBar.SetActive(!cPathfinding.mInstance.mCurrentPath.isEmpty());
+        rTopBar.SetActive(currentBuildingNode != null);
 
         // Check if the currentBuildingNode is not null
         if (currentBuildingNode != null)
@@ -180,14 +181,23 @@ public class cUI_Manager : MonoBehaviour
             // Update the text content of the TextMeshPro field with the building name
             rBuildingNameField.text = currentBuildingNode.GetBuildingName();
 
-            // Get distance.
-            float distanceFloat = cGPSMaths.GetDistance(currentBuildingNode.GetGPSLocation(), cUser_Manager.mInstance.mUserLastLocation);
+            // Get the distance to the next node
+            float distanceToNextNode = cPathfinding.mInstance.GetDistanceToNextNode();
 
-            // Round down the distance.
-            distanceFloat = Mathf.FloorToInt(distanceFloat);
+            // Get the user's distance preference as a string
+            string distancePreference = cUser_Manager.mInstance.GetUserDistancePreference().ToString();
 
-            // Update the text content of the TextMeshPro field with the building distance.
-            rBuildingDistanceField.text = $"{distanceFloat} " + "m";
+            // Create an instance of the cDistanceText class
+            cDistanceText distanceTextConverter = new cDistanceText();
+
+            // Convert the distance to the preferred metric (km or miles)
+            float convertedDistance = distanceTextConverter.ConvertToPreferredMetric(distanceToNextNode, distancePreference);
+
+            // Round the distance
+            float _distance = (float)Math.Round(convertedDistance, 2);
+
+            // Update the building distance field with the converted distance and the user's preference
+            rBuildingDistanceField.text = $"{_distance} {distancePreference}";
         }
     }
 
@@ -258,12 +268,9 @@ public class cUI_Manager : MonoBehaviour
 
         _building.GetComponent<Button>().onClick.AddListener(() =>
         {
-            if (rBuildingNameField != null)
-            {
-                rBuildingNameField.gameObject.SetActive(true);
-                currentBuildingNode = clickedNode;
-                cUser_Manager.mInstance.SetTargetNode(index);
-            }
+            rBuildingNameField.gameObject.SetActive(true);
+            currentBuildingNode = clickedNode;
+            cUser_Manager.mInstance.SetTargetNode(index);
         });
     }
 
@@ -319,14 +326,18 @@ public class cUI_Manager : MonoBehaviour
     {
         float distanceFloat = cGPSMaths.GetDistance(cNode_Manager.mInstance.mBuildingNodes[index].GetGPSLocation(), cUser_Manager.mInstance.mUserLastLocation);
 
-        int distance = Mathf.FloorToInt(distanceFloat);
+        cDistanceText distanceconverter = new cDistanceText();
+
+        string distancePreference = cUser_Manager.mInstance.GetUserDistancePreference().ToString();
+
+        float convertedDistance = distanceconverter.ConvertToPreferredMetric(distanceFloat, distancePreference);
+
+        float distance = (float)Math.Round(convertedDistance, 2);
 
         // Set Values.
         building.transform.Find("BuildingTag (TMP)").GetComponent<TextMeshProUGUI>().text = cNode_Manager.mInstance.mBuildingNodes[index].GetBuildingAbbreviation();
         building.transform.Find("BuildingName (TMP)").GetComponent<TextMeshProUGUI>().text = cNode_Manager.mInstance.mBuildingNodes[index].GetBuildingName();
-
-        string distanceUnit = cDistanceUnitUtility.GetDistanceUnit();
-        building.transform.Find("Distance (TMP)").GetComponent<TextMeshProUGUI>().text = $"{distance} {distanceUnit}";
+        building.transform.Find("Distance (TMP)").GetComponent<TextMeshProUGUI>().text = $"{distance} {distancePreference}";
     }
 
     /// <summary>
